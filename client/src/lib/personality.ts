@@ -230,22 +230,25 @@ export const foundationStoneSets: FoundationStoneSet[] = [
       {
         id: 7,
         name: "INSIGHT",
-        values: "PERCEPTION • KNOWLEDGE • WISDOM",
+        baselines: "PERCEPTION • KNOWLEDGE • WISDOM",
         image: "https://images.unsplash.com/photo-1506901437675-cde80ff9c746?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&h=250",
+        category: "Head",
         typeScore: { "5": 5, "1": 3, "4": 2 }
       },
       {
         id: 8,
         name: "HARMONY",
-        values: "PEACE • BALANCE • CONNECTION",
+        baselines: "PEACE • BALANCE • CONNECTION",
         image: "https://images.unsplash.com/photo-1506056820413-f8fa4f246a75?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&h=250",
+        category: "Heart",
         typeScore: { "9": 5, "2": 3, "7": 2 }
       },
       {
         id: 9,
         name: "VIGILANCE",
-        values: "CAUTION • PREPARATION • LOYALTY",
+        baselines: "CAUTION • PREPARATION • LOYALTY",
         image: "https://images.unsplash.com/photo-1568607689150-2a2a0e4f479d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&h=250",
+        category: "Body",
         typeScore: { "6": 5, "1": 3, "8": 2 }
       }
     ]

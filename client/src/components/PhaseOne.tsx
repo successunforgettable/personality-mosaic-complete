@@ -47,12 +47,22 @@ const PhaseOne = () => {
               className="bg-white rounded-xl shadow-md overflow-hidden transition-all cursor-pointer border-2 border-transparent hover:border-primary-300"
               onClick={() => handleStoneSelection(stone)}
             >
-              <div className="h-32 overflow-hidden">
-                <img src={stone.image} alt={`${stone.name} stone texture`} className="w-full h-full object-cover" />
-              </div>
-              <div className="p-5">
-                <h3 className="font-semibold text-gray-900 text-lg mb-2">{stone.name}</h3>
-                <p className="text-gray-600 text-sm">{stone.values}</p>
+              <div className="relative h-60 w-60 mx-auto">
+                <div className="absolute inset-0 hexagon-shape bg-gradient-to-br border-2 border-white rounded-lg shadow-lg"
+                  style={{ 
+                    background: `linear-gradient(135deg, 
+                      rgba(99, 102, 241, 0.8),
+                      rgba(139, 92, 246, 0.8))`,
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.2)'
+                  }}>
+                  <div className="absolute inset-0 hexagon-content flex flex-col items-center justify-center p-4 text-center">
+                    <h3 className="font-semibold text-white text-lg mb-2">{stone.name}</h3>
+                    <p className="text-white text-sm">{stone.baselines}</p>
+                    <div className="absolute bottom-2 right-2 bg-white rounded-full h-6 w-6 flex items-center justify-center">
+                      <span className="text-xs font-medium text-primary-600">{stone.category}</span>
+                    </div>
+                  </div>
+                </div>
               </div>
             </motion.div>
           ))}

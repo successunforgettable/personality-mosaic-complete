@@ -8,6 +8,7 @@ import Home from "@/pages/Home";
 import Assessment from "@/pages/Assessment";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { AssessmentProvider } from "./context/AssessmentContext";
 
 function Router() {
   return (
@@ -30,7 +31,9 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <Toaster />
-        <Router />
+        <AssessmentProvider>
+          <Router />
+        </AssessmentProvider>
       </TooltipProvider>
     </QueryClientProvider>
   );

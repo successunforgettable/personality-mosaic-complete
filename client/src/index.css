@@ -140,3 +140,22 @@ body {
   background: #6366F1;
   cursor: pointer;
 }
+
+/* Hexagonal shape styling */
+.hexagon-shape {
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  transition: all 0.3s ease;
+}
+
+.hexagon-shape:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+}
+
+.hexagon-shape.selected {
+  box-shadow: 0 0 15px rgba(99, 102, 241, 0.7);
+}
+
+.hexagon-content {
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+}
