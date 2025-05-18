@@ -1406,7 +1406,7 @@
 - **Achievement Categories:**
   - Onboarding achievements
   - Assessment completion achievements
-  - Exploration achievements
+  - BASELINES exploration achievements
   - Social sharing achievements
   - Personal growth achievements
 
@@ -2390,9 +2390,14 @@ Results Visualization and Report
    - NEVER use other type names in the influence description (e.g., don't say "The Peacemaker influence")
    - Always refer to the influence as the primary type with the influencing number
 
-6. **All internal algorithms** may continue to use technical terms like "wing" and "arrow" in the codebase, but any user-visible text must use the approved alternative terminology.
+6. **Replace "Values" with "BASELINES"** in all user-facing content:
+   - Any reference to personal values must use the term "BASELINES" instead
+   - This applies to all descriptions, labels, reports, and visualizations
+   - For example, use "Personal BASELINES" instead of "Personal Values"
 
-7. **Result reports** must be written using only the approved terminology.
+7. **All internal algorithms** may continue to use technical terms like "wing" and "arrow" in the codebase, but any user-visible text must use the approved alternative terminology.
+
+8. **Result reports** must be written using only the approved terminology.
 
 All team members must review and understand these terminology requirements before beginning implementation.
 
@@ -2622,7 +2627,7 @@ Results Visualization and Report
 - **Background:** Gradient based on stone type (see color specifications)
 - **Border:** 2px solid white with 8px border radius
 - **Shadow:** 0 4px 12px rgba(0,0,0,0.2)
-- **Content:** 2-3 words in white text (Inter SemiBold, 16px)
+- **Content:** 2-3 words in white text representing BASELINES (Inter SemiBold, 16px)
 - **Hover Effect:** Scale to 1.05×, shadow increase
 - **Selected State:** Glow effect, checkmark indicator
 
@@ -2646,49 +2651,49 @@ Results Visualization and Report
 #### 3.3.1 Complete Stone Content for All Nine Sets
 
 **Set 1: Decision-Making Center**
-- **Stone A (Head):** ANALYSIS • LOGIC • THINKING
-- **Stone B (Heart):** CONNECTION • EMPATHY • FEELING 
-- **Stone C (Body):** ACTION • INSTINCT • MOVEMENT
+- **Stone A (Head):** ANALYSIS • LOGIC • THINKING (Head BASELINES)
+- **Stone B (Heart):** CONNECTION • EMPATHY • FEELING (Heart BASELINES)
+- **Stone C (Body):** ACTION • INSTINCT • MOVEMENT (Body BASELINES)
 
 **Set 2: Core Motivation**
-- **Stone A (Fear):** SECURITY • PREPARATION • CAUTION
-- **Stone B (Shame):** AUTHENTICITY • IMAGE • MEANING
-- **Stone C (Anger):** JUSTICE • CONTROL • STRENGTH
+- **Stone A (Fear):** SECURITY • PREPARATION • CAUTION (Security BASELINES)
+- **Stone B (Shame):** AUTHENTICITY • IMAGE • MEANING (Identity BASELINES)
+- **Stone C (Anger):** JUSTICE • CONTROL • STRENGTH (Power BASELINES)
 
 **Set 3: Energy Direction**
-- **Stone A (Withdrawn):** REFLECTION • DEPTH • PRIVACY
-- **Stone B (Assertive):** ACHIEVEMENT • INFLUENCE • IMPACT
-- **Stone C (Compliant):** STRUCTURE • SUPPORT • HARMONY
+- **Stone A (Withdrawn):** REFLECTION • DEPTH • PRIVACY (Internal BASELINES)
+- **Stone B (Assertive):** ACHIEVEMENT • INFLUENCE • IMPACT (Assertive BASELINES)
+- **Stone C (Compliant):** STRUCTURE • SUPPORT • HARMONY (Cooperative BASELINES)
 
 **Set 4: Social Approach**
-- **Stone A (Detached):** OBJECTIVITY • PERSPECTIVE • SPACE
-- **Stone B (Attachment):** CLOSENESS • INTIMACY • BONDING
-- **Stone C (Autonomy):** INDEPENDENCE • SELF-RELIANCE • FREEDOM
+- **Stone A (Detached):** OBJECTIVITY • PERSPECTIVE • SPACE (Independence BASELINES)
+- **Stone B (Attachment):** CLOSENESS • INTIMACY • BONDING (Connection BASELINES)
+- **Stone C (Autonomy):** INDEPENDENCE • SELF-RELIANCE • FREEDOM (Autonomy BASELINES)
 
 **Set 5: Processing Style**
-- **Stone A (Conceptual):** SYSTEMS • CONCEPTS • IDEAS
-- **Stone B (Emotional):** EXPRESSION • MOOD • FEELING
-- **Stone C (Practical):** RESULTS • EFFICIENCY • UTILITY
+- **Stone A (Conceptual):** SYSTEMS • CONCEPTS • IDEAS (Conceptual BASELINES)
+- **Stone B (Emotional):** EXPRESSION • MOOD • FEELING (Emotional BASELINES)
+- **Stone C (Practical):** RESULTS • EFFICIENCY • UTILITY (Practical BASELINES)
 
 **Set 6: Stress Reaction**
-- **Stone A (Overthinking):** VIGILANCE • ANALYSIS • FORESIGHT
-- **Stone B (Image-focus):** RECOGNITION • IDENTITY • UNIQUENESS
-- **Stone C (Control-seeking):** AUTHORITY • POWER • DIRECTION
+- **Stone A (Overthinking):** VIGILANCE • ANALYSIS • FORESIGHT (Cautious BASELINES)
+- **Stone B (Image-focus):** RECOGNITION • IDENTITY • UNIQUENESS (Recognition BASELINES)
+- **Stone C (Control-seeking):** AUTHORITY • POWER • DIRECTION (Control BASELINES)
 
 **Set 7: Conflict Style**
-- **Stone A (Avoiding):** PEACE • MEDIATION • COMPROMISE
-- **Stone B (Accommodating):** SUPPORT • FLEXIBILITY • ADAPTATION
-- **Stone C (Confronting):** DIRECTNESS • CHALLENGE • HONESTY
+- **Stone A (Avoiding):** PEACE • MEDIATION • COMPROMISE (Harmony BASELINES)
+- **Stone B (Accommodating):** SUPPORT • FLEXIBILITY • ADAPTATION (Support BASELINES)
+- **Stone C (Confronting):** DIRECTNESS • CHALLENGE • HONESTY (Directness BASELINES)
 
 **Set 8: Success Definition**
-- **Stone A (Correctness):** ACCURACY • PRINCIPLES • IMPROVEMENT
-- **Stone B (Approval):** CONNECTION • ACKNOWLEDGMENT • APPRECIATION
-- **Stone C (Autonomy):** MASTERY • ACHIEVEMENT • CAPABILITY
+- **Stone A (Correctness):** ACCURACY • PRINCIPLES • IMPROVEMENT (Standard BASELINES)
+- **Stone B (Approval):** CONNECTION • ACKNOWLEDGMENT • APPRECIATION (Relational BASELINES)
+- **Stone C (Autonomy):** MASTERY • ACHIEVEMENT • CAPABILITY (Achievement BASELINES)
 
 **Set 9: Relationship Priority**
-- **Stone A (Independence):** AUTONOMY • SELF-SUFFICIENCY • SPACE
-- **Stone B (Interdependence):** MUTUALITY • SHARING • RECIPROCITY
-- **Stone C (Guidance):** LEADERSHIP • MENTORSHIP • DIRECTION
+- **Stone A (Independence):** AUTONOMY • SELF-SUFFICIENCY • SPACE (Independence BASELINES)
+- **Stone B (Interdependence):** MUTUALITY • SHARING • RECIPROCITY (Reciprocity BASELINES)
+- **Stone C (Guidance):** LEADERSHIP • MENTORSHIP • DIRECTION (Leadership BASELINES)
 
 ### 3.4 Complete Type-Mapping Algorithm
 
@@ -2925,6 +2930,7 @@ export default Stone;
   letter-spacing: var(--letter-spacing-wide);
   line-height: var(--line-height-tight);
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  /* Class represents BASELINES in the stone */
 }
 
 .stone-selected-indicator {
