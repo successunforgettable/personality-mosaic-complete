@@ -47,8 +47,9 @@ const PhaseOne = () => {
               className="text-center py-4 transition-all cursor-pointer"
               onClick={() => handleStoneSelection(stone)}
             >
-              <div className="relative h-60 w-60 mx-auto">
-                <div className="absolute inset-0 hexagon-shape border-2 border-white shadow-lg"
+              <div className="relative h-72 w-64 mx-auto">
+                <div 
+                  className={`absolute inset-0 hexagon-shape border-2 border-white shadow-lg ${selectedFoundationStones.some(s => s.id === stone.id) ? 'selected' : ''}`}
                   style={{ 
                     background: stone.category === 'Head' 
                       ? 'linear-gradient(135deg, #4F46E5, #7C3AED)' 
@@ -57,12 +58,18 @@ const PhaseOne = () => {
                       : 'linear-gradient(135deg, #10B981, #3B82F6)',
                     boxShadow: '0 4px 12px rgba(0,0,0,0.2)'
                   }}>
-                  <div className="absolute inset-0 hexagon-content flex flex-col items-center justify-center p-4 text-center">
-                    <h3 className="font-semibold text-white text-lg mb-2">{stone.name}</h3>
-                    <p className="text-white text-sm">{stone.baselines}</p>
-                    <div className="absolute bottom-2 right-2 bg-white rounded-full h-6 w-6 flex items-center justify-center">
-                      <span className="text-xs font-medium text-primary-600">{stone.category}</span>
+                  <div className="absolute inset-0 hexagon-content flex flex-col items-center justify-center p-5 text-center">
+                    <div className="absolute top-3 left-1/2 transform -translate-x-1/2 bg-white rounded-full px-3 py-1">
+                      <span className="text-xs font-semibold" style={{ 
+                        color: stone.category === 'Head' 
+                          ? '#4F46E5' 
+                          : stone.category === 'Heart' 
+                          ? '#EC4899' 
+                          : '#10B981' 
+                      }}>{stone.category}</span>
                     </div>
+                    <h3 className="font-semibold text-white text-lg mb-3 mt-4">{stone.name}</h3>
+                    <p className="text-white text-sm px-3">{stone.baselines}</p>
                   </div>
                 </div>
               </div>
