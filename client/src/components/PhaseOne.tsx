@@ -32,7 +32,7 @@ const PhaseOne = () => {
     >
       <div className="text-center mb-8">
         <h2 className="text-2xl md:text-3xl font-display font-semibold text-gray-900 mb-3">Select Your Foundation Stones</h2>
-        <p className="text-gray-600 max-w-2xl mx-auto">Choose the stone that resonates most with your core values and personality traits. These will form the foundation of your personality tower.</p>
+        <p className="text-gray-600 max-w-2xl mx-auto">Choose the stone that resonates most with your core BASELINES and personality traits. These will form the foundation of your personality tower.</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
@@ -44,15 +44,17 @@ const PhaseOne = () => {
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.9 }}
               whileHover={{ scale: 1.05 }}
-              className="bg-white rounded-xl shadow-md overflow-hidden transition-all cursor-pointer border-2 border-transparent hover:border-primary-300"
+              className="text-center py-4 transition-all cursor-pointer"
               onClick={() => handleStoneSelection(stone)}
             >
               <div className="relative h-60 w-60 mx-auto">
-                <div className="absolute inset-0 hexagon-shape bg-gradient-to-br border-2 border-white rounded-lg shadow-lg"
+                <div className="absolute inset-0 hexagon-shape border-2 border-white shadow-lg"
                   style={{ 
-                    background: `linear-gradient(135deg, 
-                      rgba(99, 102, 241, 0.8),
-                      rgba(139, 92, 246, 0.8))`,
+                    background: stone.category === 'Head' 
+                      ? 'linear-gradient(135deg, #4F46E5, #7C3AED)' 
+                      : stone.category === 'Heart'
+                      ? 'linear-gradient(135deg, #EC4899, #8B5CF6)'
+                      : 'linear-gradient(135deg, #10B981, #3B82F6)',
                     boxShadow: '0 4px 12px rgba(0,0,0,0.2)'
                   }}>
                   <div className="absolute inset-0 hexagon-content flex flex-col items-center justify-center p-4 text-center">
