@@ -1,4 +1,6 @@
 import { users, type User, type InsertUser, assessmentResults, type AssessmentResult, type InsertAssessmentResult } from "@shared/schema";
+import { db } from "./db";
+import { eq } from "drizzle-orm";
 
 export interface IStorage {
   getUser(id: number): Promise<User | undefined>;
@@ -9,54 +11,41 @@ export interface IStorage {
   createAssessmentResult(result: InsertAssessmentResult): Promise<AssessmentResult>;
 }
 
-export class MemStorage implements IStorage {
-  private users: Map<number, User>;
-  private assessmentResults: Map<number, AssessmentResult>;
-  private userIdCounter: number;
-  private resultIdCounter: number;
-
-  constructor() {
-    this.users = new Map();
-    this.assessmentResults = new Map();
-    this.userIdCounter = 1;
-    this.resultIdCounter = 1;
-  }
-
+export class DatabaseStorage implements IStorage {
   async getUser(id: number): Promise<User | undefined> {
-    return this.users.get(id);
+    const [user] = await db.select().from(users).where(eq(users.id, id));
+    return user;
   }
 
   async getUserByUsername(username: string): Promise<User | undefined> {
-    return Array.from(this.users.values()).find(
-      (user) => user.username === username,
-    );
+    const [user] = await db.select().from(users).where(eq(users.username, username));
+    return user;
   }
 
   async createUser(insertUser: InsertUser): Promise<User> {
-    const id = this.userIdCounter++;
-    const createdAt = new Date().toISOString();
-    const user: User = { ...insertUser, id, createdAt };
-    this.users.set(id, user);
+    const [user] = await db
+      .insert(users)
+      .values(insertUser)
+      .returning();
     return user;
   }
 
   async getAssessmentResult(id: number): Promise<AssessmentResult | undefined> {
-    return this.assessmentResults.get(id);
+    const [result] = await db.select().from(assessmentResults).where(eq(assessmentResults.id, id));
+    return result;
   }
 
   async getAssessmentResultsByUserId(userId: number): Promise<AssessmentResult[]> {
-    return Array.from(this.assessmentResults.values()).filter(
-      (result) => result.userId === userId
-    );
+    return db.select().from(assessmentResults).where(eq(assessmentResults.userId, userId));
   }
 
   async createAssessmentResult(insertResult: InsertAssessmentResult): Promise<AssessmentResult> {
-    const id = this.resultIdCounter++;
-    const createdAt = new Date().toISOString();
-    const result: AssessmentResult = { ...insertResult, id, createdAt };
-    this.assessmentResults.set(id, result);
+    const [result] = await db
+      .insert(assessmentResults)
+      .values(insertResult)
+      .returning();
     return result;
   }
 }
 
-export const storage = new MemStorage();
+export const storage = new DatabaseStorage();
