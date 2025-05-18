@@ -2,8 +2,9 @@
 export interface FoundationStone {
   id: number;
   name: string;
-  values: string;
+  baselines: string;
   image: string;
+  category: 'Head' | 'Heart' | 'Body';
   typeScore: Record<string, number>;
 }
 

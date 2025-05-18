@@ -172,22 +172,25 @@ export const foundationStoneSets: FoundationStoneSet[] = [
       {
         id: 1,
         name: "COMPASSION",
-        values: "EMPATHY • KINDNESS • UNDERSTANDING",
+        baselines: "EMPATHY • KINDNESS • UNDERSTANDING",
         image: "https://images.unsplash.com/photo-1518621736915-f3b1c41bfd00?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&h=250",
+        category: "Heart",
         typeScore: { "2": 5, "9": 3, "4": 2 }
       },
       {
         id: 2,
         name: "ANALYSIS",
-        values: "LOGIC • THINKING • PROBLEM-SOLVING",
+        baselines: "LOGIC • THINKING • PROBLEM-SOLVING",
         image: "https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&h=250",
+        category: "Head",
         typeScore: { "5": 5, "1": 3, "6": 2 }
       },
       {
         id: 3,
         name: "PASSION",
-        values: "ENTHUSIASM • INTENSITY • DRIVE",
+        baselines: "ENTHUSIASM • INTENSITY • DRIVE",
         image: "https://images.unsplash.com/photo-1538428494232-9c0d8a3ab403?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&h=250",
+        category: "Body",
         typeScore: { "8": 5, "3": 3, "7": 2 }
       }
     ]
@@ -198,22 +201,25 @@ export const foundationStoneSets: FoundationStoneSet[] = [
       {
         id: 4,
         name: "DILIGENCE",
-        values: "RESPONSIBILITY • HARD WORK • DEDICATION",
+        baselines: "RESPONSIBILITY • HARD WORK • DEDICATION",
         image: "https://images.unsplash.com/photo-1589939705384-5185137a7f0f?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&h=250",
+        category: "Head",
         typeScore: { "1": 5, "3": 3, "6": 2 }
       },
       {
         id: 5,
         name: "CREATIVITY",
-        values: "INNOVATION • EXPRESSION • IMAGINATION",
+        baselines: "INNOVATION • EXPRESSION • IMAGINATION",
         image: "https://images.unsplash.com/photo-1518640467707-6811f4a6ab73?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&h=250",
+        category: "Heart",
         typeScore: { "4": 5, "7": 3, "9": 2 }
       },
       {
         id: 6,
         name: "ASSURANCE",
-        values: "CONFIDENCE • STRENGTH • PROTECTION",
+        baselines: "CONFIDENCE • STRENGTH • PROTECTION",
         image: "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&h=250",
+        category: "Body",
         typeScore: { "8": 5, "2": 3, "6": 2 }
       }
     ]
