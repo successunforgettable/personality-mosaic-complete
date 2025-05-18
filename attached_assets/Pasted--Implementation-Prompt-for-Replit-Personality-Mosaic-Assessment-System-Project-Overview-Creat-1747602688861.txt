@@ -1,0 +1,108 @@
+# Implementation Prompt for Replit: Personality Mosaic Assessment System
+
+## Project Overview
+
+Create an engaging, visually interactive personality assessment system called "The Personality Mosaic" that helps users discover their personality type through a gamified tower-building metaphor. Users will progress through four distinct phases to construct their personality profile, resulting in a personalized visualization and detailed report. The assessment should take 5-7 minutes to complete and feel like an artistic creation rather than a traditional test.
+
+## Core Technical Requirements
+
+- **Frontend Framework**: React with modern hooks and context API
+- **Animation Library**: Framer Motion for smooth transitions and interactive elements
+- **State Management**: React Context API or Zustand for application state
+- **Styling**: CSS-in-JS approach with custom design system
+- **Visualization**: SVG-based tower visualization with interactive elements
+- **Database**: MongoDB for user data and assessment results storage (optional for initial MVP)
+- **Authentication**: JWT-based authentication system with email/password and social login options
+- **Mobile Support**: Responsive design optimized for all device sizes
+
+## CRITICAL TERMINOLOGY REQUIREMENTS
+
+**IMPORTANT:** The application MUST adhere to the following terminology guidelines:
+
+1. NEVER use the term "Enneagram" anywhere in the user-facing application.
+2. Always call Type 6 "Sentinel" NOT "Loyalist" in all user-facing content.
+3. Format personality influences as: "Reformer 9" (not "1w9"), always using the type name followed by the influencing number.
+4. For mood states, use language like "When you're in a good mood, you are..." and "When you're in a bad mood, you are..." and NEVER reference movement between types.
+5. When referring to influences, use the format "The Reformer 9 influence" and NEVER use other type names in the description (e.g., don't say "The Peacemaker influence").
+
+## Implementation Phases
+
+### 1. Foundation Stone Experience
+
+Create an interactive phase where users select from sets of "Foundation Stones" with different attributes:
+
+- Present 9 sets of 3 stones each, shown 3 sets at a time
+- Each stone has distinct visual appearance and values/traits (e.g., "ANALYSIS • LOGIC • THINKING")
+- Selection adds stone to a circular foundation visualization
+- Track selections to determine primary personality type
+- Implement the core algorithm to calculate personality type based on selection patterns
+
+### 2. Building Block Experience
+
+Create the second phase where users make choices about personality influences:
+
+- Present 4 pairs of contrasting blocks with text descriptions
+- Implement selection interface for A/B choice for each pair
+- Visualize selected blocks stacking on the foundation
+- Calculate "influence" (wing) and "mood states" (arrows) based on selections
+
+### 3. Color Palette Experience
+
+Create a visual slider interface for state distribution:
+
+- Implement three linked vertical sliders for Healthy, Average, and Unhealthy states
+- Values must always total 100%
+- Real-time color updates to tower visualization
+- Store state distribution in application state
+
+### 4. Detail Elements Experience
+
+Create a drag-and-drop interface for subtype determination:
+
+- Design 10 draggable tokens that can be placed in three containers
+- Implement containers for Self-Preservation, One-to-One, and Social subtypes
+- Create visual feedback for token placement
+- Calculate subtype distribution based on final allocation
+
+### 5. Results Visualization and Report
+
+Create the final results presentation:
+
+- Design an interactive 3D-like tower visualization reflecting all choices
+- Implement a comprehensive text report with sections for:
+  - Primary type description
+  - Influence (wing) analysis
+  - Mood states description
+  - State distribution insights
+  - Subtype stack explanation
+- Enable report sharing via email, social media, and WhatsApp
+- Allow PDF export of the complete report
+
+## Additional Requirements
+
+1. **Navigation**: Implement progress indicators and navigation controls between phases
+2. **UI Design**: Follow the detailed color system, typography, spacing, and shadow specifications
+3. **Animations**: Create smooth transitions between all states and selections
+4. **Responsive Design**: Optimize for mobile, tablet, and desktop experiences
+5. **Accessibility**: Ensure WCAG 2.1 AA compliance throughout the application
+6. **Error Handling**: Implement graceful error recovery and validation
+7. **Performance**: Optimize for quick loading and smooth interactions
+
+## Implementation Approach
+
+1. Start by implementing the Foundation Stone phase completely, including the visualization and selection algorithm
+2. Once the foundation is working properly, implement the Building Block phase
+3. Continue with Color Palette and Detail Elements phases
+4. Complete the Results Visualization and comprehensive report
+5. Finally, implement the user management, sharing, and export functionality
+
+## Deliverables
+
+1. Complete React application with all interactive assessment phases
+2. Functional tower visualization that updates based on user selections
+3. Comprehensive report generation system
+4. User authentication and profile management
+5. Responsive design for all device sizes
+6. Documentation of all algorithms and component structures
+
+The application should feel engaging, visually appealing, and provide valuable personality insights to users in an innovative format that feels more like creating art than taking a test.
