@@ -111,37 +111,51 @@ const Results = () => {
           
           <div className="flex items-center mb-3">
             <div className="w-3 h-3 rounded-full bg-green-500 mr-2"></div>
-            <span className="text-sm text-gray-700">Healthy State</span>
-            <span className="ml-auto text-sm font-medium text-gray-900">{stateDistribution.healthy}%</span>
+            <span className="text-sm text-gray-700">Very Good State</span>
+            <span className="ml-auto text-sm font-medium text-gray-900">{stateDistribution.veryGood}%</span>
           </div>
           
           <div className="flex items-center mb-3">
-            <div className="w-3 h-3 rounded-full bg-blue-500 mr-2"></div>
+            <div className="w-3 h-3 rounded-full bg-emerald-500 mr-2"></div>
+            <span className="text-sm text-gray-700">Good State</span>
+            <span className="ml-auto text-sm font-medium text-gray-900">{stateDistribution.good}%</span>
+          </div>
+          
+          <div className="flex items-center mb-3">
+            <div className="w-3 h-3 rounded-full bg-amber-500 mr-2"></div>
             <span className="text-sm text-gray-700">Average State</span>
             <span className="ml-auto text-sm font-medium text-gray-900">{stateDistribution.average}%</span>
           </div>
           
+          <div className="flex items-center mb-3">
+            <div className="w-3 h-3 rounded-full bg-orange-500 mr-2"></div>
+            <span className="text-sm text-gray-700">Below Average State</span>
+            <span className="ml-auto text-sm font-medium text-gray-900">{stateDistribution.belowAverage}%</span>
+          </div>
+          
           <div className="flex items-center mb-4">
             <div className="w-3 h-3 rounded-full bg-red-500 mr-2"></div>
-            <span className="text-sm text-gray-700">Unhealthy State</span>
-            <span className="ml-auto text-sm font-medium text-gray-900">{stateDistribution.unhealthy}%</span>
+            <span className="text-sm text-gray-700">Destructive State</span>
+            <span className="ml-auto text-sm font-medium text-gray-900">{stateDistribution.destructive}%</span>
           </div>
           
           <div className="h-4 bg-gray-100 rounded-full overflow-hidden">
             <div className="flex h-full">
-              <div className="bg-green-500 h-full" style={{ width: `${stateDistribution.healthy}%` }}></div>
-              <div className="bg-blue-500 h-full" style={{ width: `${stateDistribution.average}%` }}></div>
-              <div className="bg-red-500 h-full" style={{ width: `${stateDistribution.unhealthy}%` }}></div>
+              <div className="bg-green-500 h-full" style={{ width: `${stateDistribution.veryGood}%` }}></div>
+              <div className="bg-emerald-500 h-full" style={{ width: `${stateDistribution.good}%` }}></div>
+              <div className="bg-amber-500 h-full" style={{ width: `${stateDistribution.average}%` }}></div>
+              <div className="bg-orange-500 h-full" style={{ width: `${stateDistribution.belowAverage}%` }}></div>
+              <div className="bg-red-500 h-full" style={{ width: `${stateDistribution.destructive}%` }}></div>
             </div>
           </div>
           
           <p className="text-sm text-gray-600 mt-4">
-            {stateDistribution.healthy > stateDistribution.average && stateDistribution.healthy > stateDistribution.unhealthy ? (
-              "You tend to operate in your healthy state most often, which indicates a balanced and growth-oriented mindset."
-            ) : stateDistribution.average > stateDistribution.healthy && stateDistribution.average > stateDistribution.unhealthy ? (
-              "You tend to operate in your average state most often, with a good amount of time in your healthy state and occasional dips into your unhealthy state."
+            {stateDistribution.veryGood + stateDistribution.good > stateDistribution.average + stateDistribution.belowAverage + stateDistribution.destructive ? (
+              "You tend to operate in your healthy states most often, which indicates a balanced and growth-oriented mindset."
+            ) : stateDistribution.average > stateDistribution.veryGood + stateDistribution.good && stateDistribution.average > stateDistribution.belowAverage + stateDistribution.destructive ? (
+              "You tend to operate in your average state most often, with a good amount of time in your healthy states and occasional dips into your less healthy states."
             ) : (
-              "You tend to spend significant time in your unhealthy state, which may indicate current life stressors that need addressing."
+              "You tend to spend significant time in your less healthy states, which may indicate current life stressors that need addressing."
             )}
           </p>
         </div>
