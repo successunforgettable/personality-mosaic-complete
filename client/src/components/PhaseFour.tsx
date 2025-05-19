@@ -7,57 +7,143 @@ import { HTML5Backend } from 'react-dnd-html5-backend';
 import { useDragAndDrop } from '@/hooks/useDragAndDrop';
 import TowerVisualization from './TowerVisualization';
 
-// Centralized state for the last dragged element
-let lastDraggedElement: {
-  element: DetailElement | null;
-  source: Container | null;
-} = {
-  element: null,
-  source: null
+// Map icons to more descriptive labels
+const iconMeanings: Record<string, string> = {
+  'favorite': 'Emotional Connection',
+  'school': 'Learning & Growth',
+  'home': 'Safe Haven & Comfort',
+  'groups': 'Community & Belonging',
+  'person': 'Individual Identity',
+  'psychology': 'Self-reflection',
+  'favorite_border': 'Relationships',
+  'spa': 'Wellness',
+  'work': 'Achievement',
+  'public': 'Social Influence'
 };
 
-// Draggable token component
-const DraggableToken = ({ 
-  element, 
-  source, 
-  onDragStart,
-  onDragEnd 
-}: { 
-  element: DetailElement;
-  source: Container;
-  onDragStart?: (element: DetailElement, source: Container) => void;
-  onDragEnd: (element: DetailElement, source: Container, destination: Container) => void;
+// Draggable token component (following spec section 5.2.1)
+const DraggableToken = ({ element, source, onDragEnd }: { 
+  element: DetailElement, 
+  source: Container,
+  onDragEnd: (element: DetailElement, source: Container, destination: Container) => void 
 }) => {
   const { drag, isDragging } = useDragAndDrop({
     type: 'element',
     item: { id: element.id, source },
     onDrop: (destination: Container) => {
       if (destination !== source) {
+        console.log(`Moving element ${element.id} from ${source} to ${destination}`);
         onDragEnd(element, source, destination);
       }
     }
   });
 
-  // Notify parent when dragging starts
-  useEffect(() => {
-    if (isDragging && onDragStart) {
-      onDragStart(element, source);
-      lastDraggedElement = { element, source };
-    }
-  }, [isDragging, element, source, onDragStart]);
+  return (
+    <motion.div
+      ref={drag}
+      className={`rounded-full w-8 h-8 flex items-center justify-center cursor-grab 
+                border border-white shadow-md ${isDragging ? 'opacity-50 scale-110' : 'opacity-100'} 
+                ${source === 'selfPreservation' ? 'bg-gradient-to-br from-green-400 to-green-600' :
+                  source === 'oneToOne' ? 'bg-gradient-to-br from-blue-400 to-blue-600' :
+                  source === 'social' ? 'bg-gradient-to-br from-purple-400 to-purple-600' : 
+                  'bg-gradient-to-br from-gray-400 to-gray-600'}`}
+      whileHover={{ scale: 1.1, boxShadow: '0 4px 8px rgba(0,0,0,0.15)' }}
+      animate={{ 
+        scale: isDragging ? 1.1 : [1, 1.05, 1], 
+        boxShadow: isDragging ? '0 4px 8px rgba(0,0,0,0.2)' : '0 2px 4px rgba(0,0,0,0.1)' 
+      }}
+      transition={{ 
+        scale: { duration: 2, repeat: Infinity, repeatType: "reverse" },
+        boxShadow: { duration: 0.2 } 
+      }}
+    >
+      <span className="material-icons text-white text-sm">{element.icon}</span>
+      <div className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 whitespace-nowrap">
+        <span className="text-xs font-medium text-gray-700">{element.name}</span>
+      </div>
+    </motion.div>
+  );
+};
+
+// Drop target component (following spec section 5.2.2)
+const DropTarget = ({ 
+  container, 
+  title, 
+  description, 
+  elements,
+  onDrop 
+}: {
+  container: Container,
+  title: string,
+  description: string,
+  elements: DetailElement[],
+  onDrop: (containerId: Container) => void
+}) => {
+  const { drop, isOver } = useDragAndDrop({
+    type: 'element',
+    accept: 'element',
+    onDrop: () => onDrop(container)
+  });
+
+  // Calculate fill percentage (0-10 elements)
+  const fillPercentage = (elements.length / 10) * 100;
+  
+  // Background colors based on container type (spec section 5.2.2)
+  const getBgColor = () => {
+    if (container === 'selfPreservation') return 'bg-green-100';
+    if (container === 'oneToOne') return 'bg-blue-100';
+    if (container === 'social') return 'bg-purple-100';
+    return 'bg-gray-100';
+  };
 
   return (
     <div
-      ref={drag}
-      className={`rounded-full w-9 h-9 flex items-center justify-center shadow-md cursor-grab 
-                border border-white ${isDragging ? 'opacity-30' : 'opacity-100'} 
-                ${source === 'selfPreservation' ? 'bg-green-500' :
-                  source === 'oneToOne' ? 'bg-blue-500' :
-                  source === 'social' ? 'bg-purple-500' : 'bg-gray-400'}`}
+      ref={drop}
+      className={`rounded-lg p-4 ${isOver ? 'border-2 border-primary-400 bg-primary-50' : 'border border-dashed border-gray-300'}
+                relative overflow-hidden`}
+      style={{ minHeight: '120px' }}
     >
-      <span className="text-white text-sm material-icons">{element.icon}</span>
-      <div className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 whitespace-nowrap">
-        <span className="text-xs font-medium text-gray-700">{element.name}</span>
+      {/* Fill background based on number of elements */}
+      <div 
+        className={`absolute inset-0 transition-all duration-300 ease-out ${getBgColor()}`}
+        style={{ width: `${fillPercentage}%`, opacity: 0.4 }}
+      />
+      
+      <div className="relative z-10">
+        <div className="flex justify-between items-center mb-2">
+          <h3 className="font-semibold text-gray-900">{title}</h3>
+          <div className="bg-white rounded-full w-6 h-6 flex items-center justify-center shadow-sm">
+            <span className="text-xs font-medium text-primary-600">{elements.length}</span>
+          </div>
+        </div>
+        <p className="text-xs text-gray-600 mb-4">{description}</p>
+        
+        <div className="flex flex-wrap gap-4 min-h-20 items-center justify-center">
+          {elements.map(element => (
+            <DraggableToken 
+              key={element.id} 
+              element={element} 
+              source={container}
+              onDragEnd={(element, source, destination) => {
+                const { moveElement } = useAssessment();
+                moveElement(element, source, destination);
+              }}
+            />
+          ))}
+          
+          {elements.length === 0 && (
+            <div className="flex items-center justify-center h-16 w-full text-gray-400 italic text-sm bg-white bg-opacity-50 rounded border border-dashed border-gray-300">
+              Drop elements here
+            </div>
+          )}
+        </div>
+
+        {/* Token meanings tooltip */}
+        {elements.length > 0 && (
+          <div className="mt-4 text-xs text-gray-500">
+            <span className="font-medium">Elements:</span> {elements.map(e => e.name).join(', ')}
+          </div>
+        )}
       </div>
     </div>
   );
@@ -67,7 +153,7 @@ const PhaseFour = () => {
   const { state, moveElement, generateResult, setPhase } = useAssessment();
   const { detailElements, stateDistribution } = state;
   
-  // Calculate subtype distribution
+  // Calculate subtype distribution for visualization (spec section 5.4)
   const [subtypeDistribution, setSubtypeDistribution] = useState<SubtypeDistribution>({
     selfPreservation: 0,
     oneToOne: 0,
@@ -85,12 +171,10 @@ const PhaseFour = () => {
     setSubtypeDistribution(newDistribution);
   }, [detailElements]);
   
+  // Handle element move 
   const handleElementMove = (element: DetailElement, source: Container, destination: Container) => {
+    console.log(`PhaseFour - Moving element from ${source} to ${destination}`, element);
     moveElement(element, source, destination);
-  };
-  
-  const handleElementDragStart = (element: DetailElement, source: Container) => {
-    console.log('Started dragging:', element.name, 'from', source);
   };
   
   const handleComplete = () => {
@@ -99,7 +183,7 @@ const PhaseFour = () => {
   
   const allElementsAssigned = detailElements.unassigned.length === 0;
   
-  // Get dominant subtype
+  // Get dominant subtype (per spec section 5.4)
   const getDominantSubtype = (): string => {
     if (subtypeDistribution.selfPreservation >= subtypeDistribution.oneToOne && 
         subtypeDistribution.selfPreservation >= subtypeDistribution.social) {
@@ -122,88 +206,18 @@ const PhaseFour = () => {
     return highestScore >= 50 ? 'dominant' : 'balanced';
   };
 
-  // Drop target component
-  const DropTarget = ({ 
-    container, 
-    title, 
-    description, 
-    elements 
-  }: {
-    container: Container;
-    title: string;
-    description: string;
-    elements: DetailElement[];
-  }) => {
-    const { drop, isOver } = useDragAndDrop({
-      type: 'element',
-      accept: 'element',
-      onDrop: () => {
-        if (lastDraggedElement.element && lastDraggedElement.source) {
-          handleElementMove(
-            lastDraggedElement.element, 
-            lastDraggedElement.source, 
-            container
-          );
-        }
-      }
-    });
-
-    // Calculate fill percentage
-    const fillPercentage = (elements.length / 10) * 100;
-    
-    return (
-      <div
-        ref={drop}
-        className={`rounded-lg p-4 ${isOver ? 'border-2 border-blue-400 bg-blue-50' : 'border border-dashed border-gray-300'}
-                   relative overflow-hidden`}
-        style={{ minHeight: '120px' }}
-      >
-        {/* Fill background based on container type */}
-        <div 
-          className={`absolute inset-0 ${
-            container === 'selfPreservation' ? 'bg-green-100' :
-            container === 'oneToOne' ? 'bg-blue-100' :
-            container === 'social' ? 'bg-purple-100' : 'bg-gray-100'
-          }`}
-          style={{ width: `${fillPercentage}%`, opacity: 0.4 }}
-        />
-        
-        <div className="relative z-10">
-          <div className="flex justify-between items-center mb-2">
-            <h3 className="font-semibold text-gray-900">{title}</h3>
-            <div className="bg-white rounded-full w-6 h-6 flex items-center justify-center shadow-sm">
-              <span className="text-xs font-medium text-blue-600">{elements.length}</span>
-            </div>
-          </div>
-          <p className="text-xs text-gray-600 mb-4">{description}</p>
-          
-          <div className="flex flex-wrap gap-4 min-h-16 items-center justify-center">
-            {elements.map(element => (
-              <DraggableToken 
-                key={element.id} 
-                element={element} 
-                source={container}
-                onDragStart={handleElementDragStart}
-                onDragEnd={handleElementMove}
-              />
-            ))}
-            
-            {elements.length === 0 && (
-              <div className="flex items-center justify-center h-16 w-full text-gray-400 italic text-sm bg-white bg-opacity-50 rounded border border-dashed border-gray-300">
-                Drop elements here
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-    );
+  // Tooltip content for a token
+  const getTokenTooltip = (element: DetailElement): string => {
+    return iconMeanings[element.icon] || element.name;
   };
 
   return (
     <DndProvider backend={HTML5Backend}>
       <div className="animate-fade-in">
         <div className="text-center mb-8">
-          <h2 className="text-2xl md:text-3xl font-display font-semibold text-gray-900 mb-3">Decorate Your Tower</h2>
+          <h2 className="text-2xl md:text-3xl font-display font-semibold text-gray-900 mb-3">
+            Decorate Your Tower
+          </h2>
           <p className="text-gray-600 max-w-2xl mx-auto">
             Drag and drop these detail elements into the three containers that best represent how you focus your energy and attention.
           </p>
@@ -272,22 +286,38 @@ const PhaseFour = () => {
               <h3 className="font-semibold text-gray-900 mb-4">Available Elements</h3>
               
               {detailElements.unassigned.length > 0 ? (
-                <div className="flex flex-wrap gap-6 justify-center p-4 border border-dashed border-gray-300 rounded-lg">
-                  {detailElements.unassigned.map(element => (
-                    <DraggableToken 
-                      key={element.id} 
-                      element={element} 
-                      source="unassigned"
-                      onDragStart={handleElementDragStart}
-                      onDragEnd={handleElementMove}
-                    />
-                  ))}
+                <div className="p-4 border border-dashed border-gray-300 rounded-lg">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-8 justify-center">
+                    {detailElements.unassigned.map(element => (
+                      <div key={element.id} className="flex justify-center">
+                        <DraggableToken 
+                          element={element} 
+                          source="unassigned"
+                          onDragEnd={handleElementMove}
+                        />
+                      </div>
+                    ))}
+                  </div>
                 </div>
               ) : (
                 <div className="text-center py-4 text-gray-500 italic border border-dashed border-gray-300 rounded-lg">
                   <p>All elements have been assigned!</p>
                 </div>
               )}
+
+              <div className="mt-2 text-xs text-gray-500">
+                <p className="mb-2">
+                  <strong>Tip:</strong> Drag each element to the container that best represents where you focus your energy.
+                </p>
+                <p>
+                  <strong>Element meanings:</strong> 
+                  {Object.entries(iconMeanings).map(([icon, meaning], i) => (
+                    <span key={i} className="mx-1">
+                      <span className="material-icons text-xs align-middle">{icon}</span> = {meaning}.
+                    </span>
+                  ))}
+                </p>
+              </div>
             </div>
             
             <div className="space-y-6">
@@ -296,6 +326,9 @@ const PhaseFour = () => {
                 title="Self-Preservation"
                 description="Elements focused on physical security, health, domestic concerns, and material comfort"
                 elements={detailElements.selfPreservation}
+                onDrop={(container) => {
+                  console.log('DropTarget received drop', container);
+                }}
               />
               
               <DropTarget 
@@ -303,6 +336,9 @@ const PhaseFour = () => {
                 title="One-to-One"
                 description="Elements focused on close personal relationships, intimacy, and individual connections"
                 elements={detailElements.oneToOne}
+                onDrop={(container) => {
+                  console.log('DropTarget received drop', container);
+                }}
               />
               
               <DropTarget 
@@ -310,6 +346,9 @@ const PhaseFour = () => {
                 title="Social"
                 description="Elements focused on group dynamics, communities, and broader social structures"
                 elements={detailElements.social}
+                onDrop={(container) => {
+                  console.log('DropTarget received drop', container);
+                }}
               />
             </div>
           </div>
