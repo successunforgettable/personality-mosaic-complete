@@ -51,58 +51,80 @@ const TowerVisualization = ({
   const renderBlocks = () => {
     if (selectedBuildingBlocks.length === 0) return null;
     
-    return (
-      <>
+    // Tower height calculation
+    const towerHeight = 180; // Total height of tower in pixels
+    
+    // Calculate the heights of each section based on state distribution
+    const healthyHeight = Math.round((distribution.healthy / 100) * towerHeight);
+    const averageHeight = Math.round((distribution.average / 100) * towerHeight);
+    const unhealthyHeight = Math.round((distribution.unhealthy / 100) * towerHeight);
+    
+    // Tower block widths - decreasing as they go up
+    const baseWidth = 36;
+    const blockWidths = [baseWidth, baseWidth - 4, baseWidth - 8, baseWidth - 12];
+    
+    // Number of blocks to display (based on progress)
+    const numBlocks = Math.min(4, selectedBuildingBlocks.length);
+    
+    // Calculate tower structure
+    const blocks = [];
+    let currentBottom = 12; // Start above foundation
+    
+    for (let i = 0; i < numBlocks; i++) {
+      const width = blockWidths[i];
+      const height = towerHeight / numBlocks;
+      const opacity = 1 - (i * 0.1); // Slightly decrease opacity for higher blocks
+      
+      blocks.push(
         <motion.div 
-          className="absolute bottom-12 left-1/2 transform -translate-x-1/2 w-36 h-16 rounded-lg shadow-md overflow-hidden"
+          key={i}
+          className="absolute left-1/2 transform -translate-x-1/2 rounded-lg shadow-md overflow-hidden"
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 0.5, delay: 0.1 }}
+          transition={{ duration: 0.5, delay: 0.1 * (i + 1) }}
           style={{
-            background: `linear-gradient(to top, ${healthyColor}, ${averageColor}, ${unhealthyColor})`
+            bottom: currentBottom,
+            width: `${width}%`,
+            height: height,
+            opacity
           }}
-        />
-        
-        {selectedBuildingBlocks.length > 1 && (
-          <motion.div 
-            className="absolute bottom-28 left-1/2 transform -translate-x-1/2 w-32 h-16 rounded-lg shadow-md overflow-hidden"
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            style={{
-              background: `linear-gradient(to top, ${healthyColor}, ${averageColor}, ${unhealthyColor})`,
-              opacity: 0.9
-            }}
-          />
-        )}
-        
-        {selectedBuildingBlocks.length > 2 && (
-          <motion.div 
-            className="absolute bottom-44 left-1/2 transform -translate-x-1/2 w-28 h-16 rounded-lg shadow-md overflow-hidden"
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ duration: 0.5, delay: 0.3 }}
-            style={{
-              background: `linear-gradient(to top, ${healthyColor}, ${averageColor}, ${unhealthyColor})`,
-              opacity: 0.8
-            }}
-          />
-        )}
-        
-        {selectedBuildingBlocks.length > 3 && (
-          <motion.div 
-            className="absolute bottom-60 left-1/2 transform -translate-x-1/2 w-24 h-16 rounded-lg shadow-md overflow-hidden"
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ duration: 0.5, delay: 0.4 }}
-            style={{
-              background: `linear-gradient(to top, ${healthyColor}, ${averageColor}, ${unhealthyColor})`,
-              opacity: 0.7
-            }}
-          />
-        )}
-      </>
-    );
+        >
+          {/* State segments within each block */}
+          <div className="flex flex-col h-full w-full">
+            {/* Green segment (Healthy) */}
+            <div 
+              className="bg-green-500" 
+              style={{ 
+                height: `${(distribution.healthy / 100) * 100}%`,
+                opacity: 0.9 + (0.1 * (numBlocks - i) / numBlocks) // Higher blocks slightly more transparent
+              }} 
+            />
+            
+            {/* Blue segment (Average) */}
+            <div 
+              className="bg-blue-500" 
+              style={{ 
+                height: `${(distribution.average / 100) * 100}%`,
+                opacity: 0.85 + (0.1 * (numBlocks - i) / numBlocks)
+              }} 
+            />
+            
+            {/* Red segment (Unhealthy) */}
+            <div 
+              className="bg-red-500" 
+              style={{ 
+                height: `${(distribution.unhealthy / 100) * 100}%`,
+                opacity: 0.8 + (0.1 * (numBlocks - i) / numBlocks)
+              }} 
+            />
+          </div>
+        </motion.div>
+      );
+      
+      currentBottom += height;
+    }
+    
+    return <>{blocks}</>;
   };
   
   const renderHotspots = () => {

@@ -1,0 +1,88 @@
+# Personality Mosaic – State Selection & Tower Visualization Fixes
+
+This document outlines the missing or incorrect implementations in the "State Selection" (Color Palette) and "Your Colorful Tower" sections of the Personality Mosaic app, based on current screenshots and the provided technical specification.
+
+---
+
+## ✅ What’s Implemented (from Screenshots)
+
+| Feature                        | Status | Notes |
+|-------------------------------|--------|-------|
+| Sliders for Healthy, Average, and Unhealthy States | ✅ | All three visible and adjustable |
+| Total Distribution = 100%     | ✅ | Present under sliders |
+| Tower Graphic Appears         | ✅ | Stack of rainbow-colored blocks shown |
+| Progress bar updates          | ✅ | Visible below sliders |
+
+---
+
+## ❗️What Needs Fixing (with Spec References)
+
+### 1. ❌ Limit State Selection to Exactly **Two States**
+- **Spec Reference:**  
+  `Section 1.2 Core Concepts` — Under “Building Metaphor” and  
+  `Section 1.3 User Journey Flow` → Color Palette Adjustment implies a **2-state balance model**.
+
+- **Requirement:**  
+  - Only 2 sliders should be adjustable.  
+  - The 3rd state must be auto-calculated: `100 - (State1 + State2)`
+
+- **Fix:**  
+  - Use toggles to select exactly two active sliders.  
+  - Disable the third slider.  
+  - Dynamically recalculate its value.
+
+---
+
+### 2. ❌ Tower Visualization Not Reflecting State Percentages
+- **Spec Reference:**  
+  `Section 1.2 Core Concepts → Visual Feedback` and  
+  `Section 22.4.1 Individual Exports → PNG image of tower visualization`
+
+- **Requirement:**  
+  - Tower must visually reflect state proportions:
+    - **Green** = Healthy
+    - **Blue** = Average
+    - **Red** = Unhealthy
+
+- **Fix:**  
+  - Proportional block heights or segmented colored slices based on percentages  
+  - Consider animated transitions
+
+---
+
+### 3. ❌ No Slider Validation or Feedback Logic
+- **Spec Reference:**  
+  `Section 24.2.2 Mobile User Experience → Input Optimization + Visual Adaptations`
+
+- **Requirement:**  
+  - Real-time tooltip or inline feedback (e.g., “You spend 45% in Average and 40% in Healthy”)  
+  - Enforce only 2 active sliders
+
+- **Fix:**  
+  - Dynamic feedback above sliders  
+  - Error prevention logic for third slider
+
+---
+
+### 4. ❌ Backend Storage of State Distribution
+- **Spec Reference:**  
+  `Section 23 Development and Deployment Workflow`
+
+- **Requirement:**  
+  - Save state distribution values (e.g., 40% Healthy, 45% Average, 15% Unhealthy) to user profile in DB
+
+- **Fix:**  
+  - Store state data during Phase 3 (Color Palette) in database for future exports and reports
+
+---
+
+## 🧩 Final Developer Checklist
+
+| Task | Priority | Status |
+|------|----------|--------|
+| Limit user to selecting **only 2 states** | High | ❌ |
+| Auto-calculate 3rd state to sum to 100% | High | ❌ |
+| Adjust tower blocks to **reflect state percentages visually** | High | ❌ |
+| Store state distribution values in the database | High | ❌ |
+| Add real-time feedback text/tooltips | Medium | ❌ |
+| Enforce slider validation (only 2 active) | Medium | ❌ |
