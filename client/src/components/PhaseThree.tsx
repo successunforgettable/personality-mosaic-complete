@@ -9,98 +9,96 @@ const PhaseThree = () => {
   const { stateDistribution } = state;
   
   const [localDistribution, setLocalDistribution] = useState<StateDistribution>(stateDistribution);
-  // Track which two states are active for adjustments (per spec: only 2 sliders should be adjustable)
-  const [activeStates, setActiveStates] = useState<Array<keyof StateDistribution>>(['healthy', 'average']);
+  // Track which two states are selected (per spec: exactly 2 color palettes)
+  const [selectedStates, setSelectedStates] = useState<Array<keyof StateDistribution>>([]);
+  // Tracking slider value for distribution between selected states
+  const [sliderValue, setSliderValue] = useState<number>(50);
   // Feedback message to display to the user
-  const [feedback, setFeedback] = useState<string>('Select exactly two states to adjust. The third state will be calculated automatically.');
-  
-  const toggleActiveState = (stateKey: keyof StateDistribution) => {
-    if (activeStates.includes(stateKey)) {
-      // If trying to deselect when only 2 are selected, don't allow it
-      if (activeStates.length <= 2) {
-        setFeedback('You must have exactly two active states. Select a different state first to deactivate this one.');
-        return;
-      }
-      
-      // Remove from active states
-      setActiveStates(activeStates.filter(s => s !== stateKey));
-    } else {
-      // If already have 2 active states, replace the first one
-      if (activeStates.length >= 2) {
-        const newActiveStates = [...activeStates.slice(1), stateKey];
-        setActiveStates(newActiveStates);
-        
-        // Update feedback
-        setFeedback(`You're now adjusting ${newActiveStates[0]} and ${newActiveStates[1]} states. ${getInactiveState(newActiveStates)} is auto-calculated.`);
-      } else {
-        // Add to active states
-        const newActiveStates = [...activeStates, stateKey];
-        setActiveStates(newActiveStates);
-        
-        // Update feedback
-        if (newActiveStates.length === 2) {
-          setFeedback(`You're now adjusting ${newActiveStates[0]} and ${newActiveStates[1]} states. ${getInactiveState(newActiveStates)} is auto-calculated.`);
-        }
-      }
-    }
-  };
-  
-  // Helper to get the inactive state
-  const getInactiveState = (active: Array<keyof StateDistribution>): keyof StateDistribution => {
-    return (['healthy', 'average', 'unhealthy'] as Array<keyof StateDistribution>).find(
-      state => !active.includes(state)
-    ) as keyof StateDistribution;
-  };
-  
-  const handleSliderChange = (stateKey: keyof StateDistribution, value: number) => {
-    // Only allow changes to active states
-    if (!activeStates.includes(stateKey)) {
-      setFeedback(`The ${stateKey} state is locked. Toggle it active first to adjust.`);
-      return;
-    }
-    
-    // Find the other active state and the inactive state
-    const otherActiveState = activeStates.find(s => s !== stateKey) as keyof StateDistribution;
-    const inactiveState = getInactiveState(activeStates);
-    
-    // Calculate the inactive state's value to ensure sum is 100%
-    const newInactiveValue = 100 - value - localDistribution[otherActiveState];
-    
-    // Ensure we don't go negative
-    if (newInactiveValue < 0) {
-      // Adjust the value to maintain valid distribution
-      const maxAllowedValue = 100 - localDistribution[otherActiveState];
-      const newValue = Math.min(value, maxAllowedValue);
-      
-      const newDistribution = { 
-        ...localDistribution, 
-        [stateKey]: newValue,
-        [inactiveState]: 0 
-      };
-      
-      setFeedback(`Maximum value for ${stateKey} is ${maxAllowedValue}% when ${otherActiveState} is at ${localDistribution[otherActiveState]}%.`);
-      setLocalDistribution(newDistribution);
-      return;
-    }
-    
-    // Update the distribution
-    const newDistribution = { 
-      ...localDistribution, 
-      [stateKey]: value,
-      [inactiveState]: newInactiveValue 
-    };
-    
-    // Update feedback with current distribution
-    setFeedback(`You spend ${newDistribution.healthy}% in Healthy, ${newDistribution.average}% in Average, and ${newDistribution.unhealthy}% in Unhealthy state.`);
-    
-    setLocalDistribution(newDistribution);
-  };
+  const [feedback, setFeedback] = useState<string>('Select exactly two color palettes that represent your common operating states.');
   
   // Add state for saving status
   const [isSaving, setIsSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
   
+  // Helper function to format state names for display
+  const formatStateName = (state: keyof StateDistribution): string => {
+    return state.charAt(0).toUpperCase() + state.slice(1);
+  };
+  
+  // Update the distribution based on the slider value
+  const updateDistribution = (states: Array<keyof StateDistribution>, firstStatePercentage: number) => {
+    if (states.length !== 2) return;
+    
+    const [state1, state2] = states;
+    const state1Value = firstStatePercentage;
+    const state2Value = 100 - firstStatePercentage;
+    
+    // The third state gets 0%
+    const remainingState = (['healthy', 'average', 'unhealthy'] as Array<keyof StateDistribution>)
+      .find(s => !states.includes(s));
+    
+    if (!remainingState) return;
+    
+    const newDistribution: StateDistribution = {
+      [state1]: state1Value,
+      [state2]: state2Value,
+      [remainingState]: 0
+    } as StateDistribution;
+    
+    setLocalDistribution(newDistribution);
+  };
+  
+  const toggleStateSelection = (stateKey: keyof StateDistribution) => {
+    if (selectedStates.includes(stateKey)) {
+      // Remove from selected states
+      setSelectedStates(selectedStates.filter(s => s !== stateKey));
+      setFeedback('Select exactly two color palettes that represent your common operating states.');
+    } else {
+      // If already have 2 selected states, replace the first one
+      if (selectedStates.length >= 2) {
+        const newSelectedStates = [selectedStates[1], stateKey];
+        setSelectedStates(newSelectedStates);
+        
+        // Create equal distribution between the two selected states
+        updateDistribution(newSelectedStates, 50);
+        setSliderValue(50);
+        
+        setFeedback(`You've selected ${formatStateName(newSelectedStates[0])} and ${formatStateName(newSelectedStates[1])} states. Use the slider to adjust their balance.`);
+      } else {
+        // Add to selected states
+        const newSelectedStates = [...selectedStates, stateKey];
+        setSelectedStates(newSelectedStates);
+        
+        if (newSelectedStates.length === 2) {
+          // Create equal distribution between the two selected states
+          updateDistribution(newSelectedStates, 50);
+          setSliderValue(50);
+          
+          setFeedback(`You've selected ${formatStateName(newSelectedStates[0])} and ${formatStateName(newSelectedStates[1])} states. Use the slider to adjust their balance.`);
+        }
+      }
+    }
+  };
+  
+  // Handle slider change
+  const handleSliderChange = (value: number) => {
+    if (selectedStates.length !== 2) return;
+    
+    setSliderValue(value);
+    updateDistribution(selectedStates, value);
+    
+    setFeedback(
+      `${formatStateName(selectedStates[0])}: ${value}%, ${formatStateName(selectedStates[1])}: ${100-value}%`
+    );
+  };
+  
   const handleContinue = async () => {
+    // Validate that two states have been selected
+    if (selectedStates.length !== 2) {
+      setFeedback('Please select exactly two color palettes before continuing.');
+      return;
+    }
+    
     // Update local context state
     updateStateDistribution(localDistribution);
     
@@ -109,8 +107,7 @@ const PhaseThree = () => {
     setSaveError(null);
     
     try {
-      // For demo purposes, we'll use a placeholder userId
-      // In a real app, this would come from authentication
+      // For demo purposes, we'll use the existing user
       const userId = 1;
       
       const response = await fetch('/api/assessment/state-distribution', {
@@ -146,6 +143,40 @@ const PhaseThree = () => {
     }
   };
 
+  // Define color palette card information based on technical specification
+  const colorPalettes = [
+    {
+      key: 'healthy' as keyof StateDistribution,
+      title: 'Healthy State',
+      description: 'Your best and most balanced self',
+      gradient: 'from-green-100 to-green-200',
+      color: 'green',
+      textColor: 'text-green-600',
+      activeColor: 'bg-green-600',
+      primaryColor: '#22c55e'
+    },
+    {
+      key: 'average' as keyof StateDistribution,
+      title: 'Average State',
+      description: 'Your everyday functional self',
+      gradient: 'from-blue-100 to-blue-200',
+      color: 'blue',
+      textColor: 'text-blue-600',
+      activeColor: 'bg-blue-600',
+      primaryColor: '#3b82f6'
+    },
+    {
+      key: 'unhealthy' as keyof StateDistribution,
+      title: 'Unhealthy State',
+      description: 'Your stressed or reactive self',
+      gradient: 'from-red-100 to-red-200',
+      color: 'red',
+      textColor: 'text-red-600',
+      activeColor: 'bg-red-600',
+      primaryColor: '#ef4444'
+    }
+  ];
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -155,7 +186,7 @@ const PhaseThree = () => {
     >
       <div className="text-center mb-8">
         <h2 className="text-2xl md:text-3xl font-display font-semibold text-gray-900 mb-3">Adjust Your Color Palette</h2>
-        <p className="text-gray-600 max-w-2xl mx-auto">Select exactly two states to adjust. The third state will be calculated automatically.</p>
+        <p className="text-gray-600 max-w-2xl mx-auto">Select exactly two color palettes that represent your common operating states.</p>
       </div>
 
       {/* Feedback message */}
@@ -165,118 +196,68 @@ const PhaseThree = () => {
 
       <div className="max-w-2xl mx-auto mb-10">
         <div className="bg-white rounded-xl shadow-md overflow-hidden p-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {/* Healthy State Slider */}
-            <div className="flex flex-col">
-              <div className="flex justify-between mb-2">
-                <div className="flex items-center">
-                  <label className="font-medium text-gray-800 mr-2">Healthy State</label>
-                  <button 
-                    onClick={() => toggleActiveState('healthy')}
-                    className={`h-6 w-6 rounded-full flex items-center justify-center ${
-                      activeStates.includes('healthy') 
-                        ? 'bg-green-600 text-white' 
-                        : 'bg-gray-200 text-gray-500'
-                    }`}
-                    title={activeStates.includes('healthy') ? 'Active' : 'Inactive'}
-                  >
-                    <span className="material-icons text-sm">{activeStates.includes('healthy') ? 'check' : 'lock'}</span>
-                  </button>
-                </div>
-                <span className="text-sm font-medium text-green-600">{localDistribution.healthy}%</span>
-              </div>
-              <div className={`bg-gradient-to-b from-green-100 to-green-200 p-4 rounded-lg mb-4 shadow-inner ${!activeStates.includes('healthy') ? 'opacity-50' : ''}`}>
-                <div className="relative h-48">
-                  <input 
-                    type="range" 
-                    min="0" 
-                    max="100" 
-                    value={localDistribution.healthy} 
-                    onChange={(e) => handleSliderChange('healthy', parseInt(e.target.value))}
-                    className="custom-slider absolute inset-0 w-6 h-full transform -rotate-90 origin-bottom-left translate-y-full" 
-                    disabled={!activeStates.includes('healthy')}
-                  />
+          {/* Color Palette Selection */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+            {colorPalettes.map(palette => (
+              <div 
+                key={palette.key} 
+                className={`flex flex-col cursor-pointer transition-all rounded-lg overflow-hidden ${
+                  selectedStates.includes(palette.key) ? 'ring-2 ring-offset-2 ring-' + palette.color + '-500' : ''
+                }`}
+                onClick={() => toggleStateSelection(palette.key)}
+              >
+                <div className={`bg-gradient-to-b ${palette.gradient} p-6 flex flex-col items-center justify-center text-center h-48`}>
+                  <div className="mb-2">
+                    {selectedStates.includes(palette.key) ? (
+                      <div className={`h-8 w-8 rounded-full ${palette.activeColor} text-white flex items-center justify-center`}>
+                        <span className="material-icons text-sm">check</span>
+                      </div>
+                    ) : (
+                      <div className="h-8 w-8 rounded-full bg-white bg-opacity-50 border-2 border-gray-300"></div>
+                    )}
+                  </div>
+                  <h3 className={`font-semibold ${palette.textColor} text-lg mb-2`}>{palette.title}</h3>
+                  <p className="text-gray-600 text-sm">{palette.description}</p>
                 </div>
               </div>
-              <div className="text-sm text-gray-600 text-center">
-                <p>Your best and most balanced self</p>
-              </div>
-            </div>
-
-            {/* Average State Slider */}
-            <div className="flex flex-col">
-              <div className="flex justify-between mb-2">
-                <div className="flex items-center">
-                  <label className="font-medium text-gray-800 mr-2">Average State</label>
-                  <button 
-                    onClick={() => toggleActiveState('average')}
-                    className={`h-6 w-6 rounded-full flex items-center justify-center ${
-                      activeStates.includes('average') 
-                        ? 'bg-blue-600 text-white' 
-                        : 'bg-gray-200 text-gray-500'
-                    }`}
-                    title={activeStates.includes('average') ? 'Active' : 'Inactive'}
-                  >
-                    <span className="material-icons text-sm">{activeStates.includes('average') ? 'check' : 'lock'}</span>
-                  </button>
-                </div>
-                <span className="text-sm font-medium text-blue-600">{localDistribution.average}%</span>
-              </div>
-              <div className={`bg-gradient-to-b from-blue-100 to-blue-200 p-4 rounded-lg mb-4 shadow-inner ${!activeStates.includes('average') ? 'opacity-50' : ''}`}>
-                <div className="relative h-48">
-                  <input 
-                    type="range" 
-                    min="0" 
-                    max="100" 
-                    value={localDistribution.average} 
-                    onChange={(e) => handleSliderChange('average', parseInt(e.target.value))}
-                    className="custom-slider absolute inset-0 w-6 h-full transform -rotate-90 origin-bottom-left translate-y-full" 
-                    disabled={!activeStates.includes('average')}
-                  />
-                </div>
-              </div>
-              <div className="text-sm text-gray-600 text-center">
-                <p>Your everyday functional self</p>
-              </div>
-            </div>
-
-            {/* Unhealthy State Slider */}
-            <div className="flex flex-col">
-              <div className="flex justify-between mb-2">
-                <div className="flex items-center">
-                  <label className="font-medium text-gray-800 mr-2">Unhealthy State</label>
-                  <button 
-                    onClick={() => toggleActiveState('unhealthy')}
-                    className={`h-6 w-6 rounded-full flex items-center justify-center ${
-                      activeStates.includes('unhealthy') 
-                        ? 'bg-red-600 text-white' 
-                        : 'bg-gray-200 text-gray-500'
-                    }`}
-                    title={activeStates.includes('unhealthy') ? 'Active' : 'Inactive'}
-                  >
-                    <span className="material-icons text-sm">{activeStates.includes('unhealthy') ? 'check' : 'lock'}</span>
-                  </button>
-                </div>
-                <span className="text-sm font-medium text-red-600">{localDistribution.unhealthy}%</span>
-              </div>
-              <div className={`bg-gradient-to-b from-red-100 to-red-200 p-4 rounded-lg mb-4 shadow-inner ${!activeStates.includes('unhealthy') ? 'opacity-50' : ''}`}>
-                <div className="relative h-48">
-                  <input 
-                    type="range" 
-                    min="0" 
-                    max="100" 
-                    value={localDistribution.unhealthy} 
-                    onChange={(e) => handleSliderChange('unhealthy', parseInt(e.target.value))}
-                    className="custom-slider absolute inset-0 w-6 h-full transform -rotate-90 origin-bottom-left translate-y-full" 
-                    disabled={!activeStates.includes('unhealthy')}
-                  />
-                </div>
-              </div>
-              <div className="text-sm text-gray-600 text-center">
-                <p>Your stressed or reactive self</p>
-              </div>
-            </div>
+            ))}
           </div>
+
+          {/* Color Blending Slider - only appears after 2 palettes are selected */}
+          {selectedStates.length === 2 && (
+            <div className="mb-8">
+              <h3 className="text-lg font-semibold text-gray-800 mb-3">Blend Your Color Palette</h3>
+              <div className="mb-2 flex justify-between">
+                <span className={`${colorPalettes.find(p => p.key === selectedStates[0])?.textColor} font-medium`}>
+                  {formatStateName(selectedStates[0])} {sliderValue}%
+                </span>
+                <span className={`${colorPalettes.find(p => p.key === selectedStates[1])?.textColor} font-medium`}>
+                  {formatStateName(selectedStates[1])} {100 - sliderValue}%
+                </span>
+              </div>
+              <div className="relative h-10 rounded-lg overflow-hidden" 
+                style={{
+                  background: `linear-gradient(to right, 
+                    ${colorPalettes.find(p => p.key === selectedStates[0])?.primaryColor || '#22c55e'}, 
+                    ${colorPalettes.find(p => p.key === selectedStates[1])?.primaryColor || '#3b82f6'})`
+                }}>
+                <input 
+                  type="range" 
+                  min="0" 
+                  max="100" 
+                  value={sliderValue} 
+                  onChange={(e) => handleSliderChange(parseInt(e.target.value))}
+                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" 
+                />
+                <div className="absolute top-1/2 left-0 transform -translate-y-1/2 h-6 w-6 bg-white rounded-full shadow-md" 
+                  style={{ left: `${sliderValue}%`, marginLeft: '-12px' }}
+                />
+              </div>
+              <p className="text-sm text-gray-500 mt-2">
+                Adjust the slider to show how much time you spend in each state
+              </p>
+            </div>
+          )}
 
           <div className="mt-6">
             <div className="flex items-center justify-between">
@@ -322,9 +303,10 @@ const PhaseThree = () => {
           Previous Phase
         </button>
         <button 
-          className={`px-6 py-3 ${isSaving ? 'bg-gray-400' : 'bg-primary-500 hover:bg-primary-600'} text-white rounded-lg font-medium shadow-md transition-all flex items-center`}
+          className={`px-6 py-3 ${isSaving ? 'bg-gray-400' : selectedStates.length !== 2 ? 'bg-gray-400' : 'bg-primary-500 hover:bg-primary-600'} 
+            text-white rounded-lg font-medium shadow-md transition-all flex items-center`}
           onClick={handleContinue}
-          disabled={isSaving}
+          disabled={isSaving || selectedStates.length !== 2}
         >
           {isSaving ? (
             <>
