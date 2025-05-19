@@ -7,11 +7,26 @@ import { HTML5Backend } from 'react-dnd-html5-backend';
 import { useDragAndDrop } from '@/hooks/useDragAndDrop';
 import TowerVisualization from './TowerVisualization';
 
+// Centralized state for the last dragged element
+let lastDraggedElement: {
+  element: DetailElement | null;
+  source: Container | null;
+} = {
+  element: null,
+  source: null
+};
+
 // Draggable token component
-const DraggableToken = ({ element, source, onDragEnd }: { 
-  element: DetailElement, 
-  source: Container,
-  onDragEnd: (element: DetailElement, source: Container, destination: Container) => void 
+const DraggableToken = ({ 
+  element, 
+  source, 
+  onDragStart,
+  onDragEnd 
+}: { 
+  element: DetailElement;
+  source: Container;
+  onDragStart?: (element: DetailElement, source: Container) => void;
+  onDragEnd: (element: DetailElement, source: Container, destination: Container) => void;
 }) => {
   const { drag, isDragging } = useDragAndDrop({
     type: 'element',
@@ -23,92 +38,26 @@ const DraggableToken = ({ element, source, onDragEnd }: {
     }
   });
 
+  // Notify parent when dragging starts
+  useEffect(() => {
+    if (isDragging && onDragStart) {
+      onDragStart(element, source);
+      lastDraggedElement = { element, source };
+    }
+  }, [isDragging, element, source, onDragStart]);
+
   return (
     <div
       ref={drag}
-      className={`rounded-full w-8 h-8 flex items-center justify-center shadow-md cursor-grab 
+      className={`rounded-full w-9 h-9 flex items-center justify-center shadow-md cursor-grab 
                 border border-white ${isDragging ? 'opacity-30' : 'opacity-100'} 
                 ${source === 'selfPreservation' ? 'bg-green-500' :
                   source === 'oneToOne' ? 'bg-blue-500' :
                   source === 'social' ? 'bg-purple-500' : 'bg-gray-400'}`}
     >
-      <span className="text-white text-xs material-icons">{element.icon}</span>
+      <span className="text-white text-sm material-icons">{element.icon}</span>
       <div className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 whitespace-nowrap">
         <span className="text-xs font-medium text-gray-700">{element.name}</span>
-      </div>
-    </div>
-  );
-};
-
-// Drop target component
-const DropTarget = ({ 
-  container, 
-  title, 
-  description, 
-  elements,
-  onElementDrop 
-}: {
-  container: Container,
-  title: string,
-  description: string,
-  elements: DetailElement[],
-  onElementDrop: (container: Container) => void
-}) => {
-  const { drop, isOver } = useDragAndDrop({
-    type: 'element',
-    accept: 'element',
-    onDrop: () => onElementDrop(container)
-  });
-
-  // Calculate fill percentage
-  const fillPercentage = (elements.length / 10) * 100;
-  
-  return (
-    <div
-      ref={drop}
-      className={`rounded-lg p-4 ${isOver ? 'border-2 border-blue-400 bg-blue-50' : 'border border-dashed border-gray-300'}
-                 relative overflow-hidden`}
-      style={{ minHeight: '120px' }}
-    >
-      {/* Fill background based on container type */}
-      <div 
-        className={`absolute inset-0 ${
-          container === 'selfPreservation' ? 'bg-green-100' :
-          container === 'oneToOne' ? 'bg-blue-100' :
-          container === 'social' ? 'bg-purple-100' : 'bg-gray-100'
-        }`}
-        style={{ width: `${fillPercentage}%`, opacity: 0.4 }}
-      />
-      
-      <div className="relative z-10">
-        <div className="flex justify-between items-center mb-2">
-          <h3 className="font-semibold text-gray-900">{title}</h3>
-          <div className="bg-white rounded-full w-6 h-6 flex items-center justify-center shadow-sm">
-            <span className="text-xs font-medium text-blue-600">{elements.length}</span>
-          </div>
-        </div>
-        <p className="text-xs text-gray-600 mb-4">{description}</p>
-        
-        <div className="flex flex-wrap gap-4 min-h-16 items-center justify-center">
-          {elements.map(element => (
-            <DraggableToken 
-              key={element.id} 
-              element={element} 
-              source={container}
-              onDragEnd={(el, src, dest) => {
-                // Forward to parent handler
-                const { moveElement } = useAssessment(); 
-                moveElement(el, src, dest);
-              }}
-            />
-          ))}
-          
-          {elements.length === 0 && (
-            <div className="flex items-center justify-center h-16 w-full text-gray-400 italic text-sm bg-white bg-opacity-50 rounded border border-dashed border-gray-300">
-              Drop elements here
-            </div>
-          )}
-        </div>
       </div>
     </div>
   );
@@ -139,11 +88,9 @@ const PhaseFour = () => {
   const handleElementMove = (element: DetailElement, source: Container, destination: Container) => {
     moveElement(element, source, destination);
   };
-
-  // Handler for dropping elements into containers
-  const handleContainerDrop = (destination: Container) => {
-    // The actual move happens in the DraggableToken component
-    console.log('Container ready for drop:', destination);
+  
+  const handleElementDragStart = (element: DetailElement, source: Container) => {
+    console.log('Started dragging:', element.name, 'from', source);
   };
   
   const handleComplete = () => {
@@ -173,6 +120,83 @@ const PhaseFour = () => {
       subtypeDistribution.social
     );
     return highestScore >= 50 ? 'dominant' : 'balanced';
+  };
+
+  // Drop target component
+  const DropTarget = ({ 
+    container, 
+    title, 
+    description, 
+    elements 
+  }: {
+    container: Container;
+    title: string;
+    description: string;
+    elements: DetailElement[];
+  }) => {
+    const { drop, isOver } = useDragAndDrop({
+      type: 'element',
+      accept: 'element',
+      onDrop: () => {
+        if (lastDraggedElement.element && lastDraggedElement.source) {
+          handleElementMove(
+            lastDraggedElement.element, 
+            lastDraggedElement.source, 
+            container
+          );
+        }
+      }
+    });
+
+    // Calculate fill percentage
+    const fillPercentage = (elements.length / 10) * 100;
+    
+    return (
+      <div
+        ref={drop}
+        className={`rounded-lg p-4 ${isOver ? 'border-2 border-blue-400 bg-blue-50' : 'border border-dashed border-gray-300'}
+                   relative overflow-hidden`}
+        style={{ minHeight: '120px' }}
+      >
+        {/* Fill background based on container type */}
+        <div 
+          className={`absolute inset-0 ${
+            container === 'selfPreservation' ? 'bg-green-100' :
+            container === 'oneToOne' ? 'bg-blue-100' :
+            container === 'social' ? 'bg-purple-100' : 'bg-gray-100'
+          }`}
+          style={{ width: `${fillPercentage}%`, opacity: 0.4 }}
+        />
+        
+        <div className="relative z-10">
+          <div className="flex justify-between items-center mb-2">
+            <h3 className="font-semibold text-gray-900">{title}</h3>
+            <div className="bg-white rounded-full w-6 h-6 flex items-center justify-center shadow-sm">
+              <span className="text-xs font-medium text-blue-600">{elements.length}</span>
+            </div>
+          </div>
+          <p className="text-xs text-gray-600 mb-4">{description}</p>
+          
+          <div className="flex flex-wrap gap-4 min-h-16 items-center justify-center">
+            {elements.map(element => (
+              <DraggableToken 
+                key={element.id} 
+                element={element} 
+                source={container}
+                onDragStart={handleElementDragStart}
+                onDragEnd={handleElementMove}
+              />
+            ))}
+            
+            {elements.length === 0 && (
+              <div className="flex items-center justify-center h-16 w-full text-gray-400 italic text-sm bg-white bg-opacity-50 rounded border border-dashed border-gray-300">
+                Drop elements here
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    );
   };
 
   return (
@@ -254,6 +278,7 @@ const PhaseFour = () => {
                       key={element.id} 
                       element={element} 
                       source="unassigned"
+                      onDragStart={handleElementDragStart}
                       onDragEnd={handleElementMove}
                     />
                   ))}
@@ -271,7 +296,6 @@ const PhaseFour = () => {
                 title="Self-Preservation"
                 description="Elements focused on physical security, health, domestic concerns, and material comfort"
                 elements={detailElements.selfPreservation}
-                onElementDrop={handleContainerDrop}
               />
               
               <DropTarget 
@@ -279,7 +303,6 @@ const PhaseFour = () => {
                 title="One-to-One"
                 description="Elements focused on close personal relationships, intimacy, and individual connections"
                 elements={detailElements.oneToOne}
-                onElementDrop={handleContainerDrop}
               />
               
               <DropTarget 
@@ -287,7 +310,6 @@ const PhaseFour = () => {
                 title="Social"
                 description="Elements focused on group dynamics, communities, and broader social structures"
                 elements={detailElements.social}
-                onElementDrop={handleContainerDrop}
               />
             </div>
           </div>
