@@ -363,7 +363,85 @@ const PhaseThree = () => {
           <p className="text-gray-600 text-sm">See how your state distribution affects your tower's colors</p>
         </div>
 
-        <TowerVisualization stateDistribution={localDistribution} />
+        {/* Animated tower visualization */}
+        <motion.div 
+          className="relative"
+          animate={{ scale: [0.95, 1] }}
+          transition={{ duration: 0.5, ease: "easeInOut" }}
+        >
+          {selectedStates.length === 2 && (
+            <div className="absolute -top-12 left-1/2 transform -translate-x-1/2 bg-white px-3 py-1 rounded-full shadow-md text-xs">
+              <span className="text-gray-700">Painting in progress...</span>
+            </div>
+          )}
+          
+          {/* Paint drips animation shown when adjusting slider */}
+          {selectedStates.length === 2 && (
+            <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 w-40 h-8 z-0">
+              <div 
+                className="absolute left-1/4 w-1 rounded-b-full" 
+                style={{ 
+                  height: '15px', 
+                  backgroundColor: colorPalettes.find(p => p.key === selectedStates[0])?.primaryColor,
+                  transition: 'height 0.3s ease-out',
+                  opacity: 0.8
+                }}
+              ></div>
+              <div 
+                className="absolute left-3/4 w-1 rounded-b-full" 
+                style={{ 
+                  height: '10px', 
+                  backgroundColor: colorPalettes.find(p => p.key === selectedStates[1])?.primaryColor,
+                  transition: 'height 0.3s ease-out',
+                  opacity: 0.8
+                }}
+              ></div>
+            </div>
+          )}
+          
+          {/* Tower with transition effect for color changes */}
+          <div className="relative transition-all duration-500 ease-in-out">
+            <TowerVisualization 
+              stateDistribution={localDistribution} 
+              showHotspots={selectedStates.length === 2}
+            />
+            
+            {/* Overlay showing the "painting" effect */}
+            {selectedStates.length === 2 && (
+              <div 
+                className="absolute inset-0 pointer-events-none" 
+                style={{ 
+                  backgroundImage: `radial-gradient(circle at 50% 30%, rgba(255,255,255,0.2), transparent 70%)`,
+                  animation: 'pulse 2s infinite ease-in-out'
+                }}
+              ></div>
+            )}
+          </div>
+          
+          {/* Painting tools shown when color palettes are selected */}
+          {selectedStates.length === 2 && (
+            <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 flex gap-3">
+              <div className="w-6 h-6 rounded-full bg-gray-200 flex items-center justify-center shadow-sm">
+                <div className="w-4 h-4 rounded-full" style={{ 
+                  backgroundColor: colorPalettes.find(p => p.key === selectedStates[0])?.primaryColor 
+                }}></div>
+              </div>
+              <div className="w-6 h-6 rounded-full bg-gray-200 flex items-center justify-center shadow-sm">
+                <div className="w-4 h-4 rounded-full" style={{ 
+                  backgroundColor: colorPalettes.find(p => p.key === selectedStates[1])?.primaryColor 
+                }}></div>
+              </div>
+            </div>
+          )}
+        </motion.div>
+        
+        {/* Visual metaphor description */}
+        {selectedStates.length === 2 && (
+          <p className="text-center text-sm text-gray-500 mt-12 italic max-w-md">
+            As you adjust the color mix, watch your tower transform - just like how your personality
+            shifts between these psychological states in your daily life.
+          </p>
+        )}
       </div>
 
       {/* Error message if saving fails */}

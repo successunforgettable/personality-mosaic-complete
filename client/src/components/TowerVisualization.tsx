@@ -50,6 +50,20 @@ const TowerVisualization = ({
     );
   };
   
+  // Add state for animation
+  const [isColorTransitioning, setIsColorTransitioning] = useState(false);
+  
+  // Detect changes to activate color transition animation
+  useEffect(() => {
+    if (distribution) {
+      setIsColorTransitioning(true);
+      const timer = setTimeout(() => {
+        setIsColorTransitioning(false);
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [distribution]);
+  
   const renderBlocks = () => {
     if (selectedBuildingBlocks.length === 0) return null;
     
@@ -75,9 +89,13 @@ const TowerVisualization = ({
       blocks.push(
         <motion.div 
           key={i}
-          className="absolute left-1/2 transform -translate-x-1/2 rounded-lg shadow-md overflow-hidden"
+          className={`absolute left-1/2 transform -translate-x-1/2 rounded-lg shadow-md overflow-hidden ${isColorTransitioning ? 'tower-section' : ''}`}
           initial={{ scale: 0.8, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
+          animate={{ 
+            scale: 1, 
+            opacity: 1,
+            y: isColorTransitioning ? [5, 0] : 0 
+          }}
           transition={{ duration: 0.5, delay: 0.1 * (i + 1) }}
           style={{
             bottom: currentBottom,
@@ -86,8 +104,21 @@ const TowerVisualization = ({
             opacity
           }}
         >
+          {/* Color transition overlay for painting effect */}
+          {showHotspots && isColorTransitioning && (
+            <motion.div 
+              className="absolute inset-0 z-10 pointer-events-none"
+              initial={{ opacity: 0.7 }}
+              animate={{ opacity: 0 }}
+              transition={{ duration: 0.5 }}
+              style={{ 
+                background: 'radial-gradient(circle at center, rgba(255,255,255,0.8) 0%, transparent 70%)'
+              }}
+            />
+          )}
+        
           {/* State segments within each block */}
-          <div className="flex flex-col h-full w-full">
+          <div className={`flex flex-col h-full w-full ${isColorTransitioning ? 'paint-effect' : ''}`}>
             {/* Very Good segment (Green) */}
             {distribution.veryGood > 0 && (
               <div 
@@ -143,6 +174,20 @@ const TowerVisualization = ({
               />
             )}
           </div>
+          
+          {/* Paint drips animation when colors are transitioning */}
+          {showHotspots && isColorTransitioning && (
+            <>
+              <div 
+                className="absolute top-0 left-1/4 w-1 rounded-b-lg paint-drip" 
+                style={{ backgroundColor: '#22c55e', height: '0' }}
+              />
+              <div 
+                className="absolute top-0 right-1/4 w-1 rounded-b-lg paint-drip" 
+                style={{ backgroundColor: '#10b981', height: '0', animationDelay: '0.2s' }}
+              />
+            </>
+          )}
           
           {/* Add subtype decoration on the sides */}
           {subtypeDistribution && i === 0 && (
@@ -239,8 +284,46 @@ const TowerVisualization = ({
     <div className="w-64 h-64 relative">
       {personalityType ? renderFinalTower() : (
         <>
+          {/* Paint brush visualization for "painting" effect when in color palette selection phase */}
+          {showHotspots && (
+            <motion.div 
+              className="absolute -top-8 left-1/2 transform -translate-x-1/2 z-10 pointer-events-none"
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: isColorTransitioning ? 1 : 0, y: isColorTransitioning ? 10 : -10 }}
+              transition={{ duration: 0.3 }}
+            >
+              <div className="w-16 h-8 bg-gray-700 rounded-t-lg flex items-end justify-center">
+                <div className="w-10 h-4 bg-gray-200 rounded-b-lg"></div>
+              </div>
+            </motion.div>
+          )}
+          
           {renderFoundation()}
           {renderBlocks()}
+          
+          {/* Color splash effect when transitioning */}
+          {showHotspots && isColorTransitioning && (
+            <motion.div 
+              className="absolute inset-0 z-20 pointer-events-none"
+              initial={{ opacity: 0.5 }}
+              animate={{ opacity: 0 }}
+              transition={{ duration: 0.5 }}
+              style={{ 
+                background: 'radial-gradient(circle at center, rgba(255,255,255,0.3) 0%, transparent 70%)'
+              }}
+            />
+          )}
+          
+          {/* Tower glow effect during transitions */}
+          {showHotspots && (
+            <div 
+              className={`absolute inset-0 pointer-events-none rounded-lg ${isColorTransitioning ? 'tower-glow' : ''}`}
+              style={{ 
+                boxShadow: isColorTransitioning ? '0 0 15px rgba(255,255,255,0.5)' : 'none',
+                transition: 'box-shadow 0.5s ease-in-out'
+              }}
+            ></div>
+          )}
         </>
       )}
     </div>
