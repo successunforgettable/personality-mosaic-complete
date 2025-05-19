@@ -130,6 +130,10 @@ function assessmentReducer(state: AssessmentState, action: AssessmentAction): As
         oneToOne: Math.round((state.detailElements.oneToOne.length / 10) * 100),
         social: Math.round((state.detailElements.social.length / 10) * 100)
       };
+
+      // Ensure all state distribution values are using the current state values
+      // Log the state distribution for debugging
+      console.log("State distribution for results:", state.stateDistribution);
       
       // Now we can be sure the wing is valid for the primary type
       const result: PersonalityResult = {

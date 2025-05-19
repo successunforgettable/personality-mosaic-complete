@@ -103,6 +103,7 @@ const PhaseThree = () => {
     }
     
     // Update local context state
+    console.log("Saving state distribution:", localDistribution);
     updateStateDistribution(localDistribution);
     
     // Save to database
