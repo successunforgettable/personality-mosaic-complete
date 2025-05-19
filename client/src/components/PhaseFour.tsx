@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useAssessment } from '@/context/AssessmentContext';
 import TowerVisualization from './TowerVisualization';
-import { SubtypeDistribution } from '@/types/assessment';
+import { SubtypeDistribution, Container, DetailElement } from '@/types/assessment';
 import { motion } from 'framer-motion';
 
 const PhaseFour: React.FC = () => {
-  const { state, generateResult, setPhase } = useAssessment();
+  const { state, generateResult } = useAssessment();
   const { stateDistribution } = state;
   
   // Token distribution state
@@ -36,64 +36,21 @@ const PhaseFour: React.FC = () => {
   // Handle token placement
   const handleTokenPlace = (containerId: keyof typeof distribution) => {
     if (getTotalTokens() < totalTokens) {
-      const newDistribution = {
-        ...distribution,
-        [containerId]: distribution[containerId] + 1
-      };
-      
-      setDistribution(newDistribution);
-      
-      // Calculate and update detail elements whenever tokens change
-      updateDetailElements(newDistribution);
+      setDistribution(prev => ({
+        ...prev,
+        [containerId]: prev[containerId] + 1
+      }));
     }
   };
   
   // Handle token removal
   const handleTokenRemove = (containerId: keyof typeof distribution) => {
     if (distribution[containerId] > 0) {
-      const newDistribution = {
-        ...distribution,
-        [containerId]: distribution[containerId] - 1
-      };
-      
-      setDistribution(newDistribution);
-      
-      // Calculate and update detail elements whenever tokens change
-      updateDetailElements(newDistribution);
+      setDistribution(prev => ({
+        ...prev,
+        [containerId]: prev[containerId] - 1
+      }));
     }
-  };
-  
-  // Helper function to update detail elements based on token distribution
-  const updateDetailElements = (newDistribution: typeof distribution) => {
-    // Create detail elements based on token counts
-    const elements = {
-      selfPreservation: Array(newDistribution.selfPreservation).fill(null).map((_, i) => ({ 
-        id: i + 1,
-        name: `Self-Preservation Token ${i + 1}`, 
-        icon: 'home' 
-      })),
-      oneToOne: Array(newDistribution.oneToOne).fill(null).map((_, i) => ({ 
-        id: i + 100,
-        name: `One-to-One Token ${i + 1}`, 
-        icon: 'people' 
-      })),
-      social: Array(newDistribution.social).fill(null).map((_, i) => ({ 
-        id: i + 200,
-        name: `Social Token ${i + 1}`, 
-        icon: 'groups' 
-      })),
-      unassigned: []
-    };
-    
-    // For each token, move it to the appropriate container
-    Object.entries(elements).forEach(([container, tokenElements]) => {
-      if (container !== 'unassigned' && tokenElements.length > 0) {
-        tokenElements.forEach(element => {
-          // We don't need to actually call moveElement here since we're 
-          // directly constructing the elements in their correct containers
-        });
-      }
-    });
   };
   
   // Update subtype distribution percentages whenever token counts change
@@ -113,72 +70,6 @@ const PhaseFour: React.FC = () => {
     if (isComplete) {
       // Log the subtype distribution before generating result
       console.log("Saving subtype distribution:", subtypeDistribution);
-      
-      // Create the detail elements based on token distribution
-      const detailElements = {
-        selfPreservation: Array(distribution.selfPreservation).fill(null).map((_, i) => ({ 
-          id: i + 1,
-          name: `Self-Preservation Token ${i + 1}`, 
-          icon: 'home' 
-        })),
-        oneToOne: Array(distribution.oneToOne).fill(null).map((_, i) => ({ 
-          id: i + 100,
-          name: `One-to-One Token ${i + 1}`, 
-          icon: 'people' 
-        })),
-        social: Array(distribution.social).fill(null).map((_, i) => ({ 
-          id: i + 200,
-          name: `Social Token ${i + 1}`, 
-          icon: 'groups' 
-        })),
-        unassigned: []
-      };
-      
-      // Move each token to its container
-      for (const container of ['selfPreservation', 'oneToOne', 'social'] as Container[]) {
-        for (const element of detailElements[container] as DetailElement[]) {
-          // First add the element to unassigned
-          detailElements.unassigned.push(element);
-          
-          // Then move it to the destination container
-          const unassignedElement = detailElements.unassigned.find(el => el.id === element.id);
-          if (unassignedElement) {
-            // Remove from unassigned
-            detailElements.unassigned = detailElements.unassigned.filter(el => el.id !== element.id);
-            // Add to destination container
-            if (!detailElements[container]) {
-              detailElements[container] = [];
-            }
-            detailElements[container].push(element);
-          }
-        }
-      }
-      
-      // Manually save to database if needed
-      try {
-        // For demo purposes, use the existing user
-        const userId = 1;
-        
-        await fetch('/api/assessment/subtype-distribution', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            userId,
-            subtypeDistribution,
-            tokenCounts: {
-              selfPreservation: distribution.selfPreservation,
-              oneToOne: distribution.oneToOne,
-              social: distribution.social,
-            }
-          }),
-        });
-        
-        console.log("Subtype distribution saved to database");
-      } catch (error) {
-        console.error("Error saving subtype distribution:", error);
-      }
       
       // Generate the final result
       generateResult();
@@ -377,7 +268,7 @@ const PhaseFour: React.FC = () => {
                       onClick={() => handleTokenPlace('oneToOne')} 
                       disabled={getTotalTokens() >= totalTokens}
                       className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                        getTotalTokens() >= totalTokens ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-blue-100 text-blue-600 hover:bg-blue-200'
+                        getTotalTokens() >= totalTokens ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-green-100 text-green-600 hover:bg-green-200'
                       }`}
                     >
                       <span className="text-lg font-bold">+</span>
@@ -399,7 +290,7 @@ const PhaseFour: React.FC = () => {
                 
                 <div className="p-4 relative z-10">
                   <p className="text-gray-700 mb-4">
-                    Focus on intense connections, chemistry, and intimate relationships. Attention to deep personal bonds.
+                    Focus on intimate connections, attraction, and one-on-one relationships. Intensity in personal interactions.
                   </p>
                   
                   <div className="flex flex-wrap gap-2 mb-3">
@@ -416,10 +307,10 @@ const PhaseFour: React.FC = () => {
                   <div className="bg-white bg-opacity-60 p-3 rounded-lg text-sm">
                     <p className="font-medium text-gray-800 mb-1">Examples:</p>
                     <ul className="text-gray-600 list-disc pl-5 space-y-1">
-                      <li>Deep friendships and romantic connections</li>
-                      <li>Intimate one-on-one interactions</li>
-                      <li>Chemistry and attraction dynamics</li>
-                      <li>Close personal relationships</li>
+                      <li>Intensity in intimate relationships</li>
+                      <li>Strong one-on-one connections</li>
+                      <li>Desire for deep personal sharing</li>
+                      <li>Chemistry and attraction focus</li>
                     </ul>
                   </div>
                 </div>
@@ -449,7 +340,7 @@ const PhaseFour: React.FC = () => {
                       onClick={() => handleTokenPlace('social')} 
                       disabled={getTotalTokens() >= totalTokens}
                       className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                        getTotalTokens() >= totalTokens ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-purple-100 text-purple-600 hover:bg-purple-200'
+                        getTotalTokens() >= totalTokens ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-green-100 text-green-600 hover:bg-green-200'
                       }`}
                     >
                       <span className="text-lg font-bold">+</span>
@@ -471,7 +362,7 @@ const PhaseFour: React.FC = () => {
                 
                 <div className="p-4 relative z-10">
                   <p className="text-gray-700 mb-4">
-                    Focus on group dynamics, community belonging, and social roles. Attention to your place within larger contexts.
+                    Focus on group dynamics, social position, and community engagement. Awareness of broader social contexts.
                   </p>
                   
                   <div className="flex flex-wrap gap-2 mb-3">
@@ -488,10 +379,10 @@ const PhaseFour: React.FC = () => {
                   <div className="bg-white bg-opacity-60 p-3 rounded-lg text-sm">
                     <p className="font-medium text-gray-800 mb-1">Examples:</p>
                     <ul className="text-gray-600 list-disc pl-5 space-y-1">
-                      <li>Community involvement and group activities</li>
+                      <li>Community and group belonging</li>
                       <li>Social status and recognition</li>
-                      <li>Cultural identity and belonging</li>
-                      <li>Group dynamics and social structures</li>
+                      <li>Participation in collective activities</li>
+                      <li>Awareness of hierarchy and social norms</li>
                     </ul>
                   </div>
                 </div>
@@ -501,34 +392,17 @@ const PhaseFour: React.FC = () => {
         </div>
       </div>
       
-      {/* Navigation buttons */}
-      <div className="flex justify-between mt-8">
-        <button 
-          className="px-5 py-2.5 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-all"
-          onClick={() => setPhase(3)}
-        >
-          Previous Phase
-        </button>
-        <button 
-          className={`px-6 py-3 ${isComplete ? 'bg-blue-600 hover:bg-blue-700' : 'bg-gray-400 cursor-not-allowed'} 
-            text-white rounded-lg font-medium shadow-md transition-all flex items-center gap-2`}
+      <div className="flex justify-center">
+        <button
           onClick={handleContinue}
           disabled={!isComplete}
+          className={`px-8 py-3 rounded-lg font-medium shadow-md transition-all ${
+            isComplete
+              ? 'bg-primary-600 text-white hover:bg-primary-700'
+              : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+          }`}
         >
-          {isComplete ? (
-            <>
-              <span className="material-icons text-sm">check_circle</span>
-              Complete & View Results
-            </>
-          ) : (
-            <>
-              <span className="material-icons text-sm">info</span>
-              Distribute All Tokens to Continue
-              <span className="text-xs opacity-75 ml-1">
-                ({getTotalTokens()}/{totalTokens})
-              </span>
-            </>
-          )}
+          {isComplete ? 'Complete Assessment' : `Distribute All ${totalTokens} Tokens (${getTotalTokens()} of ${totalTokens} placed)`}
         </button>
       </div>
     </div>
