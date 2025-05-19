@@ -87,14 +87,28 @@ function assessmentReducer(state: AssessmentState, action: AssessmentAction): As
     case 'MOVE_ELEMENT': {
       const { element, source, destination } = action.payload;
       
+      // Validate that both source and destination are valid
+      if (!source || !destination) {
+        console.error('Invalid source or destination:', source, destination);
+        return state;
+      }
+      
       // Create a copy of the detail elements state
       const detailElements = { ...state.detailElements };
+      
+      // Make sure the destination container exists
+      if (!detailElements[destination]) {
+        console.error(`Destination container ${destination} does not exist`);
+        return state;
+      }
       
       // Remove the element from the source container
       detailElements[source] = detailElements[source].filter(item => item.id !== element.id);
       
       // Add the element to the destination container
       detailElements[destination] = [...detailElements[destination], element];
+      
+      console.log(`Moved element ${element.name} from ${source} to ${destination}`);
       
       return {
         ...state,

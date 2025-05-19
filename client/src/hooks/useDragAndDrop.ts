@@ -45,7 +45,7 @@ export function useDragAndDrop(options: DraggableOptions | DroppableOptions) {
         return { containerId: (options as any).containerId };
       },
       collect: (monitor) => ({
-        isOver: monitor.isOver(),
+        isOver: !!monitor.isOver(),
       }),
     });
     
