@@ -1,300 +1,93 @@
 import React, { useState, useEffect } from 'react';
-import { DndProvider } from 'react-dnd';
-import { HTML5Backend } from 'react-dnd-html5-backend';
 import { useAssessment } from '@/context/AssessmentContext';
 import TowerVisualization from './TowerVisualization';
 import { SubtypeDistribution } from '@/types/assessment';
 import { motion } from 'framer-motion';
 
-// Token Component
-const Token = ({ 
-  id, 
-  isPlaced, 
-  containerId,
-  onDrag,
-  onRemove
-}) => {
-  const [{ isDragging }, drag] = useDragItem('token');
-  
-  // Get color based on container
-  const getColor = () => {
-    switch(containerId) {
-      case 'selfPreservation': return 'bg-gradient-to-br from-green-400 to-green-600';
-      case 'oneToOne': return 'bg-gradient-to-br from-blue-400 to-blue-600';
-      case 'social': return 'bg-gradient-to-br from-purple-400 to-purple-600';
-      default: return 'bg-gradient-to-br from-gray-400 to-gray-600';
-    }
-  };
-  
-  return (
-    <motion.div
-      ref={drag}
-      className={`rounded-full w-8 h-8 flex items-center justify-center
-                 border-2 border-white shadow-md ${isDragging ? 'opacity-50' : 'opacity-100'} 
-                 ${isPlaced ? 'cursor-pointer' : 'cursor-grab'}
-                 ${getColor()}`}
-      whileHover={{ scale: 1.1 }}
-      animate={{ scale: isPlaced ? 1 : [0.95, 1.05, 0.95] }}
-      transition={{ repeat: isPlaced ? 0 : Infinity, duration: 2 }}
-      onDoubleClick={isPlaced ? onRemove : undefined}
-    />
-  );
-};
-
-// Helper hook for drag
-function useDragItem(type) {
-  const [isDragging, setIsDragging] = useState(false);
-  
-  const drag = React.useRef(null);
-  
-  React.useEffect(() => {
-    const el = drag.current;
-    if (!el) return;
-    
-    let dragCounter = 0;
-    
-    const handleDragStart = () => {
-      setIsDragging(true);
-      dragCounter++;
-    };
-    
-    const handleDragEnd = () => {
-      dragCounter--;
-      if (dragCounter === 0) {
-        setIsDragging(false);
-      }
-    };
-    
-    el.addEventListener('dragstart', handleDragStart);
-    el.addEventListener('dragend', handleDragEnd);
-    
-    return () => {
-      el.removeEventListener('dragstart', handleDragStart);
-      el.removeEventListener('dragend', handleDragEnd);
-    };
-  }, []);
-  
-  return [{ isDragging }, drag];
-}
-
-// Subtype Container Component
-const SubtypeContainer = ({
-  id,
-  title,
-  description,
-  tokenCount,
-  onTokenPlace,
-  onTokenRemove
-}) => {
-  const [isOver, setIsOver] = useState(false);
-  
-  // Ref for drop detection
-  const drop = React.useRef(null);
-  
-  React.useEffect(() => {
-    const el = drop.current;
-    if (!el) return;
-    
-    const handleDragOver = (e) => {
-      e.preventDefault();
-      setIsOver(true);
-    };
-    
-    const handleDragLeave = () => {
-      setIsOver(false);
-    };
-    
-    const handleDrop = (e) => {
-      e.preventDefault();
-      setIsOver(false);
-      onTokenPlace();
-    };
-    
-    el.addEventListener('dragover', handleDragOver);
-    el.addEventListener('dragleave', handleDragLeave);
-    el.addEventListener('drop', handleDrop);
-    
-    return () => {
-      el.removeEventListener('dragover', handleDragOver);
-      el.removeEventListener('dragleave', handleDragLeave);
-      el.removeEventListener('drop', handleDrop);
-    };
-  }, [onTokenPlace]);
-  
-  // Calculate fill percentage
-  const fillPercentage = tokenCount * 10; // 10 tokens = 100%
-  
-  return (
-    <div 
-      ref={drop}
-      className={`rounded-lg p-4 relative
-                 ${isOver ? 'border-2 border-blue-400 bg-blue-50' : 'border border-dashed border-gray-300'}
-                 overflow-hidden transition-all duration-300`}
-      style={{ minHeight: '150px' }}
-    >
-      {/* Background fill based on token count */}
-      <div 
-        className={`absolute inset-0
-                   ${id === 'selfPreservation' ? 'bg-green-100' :
-                     id === 'oneToOne' ? 'bg-blue-100' :
-                     id === 'social' ? 'bg-purple-100' : 'bg-gray-100'} 
-                   transition-all duration-500 ease-out`}
-        style={{ width: `${fillPercentage}%`, opacity: fillPercentage > 0 ? 0.3 : 0 }}
-      />
-      
-      {/* Container content */}
-      <div className="relative z-10">
-        <div className="flex justify-between items-center mb-2">
-          <h3 className="font-semibold text-gray-900">{title}</h3>
-          <div className="bg-white rounded-full w-6 h-6 flex items-center justify-center shadow-sm">
-            <span className="text-xs font-medium text-blue-600">{tokenCount}</span>
-          </div>
-        </div>
-        <p className="text-xs text-gray-600 mb-4">{description}</p>
-        
-        <div className="flex flex-wrap gap-3 justify-center min-h-[50px] py-2">
-          {tokenCount === 0 && !isOver && (
-            <div className="text-center text-gray-400 italic text-sm">
-              Drop tokens here
-            </div>
-          )}
-          
-          {tokenCount === 0 && isOver && (
-            <div className="text-center text-blue-500 font-medium text-sm animate-pulse">
-              Drop here!
-            </div>
-          )}
-          
-          {Array(tokenCount).fill(null).map((_, index) => (
-            <Token 
-              key={`${id}-token-${index}`}
-              id={`${id}-token-${index}`}
-              isPlaced={true}
-              containerId={id}
-              onRemove={() => onTokenRemove()}
-            />
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-};
-
-// Token Pool Component
-const TokenPool = ({ availableTokens }) => {
-  return (
-    <div className="bg-white rounded-xl shadow-md p-5 mb-6">
-      <h3 className="font-medium text-gray-800 mb-3">
-        Available Tokens: <span className="font-semibold text-blue-600">{availableTokens}</span>
-      </h3>
-      
-      <div className="p-4 border border-dashed border-gray-300 rounded-lg">
-        {availableTokens > 0 ? (
-          <div className="flex flex-wrap gap-3 justify-center">
-            {Array(availableTokens).fill(null).map((_, index) => (
-              <Token 
-                key={`pool-token-${index}`}
-                id={`pool-token-${index}`}
-                isPlaced={false}
-                containerId="pool"
-              />
-            ))}
-          </div>
-        ) : (
-          <div className="text-center py-4 text-gray-500">
-            <p className="italic">All tokens have been distributed!</p>
-          </div>
-        )}
-      </div>
-      
-      <div className="mt-4 text-xs text-gray-500">
-        <p><span className="font-medium">Tip:</span> Drag tokens to containers to show where you focus your energy.</p>
-        <p className="mt-1"><span className="font-medium">Double-click</span> on placed tokens to return them to the pool.</p>
-      </div>
-    </div>
-  );
-};
-
-// Main Phase Four Component (Token-based Subtype System)
-const PhaseFour = () => {
+const PhaseFour: React.FC = () => {
   const { state, generateResult, setPhase } = useAssessment();
   const { stateDistribution } = state;
   
   // Token distribution state
-  const [tokenCounts, setTokenCounts] = useState({
+  const [distribution, setDistribution] = useState({
     selfPreservation: 0,
     oneToOne: 0,
     social: 0
   });
   
-  // Total tokens available
-  const totalTokens = 10;
-  
-  // Calculate tokens placed and available
-  const tokensPlaced = tokenCounts.selfPreservation + tokenCounts.oneToOne + tokenCounts.social;
-  const tokensAvailable = totalTokens - tokensPlaced;
-  
-  // Calculate subtype distribution
+  // Calculate subtype distribution percentages
   const [subtypeDistribution, setSubtypeDistribution] = useState<SubtypeDistribution>({
     selfPreservation: 0,
     oneToOne: 0,
     social: 0
   });
   
-  // Update distribution whenever token counts change
-  useEffect(() => {
-    if (tokensPlaced === 0) return;
-    
-    setSubtypeDistribution({
-      selfPreservation: Math.round((tokenCounts.selfPreservation / tokensPlaced) * 100),
-      oneToOne: Math.round((tokenCounts.oneToOne / tokensPlaced) * 100),
-      social: Math.round((tokenCounts.social / tokensPlaced) * 100)
-    });
-  }, [tokenCounts, tokensPlaced]);
+  // Total tokens
+  const totalTokens = 10;
   
-  // Add token to container
-  const handleAddToken = (containerId) => {
-    if (tokensAvailable > 0) {
-      setTokenCounts(prev => ({
+  // Get total tokens placed
+  const getTotalTokens = () => {
+    return distribution.selfPreservation + distribution.oneToOne + distribution.social;
+  };
+  
+  // Check if all tokens are distributed
+  const isComplete = getTotalTokens() === totalTokens;
+  
+  // Handle token placement
+  const handleTokenPlace = (containerId: keyof typeof distribution) => {
+    if (getTotalTokens() < totalTokens) {
+      setDistribution(prev => ({
         ...prev,
         [containerId]: prev[containerId] + 1
       }));
     }
   };
   
-  // Remove token from container
-  const handleRemoveToken = (containerId) => {
-    if (tokenCounts[containerId] > 0) {
-      setTokenCounts(prev => ({
+  // Handle token removal
+  const handleTokenRemove = (containerId: keyof typeof distribution) => {
+    if (distribution[containerId] > 0) {
+      setDistribution(prev => ({
         ...prev,
         [containerId]: prev[containerId] - 1
       }));
     }
   };
   
-  // Determine if all tokens have been placed
-  const allTokensPlaced = tokensPlaced === totalTokens;
+  // Update subtype distribution percentages whenever token counts change
+  useEffect(() => {
+    if (getTotalTokens() === 0) return;
+    
+    const total = getTotalTokens();
+    setSubtypeDistribution({
+      selfPreservation: Math.round((distribution.selfPreservation / total) * 100),
+      oneToOne: Math.round((distribution.oneToOne / total) * 100),
+      social: Math.round((distribution.social / total) * 100)
+    });
+  }, [distribution]);
   
   // Handle continuing to results
-  const handleComplete = () => {
-    generateResult();
+  const handleContinue = () => {
+    if (isComplete) {
+      generateResult();
+    }
   };
   
   return (
     <div className="pb-10">
-      <div className="text-center mb-8">
-        <h2 className="text-2xl md:text-3xl font-display font-semibold text-gray-900 mb-3">
-          Decorate Your Tower
+      <div className="text-center mb-8 p-6 bg-gray-50 rounded-lg border border-gray-200">
+        <h2 className="text-2xl md:text-3xl font-semibold text-gray-900 mb-3">
+          Discover Your Instinctual Variants
         </h2>
         <p className="text-gray-600 max-w-2xl mx-auto">
-          Distribute 10 tokens among the three instinctual subtypes based on how you focus your energy and attention.
+          Distribute all 10 tokens among these three containers to show how much of your attention 
+          and energy naturally goes to each area in your life. Areas with more tokens represent where you focus more intensely.
         </p>
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-8">
-        {/* Tower visualization */}
-        <div className="md:col-span-1">
-          <div className="bg-white rounded-xl shadow-md p-5 h-full">
+      <div className="grid grid-cols-1 md:grid-cols-12 gap-6 mb-8">
+        {/* Left column - Token Pool and Tower Visualization */}
+        <div className="md:col-span-4">
+          <div className="bg-white rounded-xl shadow-md p-5 mb-6">
             <h3 className="font-semibold text-gray-900 mb-4">Your Tower</h3>
             <div className="flex justify-center mb-6">
               <TowerVisualization 
@@ -303,41 +96,60 @@ const PhaseFour = () => {
               />
             </div>
             
-            <div className="text-sm text-gray-600 space-y-3 mt-6">
-              <p className="font-medium text-gray-800">Your subtype distribution:</p>
-              
-              <div className="space-y-1">
-                <div className="flex justify-between items-center">
-                  <span>Self-Preservation:</span>
-                  <span className="font-medium">{subtypeDistribution.selfPreservation}%</span>
-                </div>
-                <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-                  <div className="bg-green-500 h-full" style={{ width: `${subtypeDistribution.selfPreservation}%` }}></div>
-                </div>
-              </div>
-              
-              <div className="space-y-1">
-                <div className="flex justify-between items-center">
-                  <span>One-to-One:</span>
-                  <span className="font-medium">{subtypeDistribution.oneToOne}%</span>
-                </div>
-                <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-                  <div className="bg-blue-500 h-full" style={{ width: `${subtypeDistribution.oneToOne}%` }}></div>
+            <div className="text-sm text-gray-600">
+              <div className="bg-gray-50 p-4 rounded-lg mb-4">
+                <p className="font-medium mb-2">Available Tokens: <span className="text-blue-600 font-bold">{totalTokens - getTotalTokens()}</span> / {totalTokens}</p>
+                <div className="flex flex-wrap gap-2 mb-2">
+                  {Array(totalTokens - getTotalTokens()).fill(null).map((_, index) => (
+                    <div 
+                      key={`token-${index}`}
+                      className="w-7 h-7 rounded-full bg-gradient-to-br from-gray-400 to-gray-600 border-2 border-white shadow-md flex items-center justify-center"
+                    >
+                      <span className="text-white text-xs font-bold">{index + 1}</span>
+                    </div>
+                  ))}
+                  {getTotalTokens() === totalTokens && (
+                    <p className="text-green-600 font-medium">All tokens distributed!</p>
+                  )}
                 </div>
               </div>
               
-              <div className="space-y-1">
-                <div className="flex justify-between items-center">
-                  <span>Social:</span>
-                  <span className="font-medium">{subtypeDistribution.social}%</span>
+              <p className="font-medium text-gray-800 mb-2">Your subtype distribution:</p>
+              
+              <div className="space-y-3">
+                <div className="space-y-1">
+                  <div className="flex justify-between items-center">
+                    <span>Self-Preservation:</span>
+                    <span className="font-medium">{subtypeDistribution.selfPreservation}%</span>
+                  </div>
+                  <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                    <div className="bg-green-500 h-full" style={{ width: `${subtypeDistribution.selfPreservation}%` }}></div>
+                  </div>
                 </div>
-                <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-                  <div className="bg-purple-500 h-full" style={{ width: `${subtypeDistribution.social}%` }}></div>
+                
+                <div className="space-y-1">
+                  <div className="flex justify-between items-center">
+                    <span>One-to-One:</span>
+                    <span className="font-medium">{subtypeDistribution.oneToOne}%</span>
+                  </div>
+                  <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                    <div className="bg-blue-500 h-full" style={{ width: `${subtypeDistribution.oneToOne}%` }}></div>
+                  </div>
+                </div>
+                
+                <div className="space-y-1">
+                  <div className="flex justify-between items-center">
+                    <span>Social:</span>
+                    <span className="font-medium">{subtypeDistribution.social}%</span>
+                  </div>
+                  <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                    <div className="bg-purple-500 h-full" style={{ width: `${subtypeDistribution.social}%` }}></div>
+                  </div>
                 </div>
               </div>
               
               {/* Show stack analysis when all tokens are placed */}
-              {allTokensPlaced && (
+              {isComplete && (
                 <div className="mt-4 p-3 bg-blue-50 rounded-lg text-sm">
                   <p className="font-medium text-blue-800">Stack Analysis:</p>
                   <p className="text-blue-700">
@@ -354,45 +166,230 @@ const PhaseFour = () => {
           </div>
         </div>
         
-        {/* Main drag-drop area */}
-        <div className="md:col-span-2 lg:col-span-3">
-          {/* Token pool */}
-          <TokenPool availableTokens={tokensAvailable} />
-          
-          {/* Subtype containers */}
-          <div className="space-y-4">
-            <SubtypeContainer 
-              id="selfPreservation"
-              title="Self-Preservation"
-              description="Focus on physical security, health, domestic concerns, and material comfort"
-              tokenCount={tokenCounts.selfPreservation}
-              onTokenPlace={() => handleAddToken('selfPreservation')}
-              onTokenRemove={() => handleRemoveToken('selfPreservation')}
-            />
+        {/* Right column - Subtype Containers */}
+        <div className="md:col-span-8">
+          <div className="space-y-6">
+            {/* Self-Preservation Container */}
+            <div className="bg-white rounded-lg shadow-md overflow-hidden">
+              {/* Container header */}
+              <div className="p-4 border-b border-gray-100">
+                <div className="flex justify-between items-center">
+                  <h3 className="font-semibold text-lg text-gray-900">Self-Preservation</h3>
+                  <div className="flex items-center gap-2">
+                    <button 
+                      onClick={() => handleRemoveToken('selfPreservation')} 
+                      disabled={distribution.selfPreservation === 0}
+                      className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                        distribution.selfPreservation === 0 ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-red-100 text-red-600 hover:bg-red-200'
+                      }`}
+                    >
+                      <span className="text-lg font-bold">-</span>
+                    </button>
+                    <div className="bg-white rounded-full w-10 h-10 flex items-center justify-center shadow-sm border border-gray-200">
+                      <span className="text-xl font-semibold text-gray-800">{distribution.selfPreservation}</span>
+                    </div>
+                    <button 
+                      onClick={() => handleTokenPlace('selfPreservation')} 
+                      disabled={getTotalTokens() >= totalTokens}
+                      className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                        getTotalTokens() >= totalTokens ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-green-100 text-green-600 hover:bg-green-200'
+                      }`}
+                    >
+                      <span className="text-lg font-bold">+</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Container content */}
+              <div className="relative">
+                {/* Background fill based on token count */}
+                <div 
+                  className="absolute inset-0 bg-green-50 transition-all duration-500 ease-out"
+                  style={{ 
+                    width: `${(distribution.selfPreservation / totalTokens) * 100}%`, 
+                    opacity: distribution.selfPreservation > 0 ? 0.7 : 0 
+                  }}
+                />
+                
+                <div className="p-4 relative z-10">
+                  <p className="text-gray-700 mb-4">
+                    Focus on physical security, health, comfort, and resources. Attention to personal needs and practical concerns.
+                  </p>
+                  
+                  <div className="flex flex-wrap gap-2 mb-3">
+                    {Array(distribution.selfPreservation).fill(null).map((_, index) => (
+                      <div 
+                        key={`sp-token-${index}`}
+                        className="w-8 h-8 rounded-full bg-gradient-to-br from-green-400 to-green-600 border-2 border-white shadow-md flex items-center justify-center"
+                      >
+                        <span className="text-white text-xs font-bold">{index + 1}</span>
+                      </div>
+                    ))}
+                  </div>
+                  
+                  <div className="bg-white bg-opacity-60 p-3 rounded-lg text-sm">
+                    <p className="font-medium text-gray-800 mb-1">Examples:</p>
+                    <ul className="text-gray-600 list-disc pl-5 space-y-1">
+                      <li>Physical health and comfort</li>
+                      <li>Financial security and resources</li>
+                      <li>Practical concerns about survival</li>
+                      <li>Home and personal environment</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
             
-            <SubtypeContainer 
-              id="oneToOne"
-              title="One-to-One"
-              description="Focus on close personal relationships, intimacy, and individual connections"
-              tokenCount={tokenCounts.oneToOne}
-              onTokenPlace={() => handleAddToken('oneToOne')}
-              onTokenRemove={() => handleRemoveToken('oneToOne')}
-            />
+            {/* One-to-One Container */}
+            <div className="bg-white rounded-lg shadow-md overflow-hidden">
+              {/* Container header */}
+              <div className="p-4 border-b border-gray-100">
+                <div className="flex justify-between items-center">
+                  <h3 className="font-semibold text-lg text-gray-900">One-to-One</h3>
+                  <div className="flex items-center gap-2">
+                    <button 
+                      onClick={() => handleRemoveToken('oneToOne')} 
+                      disabled={distribution.oneToOne === 0}
+                      className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                        distribution.oneToOne === 0 ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-red-100 text-red-600 hover:bg-red-200'
+                      }`}
+                    >
+                      <span className="text-lg font-bold">-</span>
+                    </button>
+                    <div className="bg-white rounded-full w-10 h-10 flex items-center justify-center shadow-sm border border-gray-200">
+                      <span className="text-xl font-semibold text-gray-800">{distribution.oneToOne}</span>
+                    </div>
+                    <button 
+                      onClick={() => handleTokenPlace('oneToOne')} 
+                      disabled={getTotalTokens() >= totalTokens}
+                      className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                        getTotalTokens() >= totalTokens ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-blue-100 text-blue-600 hover:bg-blue-200'
+                      }`}
+                    >
+                      <span className="text-lg font-bold">+</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Container content */}
+              <div className="relative">
+                {/* Background fill based on token count */}
+                <div 
+                  className="absolute inset-0 bg-blue-50 transition-all duration-500 ease-out"
+                  style={{ 
+                    width: `${(distribution.oneToOne / totalTokens) * 100}%`, 
+                    opacity: distribution.oneToOne > 0 ? 0.7 : 0 
+                  }}
+                />
+                
+                <div className="p-4 relative z-10">
+                  <p className="text-gray-700 mb-4">
+                    Focus on intense connections, chemistry, and intimate relationships. Attention to deep personal bonds.
+                  </p>
+                  
+                  <div className="flex flex-wrap gap-2 mb-3">
+                    {Array(distribution.oneToOne).fill(null).map((_, index) => (
+                      <div 
+                        key={`oto-token-${index}`}
+                        className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 border-2 border-white shadow-md flex items-center justify-center"
+                      >
+                        <span className="text-white text-xs font-bold">{index + 1}</span>
+                      </div>
+                    ))}
+                  </div>
+                  
+                  <div className="bg-white bg-opacity-60 p-3 rounded-lg text-sm">
+                    <p className="font-medium text-gray-800 mb-1">Examples:</p>
+                    <ul className="text-gray-600 list-disc pl-5 space-y-1">
+                      <li>Deep friendships and romantic connections</li>
+                      <li>Intimate one-on-one interactions</li>
+                      <li>Chemistry and attraction dynamics</li>
+                      <li>Close personal relationships</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
             
-            <SubtypeContainer 
-              id="social"
-              title="Social"
-              description="Focus on group dynamics, communities, and broader social structures"
-              tokenCount={tokenCounts.social}
-              onTokenPlace={() => handleAddToken('social')}
-              onTokenRemove={() => handleRemoveToken('social')}
-            />
+            {/* Social Container */}
+            <div className="bg-white rounded-lg shadow-md overflow-hidden">
+              {/* Container header */}
+              <div className="p-4 border-b border-gray-100">
+                <div className="flex justify-between items-center">
+                  <h3 className="font-semibold text-lg text-gray-900">Social</h3>
+                  <div className="flex items-center gap-2">
+                    <button 
+                      onClick={() => handleRemoveToken('social')} 
+                      disabled={distribution.social === 0}
+                      className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                        distribution.social === 0 ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-red-100 text-red-600 hover:bg-red-200'
+                      }`}
+                    >
+                      <span className="text-lg font-bold">-</span>
+                    </button>
+                    <div className="bg-white rounded-full w-10 h-10 flex items-center justify-center shadow-sm border border-gray-200">
+                      <span className="text-xl font-semibold text-gray-800">{distribution.social}</span>
+                    </div>
+                    <button 
+                      onClick={() => handleTokenPlace('social')} 
+                      disabled={getTotalTokens() >= totalTokens}
+                      className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                        getTotalTokens() >= totalTokens ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-purple-100 text-purple-600 hover:bg-purple-200'
+                      }`}
+                    >
+                      <span className="text-lg font-bold">+</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Container content */}
+              <div className="relative">
+                {/* Background fill based on token count */}
+                <div 
+                  className="absolute inset-0 bg-purple-50 transition-all duration-500 ease-out"
+                  style={{ 
+                    width: `${(distribution.social / totalTokens) * 100}%`, 
+                    opacity: distribution.social > 0 ? 0.7 : 0 
+                  }}
+                />
+                
+                <div className="p-4 relative z-10">
+                  <p className="text-gray-700 mb-4">
+                    Focus on group dynamics, community belonging, and social roles. Attention to your place within larger contexts.
+                  </p>
+                  
+                  <div className="flex flex-wrap gap-2 mb-3">
+                    {Array(distribution.social).fill(null).map((_, index) => (
+                      <div 
+                        key={`soc-token-${index}`}
+                        className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-400 to-purple-600 border-2 border-white shadow-md flex items-center justify-center"
+                      >
+                        <span className="text-white text-xs font-bold">{index + 1}</span>
+                      </div>
+                    ))}
+                  </div>
+                  
+                  <div className="bg-white bg-opacity-60 p-3 rounded-lg text-sm">
+                    <p className="font-medium text-gray-800 mb-1">Examples:</p>
+                    <ul className="text-gray-600 list-disc pl-5 space-y-1">
+                      <li>Community involvement and group activities</li>
+                      <li>Social status and recognition</li>
+                      <li>Cultural identity and belonging</li>
+                      <li>Group dynamics and social structures</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
       
       {/* Navigation buttons */}
-      <div className="flex justify-between">
+      <div className="flex justify-between mt-8">
         <button 
           className="px-5 py-2.5 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-all"
           onClick={() => setPhase(3)}
@@ -400,12 +397,12 @@ const PhaseFour = () => {
           Previous Phase
         </button>
         <button 
-          className={`px-6 py-3 ${allTokensPlaced ? 'bg-blue-600 hover:bg-blue-700' : 'bg-gray-400 cursor-not-allowed'} 
+          className={`px-6 py-3 ${isComplete ? 'bg-blue-600 hover:bg-blue-700' : 'bg-gray-400 cursor-not-allowed'} 
             text-white rounded-lg font-medium shadow-md transition-all flex items-center gap-2`}
-          onClick={handleComplete}
-          disabled={!allTokensPlaced}
+          onClick={handleContinue}
+          disabled={!isComplete}
         >
-          {allTokensPlaced ? (
+          {isComplete ? (
             <>
               <span className="material-icons text-sm">check_circle</span>
               Complete & View Results
@@ -415,7 +412,7 @@ const PhaseFour = () => {
               <span className="material-icons text-sm">info</span>
               Distribute All Tokens to Continue
               <span className="text-xs opacity-75 ml-1">
-                ({tokensPlaced}/{totalTokens})
+                ({getTotalTokens()}/{totalTokens})
               </span>
             </>
           )}
