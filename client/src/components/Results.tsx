@@ -5,11 +5,17 @@ import { Link } from 'wouter';
 
 const Results = () => {
   const { state, resetAssessment } = useAssessment();
-  const { result } = state;
+  const { result, stateDistribution: contextStateDistribution } = state;
   
   if (!result) return null;
   
-  const { type, influence, stateDistribution, subtypeDistribution } = result;
+  // Log the state distributions to debug the issue
+  console.log("Context state distribution:", contextStateDistribution);
+  console.log("Result state distribution:", result.stateDistribution);
+  
+  const { type, influence, subtypeDistribution } = result;
+  // Use the state distribution directly from context to ensure we have the latest values
+  const stateDistribution = contextStateDistribution;
   
   const handleShare = () => {
     // Implement sharing functionality
