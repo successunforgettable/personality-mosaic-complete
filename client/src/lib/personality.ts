@@ -397,7 +397,7 @@ export const personalityInfluences: PersonalityInfluence[] = [
 ];
 
 // Function to determine the personality influence (wing)
-export function determineInfluence(selectedBlocks: BuildingBlock[]): PersonalityInfluence {
+export function determineInfluence(selectedBlocks: BuildingBlock[], primaryType?: PersonalityType): PersonalityInfluence {
   if (selectedBlocks.length === 0) {
     // Default to Type 9 influence if no blocks selected (shouldn't happen in real use)
     return personalityInfluences[8]; // Index 8 is Type 9
@@ -415,6 +415,50 @@ export function determineInfluence(selectedBlocks: BuildingBlock[]): Personality
     }
   });
   
+  // If primary type is provided, enforce proper Enneagram wing rules
+  if (primaryType) {
+    const typeId = primaryType.id;
+    
+    // In Enneagram, a type can only have wings from adjacent numbers
+    // Type 1 can have wings 9 or 2
+    // Type 2 can have wings 1 or 3
+    // Type 3 can have wings 2 or 4
+    // And so on...
+    
+    // Define valid wings for each type
+    const validWings: Record<number, number[]> = {
+      1: [9, 2],
+      2: [1, 3],
+      3: [2, 4],
+      4: [3, 5],
+      5: [4, 6],
+      6: [5, 7],
+      7: [6, 8],
+      8: [7, 9],
+      9: [8, 1]
+    };
+    
+    // Get valid wings for the primary type
+    const possibleWings = validWings[typeId];
+    
+    // Find the highest scoring valid wing
+    let highestValidScore = -1;
+    let validWingId = possibleWings[0].toString(); // Default to first possible wing
+    
+    possibleWings.forEach(wingId => {
+      const wingScore = scores[wingId.toString()] || 0;
+      if (wingScore > highestValidScore) {
+        highestValidScore = wingScore;
+        validWingId = wingId.toString();
+      }
+    });
+    
+    // Get the personality influence with the matching ID
+    const matchedInfluence = personalityInfluences.find(influence => influence.id === parseInt(validWingId));
+    return matchedInfluence || personalityInfluences[8]; // Fallback to Type 9 if not found
+  }
+  
+  // If no primary type provided, use the original algorithm
   // Find the influence with the highest score
   let highestScore = 0;
   let highestTypeId = "9"; // Default to Type 9
@@ -428,6 +472,5 @@ export function determineInfluence(selectedBlocks: BuildingBlock[]): Personality
   
   // Get the personality influence with the matching ID
   const matchedInfluence = personalityInfluences.find(influence => influence.id === parseInt(highestTypeId));
-  
   return matchedInfluence || personalityInfluences[8]; // Fallback to Type 9 if not found
 }
