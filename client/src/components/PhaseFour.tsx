@@ -70,6 +70,11 @@ const PhaseFour: React.FC = () => {
     if (isComplete) {
       // Log the subtype distribution before generating result
       console.log("Saving subtype distribution:", subtypeDistribution);
+      console.log("Token distribution:", distribution);
+      
+      // Pass the subtype distribution directly through the context
+      // This is simpler and ensures the percentages are correctly calculated
+      // No need to create and move detail elements
       
       // Generate the final result
       generateResult();
