@@ -96,9 +96,54 @@ const PhaseThree = () => {
     setLocalDistribution(newDistribution);
   };
   
-  const handleContinue = () => {
+  // Add state for saving status
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
+  
+  const handleContinue = async () => {
+    // Update local context state
     updateStateDistribution(localDistribution);
-    setPhase(4);
+    
+    // Save to database
+    setIsSaving(true);
+    setSaveError(null);
+    
+    try {
+      // For demo purposes, we'll use a placeholder userId
+      // In a real app, this would come from authentication
+      const userId = 1;
+      
+      const response = await fetch('/api/assessment/state-distribution', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId,
+          stateDistribution: localDistribution
+        }),
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to save state distribution');
+      }
+      
+      // Successfully saved to database
+      console.log('State distribution saved to database');
+      
+      // Continue to next phase
+      setPhase(4);
+    } catch (error) {
+      console.error('Error saving state distribution:', error);
+      setSaveError(error instanceof Error ? error.message : 'An unexpected error occurred');
+      // Continue anyway after showing error briefly
+      setTimeout(() => {
+        setPhase(4);
+      }, 2000);
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
@@ -258,18 +303,37 @@ const PhaseThree = () => {
         <TowerVisualization stateDistribution={localDistribution} />
       </div>
 
+      {/* Error message if saving fails */}
+      {saveError && (
+        <div className="mb-4 p-3 bg-red-50 text-red-700 rounded-lg border border-red-200">
+          <p className="flex items-center">
+            <span className="material-icons mr-2 text-red-500">error</span>
+            {saveError}
+          </p>
+        </div>
+      )}
+      
       <div className="flex justify-between">
         <button 
           className="px-5 py-2.5 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-all"
           onClick={() => setPhase(2)}
+          disabled={isSaving}
         >
           Previous Phase
         </button>
         <button 
-          className="px-6 py-3 bg-primary-500 text-white rounded-lg font-medium shadow-md hover:bg-primary-600 transition-all"
+          className={`px-6 py-3 ${isSaving ? 'bg-gray-400' : 'bg-primary-500 hover:bg-primary-600'} text-white rounded-lg font-medium shadow-md transition-all flex items-center`}
           onClick={handleContinue}
+          disabled={isSaving}
         >
-          Continue to Detail Elements
+          {isSaving ? (
+            <>
+              <span className="material-icons animate-spin mr-2">cached</span>
+              Saving...
+            </>
+          ) : (
+            'Continue to Detail Elements'
+          )}
         </button>
       </div>
     </motion.div>

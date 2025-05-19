@@ -1,8 +1,8 @@
-import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { useAssessment } from "@/context/AssessmentContext";
-import { FoundationStone } from "@/types/assessment";
-import { foundationStoneSets } from "@/lib/personality";
+import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
+import { useAssessment } from '@/context/AssessmentContext';
+import { FoundationStone } from '@/types/assessment';
+import { foundationStoneSets } from '@/lib/personality';
 
 const PhaseOne = () => {
   const { state, selectFoundationStone, nextFoundationSet } = useAssessment();
@@ -10,8 +10,8 @@ const PhaseOne = () => {
   
   const [currentSet, setCurrentSet] = useState<FoundationStone[]>([]);
   
+  // Get the current set of foundation stones
   useEffect(() => {
-    // Get the current set of foundation stones based on the foundationSet number
     const set = foundationStoneSets.find(set => set.id === foundationSet);
     if (set) {
       setCurrentSet(set.stones);
@@ -85,58 +85,9 @@ const PhaseOne = () => {
         </div>
       </div>
 
-      <div className="flex flex-col items-center justify-center">
-        <div className="text-center mb-6">
-          <h3 className="text-xl font-semibold text-gray-800">Your Foundation</h3>
-          <p className="text-gray-600 text-sm">Watch your foundation take shape as you make selections</p>
-        </div>
-
-        <div className="w-64 h-64 relative">
-          <div className="absolute inset-0 flex items-center justify-center">
-            {selectedFoundationStones.length === 0 ? (
-              <div className="w-40 h-40 rounded-full border-4 border-dashed border-gray-300 flex items-center justify-center text-gray-400">
-                <span className="material-icons text-6xl">foundation</span>
-              </div>
-            ) : (
-              <div className="w-40 h-40 rounded-full bg-primary-100 border-4 border-primary-300 flex items-center justify-center relative overflow-hidden">
-                {selectedFoundationStones.map((stone, index) => {
-                  const angle = (index / selectedFoundationStones.length) * Math.PI * 2;
-                  const x = Math.cos(angle) * 50 + 50;
-                  const y = Math.sin(angle) * 50 + 50;
-                  
-                  return (
-                    <motion.div
-                      key={stone.id}
-                      initial={{ opacity: 0, scale: 0 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      className="absolute w-10 h-10 rounded-md bg-primary-200 border border-primary-300 shadow-md"
-                      style={{
-                        left: `${x}%`,
-                        top: `${y}%`,
-                        transform: 'translate(-50%, -50%)',
-                      }}
-                    />
-                  );
-                })}
-              </div>
-            )}
-          </div>
-        </div>
+      <div className="text-center">
+        <p className="text-gray-600 italic text-sm mb-6">Choose a foundation stone to continue building your personality tower.</p>
       </div>
-
-      <motion.div 
-        className="flex justify-center mt-10"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.3 }}
-      >
-        <button 
-          className="px-6 py-3 bg-primary-500 text-white rounded-lg font-medium shadow-md hover:bg-primary-600 transition-all"
-          onClick={nextFoundationSet}
-        >
-          {foundationSet < 3 ? 'Continue to Next Set' : 'Continue to Building Blocks'}
-        </button>
-      </motion.div>
     </motion.div>
   );
 };
