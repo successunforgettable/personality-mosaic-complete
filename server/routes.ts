@@ -5,6 +5,45 @@ import { insertAssessmentResultSchema } from "@shared/schema";
 import { ZodError } from "zod";
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Save state distribution
+  app.post("/api/assessment/state-distribution", async (req, res) => {
+    try {
+      // Check if we have valid state distribution data
+      const { userId, stateDistribution } = req.body;
+      
+      if (!userId || !stateDistribution) {
+        return res.status(400).json({ message: "Missing required fields: userId and stateDistribution" });
+      }
+      
+      // Ensure we have the required state distribution properties
+      if (typeof stateDistribution.healthy !== 'number' || 
+          typeof stateDistribution.average !== 'number' || 
+          typeof stateDistribution.unhealthy !== 'number') {
+        return res.status(400).json({ message: "Invalid state distribution format" });
+      }
+      
+      // Calculate total to ensure it's 100%
+      const total = stateDistribution.healthy + stateDistribution.average + stateDistribution.unhealthy;
+      if (Math.abs(total - 100) > 0.01) { // Allow small rounding errors
+        return res.status(400).json({ message: "State distribution must sum to 100%" });
+      }
+      
+      // Save as temporary assessment result with minimal data
+      const tempResult = await storage.createAssessmentResult({
+        userId,
+        personalityType: "pending", // Will be updated after full assessment
+        influence: "pending", // Will be updated after full assessment
+        stateDistribution,
+        subtypeDistribution: { selfPreservation: 0, oneToOne: 0, social: 0 } // Placeholder
+      });
+      
+      res.status(201).json({ success: true, stateDistributionId: tempResult.id });
+    } catch (error) {
+      console.error("Error saving state distribution:", error);
+      res.status(500).json({ message: "Failed to save state distribution" });
+    }
+  });
+  
   // Save assessment results
   app.post("/api/assessment/results", async (req, res) => {
     try {
