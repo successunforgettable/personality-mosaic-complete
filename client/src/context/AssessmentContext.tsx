@@ -120,8 +120,9 @@ function assessmentReducer(state: AssessmentState, action: AssessmentAction): As
       // Calculate the personality type based on selected foundation stones
       const personalityType = determinePersonalityType(state.selectedFoundationStones);
       
-      // Calculate the influence based on building blocks
-      const influence = determineInfluence(state.selectedBuildingBlocks);
+      // Calculate the influence (wing) based on building blocks
+      // Pass the primary type to ensure only valid wing combinations
+      const influence = determineInfluence(state.selectedBuildingBlocks, personalityType);
       
       // Calculate subtype distribution
       const subtypeDistribution = {
@@ -130,6 +131,7 @@ function assessmentReducer(state: AssessmentState, action: AssessmentAction): As
         social: Math.round((state.detailElements.social.length / 10) * 100)
       };
       
+      // Now we can be sure the wing is valid for the primary type
       const result: PersonalityResult = {
         type: personalityType,
         influence,
