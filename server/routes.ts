@@ -15,15 +15,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Missing required fields: userId and stateDistribution" });
       }
       
-      // Ensure we have the required state distribution properties
-      if (typeof stateDistribution.healthy !== 'number' || 
-          typeof stateDistribution.average !== 'number' || 
-          typeof stateDistribution.unhealthy !== 'number') {
+      // Ensure we have the required state distribution properties (5-state system)
+      if (typeof stateDistribution.veryGood !== 'number' || 
+          typeof stateDistribution.good !== 'number' || 
+          typeof stateDistribution.average !== 'number' ||
+          typeof stateDistribution.belowAverage !== 'number' ||
+          typeof stateDistribution.destructive !== 'number') {
         return res.status(400).json({ message: "Invalid state distribution format" });
       }
       
       // Calculate total to ensure it's 100%
-      const total = stateDistribution.healthy + stateDistribution.average + stateDistribution.unhealthy;
+      const total = stateDistribution.veryGood + 
+                    stateDistribution.good + 
+                    stateDistribution.average + 
+                    stateDistribution.belowAverage + 
+                    stateDistribution.destructive;
+                    
       if (Math.abs(total - 100) > 0.01) { // Allow small rounding errors
         return res.status(400).json({ message: "State distribution must sum to 100%" });
       }
