@@ -1,0 +1,54 @@
+Color Palette Experience (Phase 3) UI/UX Design
+The "states" section of the Personality Mosaic Assessment System is designed as a Color Palette Experience where users interact with visual representations of their psychological operating states. This phase uses a painting/coloring metaphor for an engaging and intuitive experience.
+Visual Layout and Interaction
+The interface features five vertically arranged "paint palette" cards (200px × 120px each) representing different psychological operating states:
+
+Very Good - Green palette (#22c55e)
+Good - Teal palette (#10b981)
+Average - Amber palette (#f59e0b)
+Orange - Orange palette (#f97316)
+Destructive - Red palette (#ef4444)
+
+Each palette card has:
+
+A paint palette shape with color swatches specific to that state
+Gradient background matching the state's color theme
+White border (2px) with rounded corners (8px radius)
+Subtle shadow effect for depth
+The state name and a personalized description in 16px Inter Medium font
+Hover animations (slight scale increase to 1.03× and shadow enhancement)
+Selected state indication (glow effect and checkmark)
+
+User Flow
+
+Users are presented with instructions: "Select the two color palettes that represent your common operating states"
+Users review all five palettes, each containing personalized descriptions relevant to their personality type
+Users select exactly two palettes that best match their common mental/emotional states
+After selecting two palettes, a horizontal color-mixing slider appears
+Users adjust this slider to indicate the percentage distribution between their selected states (e.g., 70% Very Good, 30% Average)
+As users make selections and adjust the slider, their personality tower visualization updates in real-time, showing the color gradient being applied
+
+State Content Personalization
+Each palette card displays personalized content based on the user's previously identified personality type. For example, a Type 1 (Reformer) seeing the "Very Good" state would read:
+"I feel balanced and at peace with imperfection. I channel my natural eye for improvement into positive change without becoming stressed. I can prioritize what truly matters and let go of minor issues with grace."
+While a Type 7 (Enthusiast) would see a different description for the same state:
+"I experience joy fully while staying grounded in reality. I commit to meaningful experiences rather than chasing novelty. I face difficult emotions with the same enthusiasm I give to pleasure."
+Color Blending Control
+After selecting two states, users interact with a horizontal slider that:
+
+Is 40px in height and spans the container width
+Features a single circular handle (24px diameter)
+Displays a gradient track matching the colors of the selected states (left to right)
+Shows numerical percentages for both selected states (e.g., "70% / 30%")
+Defaults to a 50/50 distribution
+Visually represents a paint mixing tool blending the two selected colors
+
+Tower Visualization Integration
+As users make selections and adjust the distribution:
+
+The personality tower visualization updates with smooth color transitions (0.5s)
+The tower displays a gradient between the selected state colors
+The color distribution visually reflects the percentage allocation set by the user
+The experience creates a cohesive metaphor of painting/coloring their personality tower
+
+This visually engaging approach transforms abstract psychological concepts into an intuitive, creative experience that helps users understand and interact with their personality states in a meaningful way.

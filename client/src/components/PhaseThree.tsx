@@ -152,7 +152,7 @@ const PhaseThree = () => {
     {
       key: 'veryGood' as keyof StateDistribution,
       title: 'Very Good State',
-      description: 'Your optimal and most integrated state',
+      description: 'I feel balanced and at peace with imperfection. I channel my natural strengths into positive change.',
       gradient: 'from-green-100 to-green-200',
       color: 'green',
       textColor: 'text-green-600',
@@ -164,7 +164,7 @@ const PhaseThree = () => {
     {
       key: 'good' as keyof StateDistribution,
       title: 'Good State',
-      description: 'Your healthy and growth-oriented state',
+      description: 'I am growing in self-awareness and making progress. I recognize patterns and choose better responses.',
       gradient: 'from-emerald-100 to-emerald-200',
       color: 'emerald',
       textColor: 'text-emerald-600',
@@ -176,7 +176,7 @@ const PhaseThree = () => {
     {
       key: 'average' as keyof StateDistribution,
       title: 'Average State',
-      description: 'Your everyday functional self',
+      description: 'I function adequately but fall back into old habits. I am aware of tendencies but not always managing them.',
       gradient: 'from-amber-100 to-amber-200',
       color: 'amber',
       textColor: 'text-amber-600',
@@ -188,7 +188,7 @@ const PhaseThree = () => {
     {
       key: 'belowAverage' as keyof StateDistribution,
       title: 'Below Average State',
-      description: 'Your stressed or reactive self',
+      description: 'I get caught in reactive patterns and find it difficult to pause. My less healthy tendencies are pronounced.',
       gradient: 'from-orange-100 to-orange-200',
       color: 'orange',
       textColor: 'text-orange-600',
@@ -200,7 +200,7 @@ const PhaseThree = () => {
     {
       key: 'destructive' as keyof StateDistribution,
       title: 'Destructive State',
-      description: 'Your unhealthy and harmful patterns',
+      description: 'I am caught in unhealthy patterns and blind spots. I cause harm to myself or others without recognizing it.',
       gradient: 'from-red-100 to-red-200',
       color: 'red',
       textColor: 'text-red-600',
@@ -233,34 +233,53 @@ const PhaseThree = () => {
           {/* Color Palette Selection */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
             {colorPalettes.map(palette => (
-              <div 
+              <motion.div 
                 key={palette.key} 
-                className={`flex flex-col cursor-pointer transition-all rounded-lg overflow-hidden ${
+                className={`flex flex-col cursor-pointer transition-all rounded-lg overflow-hidden border-2 border-white shadow-md ${
                   selectedStates.includes(palette.key) ? 'ring-2 ring-offset-2 ring-' + palette.color + '-500' : ''
                 }`}
                 onClick={() => toggleStateSelection(palette.key)}
+                whileHover={{ scale: 1.03, boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1)' }}
+                style={{ height: "120px", width: "200px", maxWidth: "100%" }}
               >
-                <div className={`bg-gradient-to-b ${palette.gradient} p-6 flex flex-col items-center justify-center text-center h-48`}>
-                  <div className="mb-2">
-                    {selectedStates.includes(palette.key) ? (
-                      <div className={`h-8 w-8 rounded-full ${palette.activeColor} text-white flex items-center justify-center`}>
+                {/* Paint palette shape with proper design */}
+                <div 
+                  className={`bg-gradient-to-br ${palette.gradient} p-4 flex flex-col items-center justify-center text-center relative h-full`}
+                  style={{ 
+                    backgroundImage: `radial-gradient(circle at 70% 30%, ${palette.lightColor} 0%, ${palette.primaryColor} 50%, ${palette.darkColor} 100%)` 
+                  }}
+                >
+                  {/* Paint color swatches */}
+                  <div className="absolute top-2 left-2 flex space-x-1">
+                    <div className="h-3 w-3 rounded-full" style={{ backgroundColor: palette.lightColor }}></div>
+                    <div className="h-3 w-3 rounded-full" style={{ backgroundColor: palette.primaryColor }}></div>
+                    <div className="h-3 w-3 rounded-full" style={{ backgroundColor: palette.darkColor }}></div>
+                  </div>
+                  
+                  {/* Selection indicator */}
+                  {selectedStates.includes(palette.key) && (
+                    <div className="absolute top-2 right-2">
+                      <div className={`h-6 w-6 rounded-full bg-white text-${palette.color}-600 flex items-center justify-center shadow-md`}>
                         <span className="material-icons text-sm">check</span>
                       </div>
-                    ) : (
-                      <div className="h-8 w-8 rounded-full bg-white bg-opacity-50 border-2 border-gray-300"></div>
-                    )}
-                  </div>
-                  <h3 className={`font-semibold ${palette.textColor} text-lg mb-2`}>{palette.title}</h3>
-                  <p className="text-gray-600 text-sm">{palette.description}</p>
+                    </div>
+                  )}
+                  
+                  {/* Palette thumb hole */}
+                  <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2 w-8 h-3 bg-white opacity-30 rounded-t-full"></div>
+                  
+                  {/* Content */}
+                  <h3 className={`font-medium text-white text-base drop-shadow-md mb-1`}>{formatStateName(palette.key)}</h3>
+                  <p className="text-white text-xs drop-shadow-md">{palette.description}</p>
                 </div>
-              </div>
+              </motion.div>
             ))}
           </div>
 
           {/* Color Blending Slider - only appears after 2 palettes are selected */}
           {selectedStates.length === 2 && (
             <div className="mb-8">
-              <h3 className="text-lg font-semibold text-gray-800 mb-3">Blend Your Color Palette</h3>
+              <h3 className="text-lg font-semibold text-gray-800 mb-3">Color Mixing Tool</h3>
               <div className="mb-2 flex justify-between">
                 <span className={`${colorPalettes.find(p => p.key === selectedStates[0])?.textColor} font-medium`}>
                   {formatStateName(selectedStates[0])} {sliderValue}%
@@ -269,26 +288,53 @@ const PhaseThree = () => {
                   {formatStateName(selectedStates[1])} {100 - sliderValue}%
                 </span>
               </div>
-              <div className="relative h-10 rounded-lg overflow-hidden" 
-                style={{
-                  background: `linear-gradient(to right, 
-                    ${colorPalettes.find(p => p.key === selectedStates[0])?.primaryColor || '#22c55e'}, 
-                    ${colorPalettes.find(p => p.key === selectedStates[1])?.primaryColor || '#3b82f6'})`
-                }}>
-                <input 
-                  type="range" 
-                  min="0" 
-                  max="100" 
-                  value={sliderValue} 
-                  onChange={(e) => handleSliderChange(parseInt(e.target.value))}
-                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" 
-                />
-                <div className="absolute top-1/2 left-0 transform -translate-y-1/2 h-6 w-6 bg-white rounded-full shadow-md" 
-                  style={{ left: `${sliderValue}%`, marginLeft: '-12px' }}
-                />
+              
+              {/* Paint mixing metaphor visualization */}
+              <div className="relative">
+                {/* Paint mixing bowl - shows the gradual blend */}
+                <div className="relative h-16 rounded-xl overflow-hidden border-2 border-gray-200 shadow-inner mb-2" 
+                  style={{
+                    background: `linear-gradient(to right, 
+                      ${colorPalettes.find(p => p.key === selectedStates[0])?.primaryColor || '#22c55e'}, 
+                      ${colorPalettes.find(p => p.key === selectedStates[1])?.primaryColor || '#3b82f6'})`
+                  }}>
+                  {/* Paint drip effect */}
+                  <div className="absolute top-0 left-1/4 w-1 h-3 rounded-b-lg" 
+                    style={{ backgroundColor: colorPalettes.find(p => p.key === selectedStates[0])?.primaryColor }}></div>
+                  <div className="absolute top-0 right-1/4 w-1 h-5 rounded-b-lg" 
+                    style={{ backgroundColor: colorPalettes.find(p => p.key === selectedStates[1])?.primaryColor }}></div>
+                  
+                  {/* Mixing swirl effect */}
+                  <div className="absolute inset-0 opacity-10" 
+                    style={{ 
+                      backgroundImage: `radial-gradient(circle at ${sliderValue}% 50%, white, transparent 80%)`
+                    }}></div>
+                </div>
+                
+                {/* Slider control */}
+                <div className="relative h-10 rounded-full overflow-hidden bg-gray-100 border border-gray-300" 
+                  style={{ 
+                    backgroundImage: `linear-gradient(to right, 
+                      ${colorPalettes.find(p => p.key === selectedStates[0])?.primaryColor || '#22c55e'}, 
+                      ${colorPalettes.find(p => p.key === selectedStates[1])?.primaryColor || '#3b82f6'})` 
+                  }}>
+                  <input 
+                    type="range" 
+                    min="0" 
+                    max="100" 
+                    value={sliderValue} 
+                    onChange={(e) => handleSliderChange(parseInt(e.target.value))}
+                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" 
+                  />
+                  <div className="absolute top-1/2 left-0 transform -translate-y-1/2 h-8 w-8 bg-white rounded-full shadow-md border-2 border-gray-200 flex items-center justify-center" 
+                    style={{ left: `${sliderValue}%`, marginLeft: '-16px' }}>
+                    <div className="h-2 w-2 rounded-full bg-gray-400"></div>
+                  </div>
+                </div>
               </div>
-              <p className="text-sm text-gray-500 mt-2">
-                Adjust the slider to show how much time you spend in each state
+              
+              <p className="text-sm text-gray-600 mt-3 italic">
+                Adjust the slider to blend your selected states and show how much time you spend in each one
               </p>
             </div>
           )}
