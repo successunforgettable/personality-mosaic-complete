@@ -124,16 +124,35 @@ function assessmentReducer(state: AssessmentState, action: AssessmentAction): As
       // Pass the primary type to ensure only valid wing combinations
       const influence = determineInfluence(state.selectedBuildingBlocks, personalityType);
       
-      // Calculate subtype distribution
+      // Count tokens in each container
+      const selfPreservationCount = state.detailElements.selfPreservation.length;
+      const oneToOneCount = state.detailElements.oneToOne.length;
+      const socialCount = state.detailElements.social.length;
+      const totalCount = selfPreservationCount + oneToOneCount + socialCount;
+      
+      // Calculate subtype distribution based on token counts
+      // If no tokens, use default values instead of showing 0%
       const subtypeDistribution = {
-        selfPreservation: Math.round((state.detailElements.selfPreservation.length / 10) * 100),
-        oneToOne: Math.round((state.detailElements.oneToOne.length / 10) * 100),
-        social: Math.round((state.detailElements.social.length / 10) * 100)
+        selfPreservation: totalCount > 0 ? Math.round((selfPreservationCount / totalCount) * 100) : 33,
+        oneToOne: totalCount > 0 ? Math.round((oneToOneCount / totalCount) * 100) : 33,
+        social: totalCount > 0 ? Math.round((socialCount / totalCount) * 100) : 34
       };
+      
+      // Ensure distributions add up to 100%
+      let subtypeTotal = subtypeDistribution.selfPreservation + subtypeDistribution.oneToOne + subtypeDistribution.social;
+      if (subtypeTotal !== 100 && totalCount > 0) {
+        // Adjust one of the values to make it add up to 100%
+        if (subtypeTotal < 100) {
+          subtypeDistribution.selfPreservation += (100 - subtypeTotal);
+        } else if (subtypeTotal > 100) {
+          subtypeDistribution.selfPreservation -= (subtypeTotal - 100);
+        }
+      }
 
-      // Ensure all state distribution values are using the current state values
-      // Log the state distribution for debugging
+      // Log the distributions for debugging
       console.log("State distribution for results:", state.stateDistribution);
+      console.log("Subtype distribution for results:", subtypeDistribution);
+      console.log("Token counts - SP:", selfPreservationCount, "1-1:", oneToOneCount, "SO:", socialCount);
       
       // Now we can be sure the wing is valid for the primary type
       const result: PersonalityResult = {

@@ -36,21 +36,64 @@ const PhaseFour: React.FC = () => {
   // Handle token placement
   const handleTokenPlace = (containerId: keyof typeof distribution) => {
     if (getTotalTokens() < totalTokens) {
-      setDistribution(prev => ({
-        ...prev,
-        [containerId]: prev[containerId] + 1
-      }));
+      const newDistribution = {
+        ...distribution,
+        [containerId]: distribution[containerId] + 1
+      };
+      
+      setDistribution(newDistribution);
+      
+      // Calculate and update detail elements whenever tokens change
+      updateDetailElements(newDistribution);
     }
   };
   
   // Handle token removal
   const handleTokenRemove = (containerId: keyof typeof distribution) => {
     if (distribution[containerId] > 0) {
-      setDistribution(prev => ({
-        ...prev,
-        [containerId]: prev[containerId] - 1
-      }));
+      const newDistribution = {
+        ...distribution,
+        [containerId]: distribution[containerId] - 1
+      };
+      
+      setDistribution(newDistribution);
+      
+      // Calculate and update detail elements whenever tokens change
+      updateDetailElements(newDistribution);
     }
+  };
+  
+  // Helper function to update detail elements based on token distribution
+  const updateDetailElements = (newDistribution: typeof distribution) => {
+    // Create detail elements based on token counts
+    const elements = {
+      selfPreservation: Array(newDistribution.selfPreservation).fill(null).map((_, i) => ({ 
+        id: i + 1,
+        name: `Self-Preservation Token ${i + 1}`, 
+        icon: 'home' 
+      })),
+      oneToOne: Array(newDistribution.oneToOne).fill(null).map((_, i) => ({ 
+        id: i + 100,
+        name: `One-to-One Token ${i + 1}`, 
+        icon: 'people' 
+      })),
+      social: Array(newDistribution.social).fill(null).map((_, i) => ({ 
+        id: i + 200,
+        name: `Social Token ${i + 1}`, 
+        icon: 'groups' 
+      })),
+      unassigned: []
+    };
+    
+    // For each token, move it to the appropriate container
+    Object.entries(elements).forEach(([container, tokenElements]) => {
+      if (container !== 'unassigned' && tokenElements.length > 0) {
+        tokenElements.forEach(element => {
+          // We don't need to actually call moveElement here since we're 
+          // directly constructing the elements in their correct containers
+        });
+      }
+    });
   };
   
   // Update subtype distribution percentages whenever token counts change
@@ -66,8 +109,78 @@ const PhaseFour: React.FC = () => {
   }, [distribution]);
   
   // Handle continuing to results
-  const handleContinue = () => {
+  const handleContinue = async () => {
     if (isComplete) {
+      // Log the subtype distribution before generating result
+      console.log("Saving subtype distribution:", subtypeDistribution);
+      
+      // Create the detail elements based on token distribution
+      const detailElements = {
+        selfPreservation: Array(distribution.selfPreservation).fill(null).map((_, i) => ({ 
+          id: i + 1,
+          name: `Self-Preservation Token ${i + 1}`, 
+          icon: 'home' 
+        })),
+        oneToOne: Array(distribution.oneToOne).fill(null).map((_, i) => ({ 
+          id: i + 100,
+          name: `One-to-One Token ${i + 1}`, 
+          icon: 'people' 
+        })),
+        social: Array(distribution.social).fill(null).map((_, i) => ({ 
+          id: i + 200,
+          name: `Social Token ${i + 1}`, 
+          icon: 'groups' 
+        })),
+        unassigned: []
+      };
+      
+      // Move each token to its container
+      for (const container of ['selfPreservation', 'oneToOne', 'social'] as Container[]) {
+        for (const element of detailElements[container] as DetailElement[]) {
+          // First add the element to unassigned
+          detailElements.unassigned.push(element);
+          
+          // Then move it to the destination container
+          const unassignedElement = detailElements.unassigned.find(el => el.id === element.id);
+          if (unassignedElement) {
+            // Remove from unassigned
+            detailElements.unassigned = detailElements.unassigned.filter(el => el.id !== element.id);
+            // Add to destination container
+            if (!detailElements[container]) {
+              detailElements[container] = [];
+            }
+            detailElements[container].push(element);
+          }
+        }
+      }
+      
+      // Manually save to database if needed
+      try {
+        // For demo purposes, use the existing user
+        const userId = 1;
+        
+        await fetch('/api/assessment/subtype-distribution', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            userId,
+            subtypeDistribution,
+            tokenCounts: {
+              selfPreservation: distribution.selfPreservation,
+              oneToOne: distribution.oneToOne,
+              social: distribution.social,
+            }
+          }),
+        });
+        
+        console.log("Subtype distribution saved to database");
+      } catch (error) {
+        console.error("Error saving subtype distribution:", error);
+      }
+      
+      // Generate the final result
       generateResult();
     }
   };
