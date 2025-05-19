@@ -19,6 +19,7 @@ function Router() {
         <Switch>
           <Route path="/" component={Home} />
           <Route path="/assessment" component={Assessment} />
+          <Route path="/test/validation" component={PersonalitySystemValidator} />
           <Route component={NotFound} />
         </Switch>
       </main>

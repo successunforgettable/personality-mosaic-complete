@@ -177,7 +177,7 @@ const PhaseFour: React.FC = () => {
                   <h3 className="font-semibold text-lg text-gray-900">Self-Preservation</h3>
                   <div className="flex items-center gap-2">
                     <button 
-                      onClick={() => handleRemoveToken('selfPreservation')} 
+                      onClick={() => handleTokenRemove('selfPreservation')} 
                       disabled={distribution.selfPreservation === 0}
                       className={`w-8 h-8 rounded-full flex items-center justify-center ${
                         distribution.selfPreservation === 0 ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-red-100 text-red-600 hover:bg-red-200'
@@ -249,7 +249,7 @@ const PhaseFour: React.FC = () => {
                   <h3 className="font-semibold text-lg text-gray-900">One-to-One</h3>
                   <div className="flex items-center gap-2">
                     <button 
-                      onClick={() => handleRemoveToken('oneToOne')} 
+                      onClick={() => handleTokenRemove('oneToOne')} 
                       disabled={distribution.oneToOne === 0}
                       className={`w-8 h-8 rounded-full flex items-center justify-center ${
                         distribution.oneToOne === 0 ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-red-100 text-red-600 hover:bg-red-200'
@@ -321,7 +321,7 @@ const PhaseFour: React.FC = () => {
                   <h3 className="font-semibold text-lg text-gray-900">Social</h3>
                   <div className="flex items-center gap-2">
                     <button 
-                      onClick={() => handleRemoveToken('social')} 
+                      onClick={() => handleTokenRemove('social')} 
                       disabled={distribution.social === 0}
                       className={`w-8 h-8 rounded-full flex items-center justify-center ${
                         distribution.social === 0 ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-red-100 text-red-600 hover:bg-red-200'
