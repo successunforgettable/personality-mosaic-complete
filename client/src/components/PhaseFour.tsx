@@ -7,7 +7,7 @@ import { HTML5Backend } from 'react-dnd-html5-backend';
 import { useDragAndDrop } from '@/hooks/useDragAndDrop';
 import TowerVisualization from './TowerVisualization';
 
-// Draggable token component (following spec section 5.2.1)
+// Draggable token component
 const DraggableToken = ({ element, source, onDragEnd }: { 
   element: DetailElement, 
   source: Container,
@@ -23,110 +23,92 @@ const DraggableToken = ({ element, source, onDragEnd }: {
     }
   });
 
-  // Element colors based on category
-  const colors = {
-    'selfPreservation': 'from-green-400 to-green-600',
-    'oneToOne': 'from-blue-400 to-blue-600',
-    'social': 'from-purple-400 to-purple-600',
-    'unassigned': 'from-gray-300 to-gray-500'
-  };
-
   return (
-    <motion.div
+    <div
       ref={drag}
-      className={`w-8 h-8 rounded-full bg-gradient-to-br ${colors[source]}
-                text-white flex items-center justify-center cursor-grab shadow-md 
-                border border-white ${isDragging ? 'opacity-30 scale-90' : ''}`}
-      whileHover={{ scale: 1.1, boxShadow: '0 4px 8px rgba(0,0,0,0.15)' }}
-      animate={{ 
-        scale: isDragging ? 0.9 : [1, 1.05, 1], 
-        opacity: isDragging ? 0.5 : 1 
-      }}
-      transition={{ 
-        scale: { duration: 2, repeat: Infinity, repeatType: "reverse" },
-        opacity: { duration: 0.2 } 
-      }}
+      className={`rounded-full w-8 h-8 flex items-center justify-center shadow-md cursor-grab 
+                border border-white ${isDragging ? 'opacity-30' : 'opacity-100'} 
+                ${source === 'selfPreservation' ? 'bg-green-500' :
+                  source === 'oneToOne' ? 'bg-blue-500' :
+                  source === 'social' ? 'bg-purple-500' : 'bg-gray-400'}`}
     >
-      <span className="material-icons text-xs">{element.icon}</span>
+      <span className="text-white text-xs material-icons">{element.icon}</span>
       <div className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 whitespace-nowrap">
         <span className="text-xs font-medium text-gray-700">{element.name}</span>
       </div>
-    </motion.div>
+    </div>
   );
 };
 
-// Drop target component (following spec section 5.2.2)
+// Drop target component
 const DropTarget = ({ 
   container, 
   title, 
   description, 
   elements,
-  onDrop 
+  onElementDrop 
 }: {
   container: Container,
   title: string,
   description: string,
   elements: DetailElement[],
-  onDrop: (containerId: Container) => void
+  onElementDrop: (container: Container) => void
 }) => {
   const { drop, isOver } = useDragAndDrop({
     type: 'element',
     accept: 'element',
-    onDrop: () => onDrop(container)
+    onDrop: () => onElementDrop(container)
   });
 
   // Calculate fill percentage
   const fillPercentage = (elements.length / 10) * 100;
   
-  // Background colors based on container type
-  const colors = {
-    'selfPreservation': 'bg-green-100',
-    'oneToOne': 'bg-blue-100',
-    'social': 'bg-purple-100',
-  };
-
   return (
     <div
       ref={drop}
-      className={`drop-target rounded-lg p-4 transition-all duration-300
-                 ${isOver ? 'border-2 border-primary-400 bg-primary-50' : 'border border-dashed border-gray-300'}
+      className={`rounded-lg p-4 ${isOver ? 'border-2 border-blue-400 bg-blue-50' : 'border border-dashed border-gray-300'}
                  relative overflow-hidden`}
       style={{ minHeight: '120px' }}
     >
-      {/* Fill background based on number of elements */}
+      {/* Fill background based on container type */}
       <div 
-        className={`absolute inset-0 transition-all duration-300 ease-out ${colors[container as keyof typeof colors] || 'bg-gray-100'}`}
-        style={{ width: `${fillPercentage}%`, opacity: 0.5 }}
+        className={`absolute inset-0 ${
+          container === 'selfPreservation' ? 'bg-green-100' :
+          container === 'oneToOne' ? 'bg-blue-100' :
+          container === 'social' ? 'bg-purple-100' : 'bg-gray-100'
+        }`}
+        style={{ width: `${fillPercentage}%`, opacity: 0.4 }}
       />
       
       <div className="relative z-10">
         <div className="flex justify-between items-center mb-2">
           <h3 className="font-semibold text-gray-900">{title}</h3>
           <div className="bg-white rounded-full w-6 h-6 flex items-center justify-center shadow-sm">
-            <span className="text-xs font-medium text-primary-600">{elements.length}</span>
+            <span className="text-xs font-medium text-blue-600">{elements.length}</span>
           </div>
         </div>
         <p className="text-xs text-gray-600 mb-4">{description}</p>
         
-        {elements.length > 0 ? (
-          <div className="flex flex-wrap gap-4 min-h-16 items-center justify-center">
-            {elements.map(element => (
-              <DraggableToken 
-                key={element.id} 
-                element={element} 
-                source={container}
-                onDragEnd={(element, source, destination) => {
-                  console.log('Moving', element.name, 'from', source, 'to', destination);
-                  onDrop(destination);
-                }}
-              />
-            ))}
-          </div>
-        ) : (
-          <div className="flex items-center justify-center h-16 text-gray-400 italic text-sm border border-dashed border-gray-300 rounded bg-white bg-opacity-50">
-            Drop elements here
-          </div>
-        )}
+        <div className="flex flex-wrap gap-4 min-h-16 items-center justify-center">
+          {elements.map(element => (
+            <DraggableToken 
+              key={element.id} 
+              element={element} 
+              source={container}
+              onDragEnd={(el, src, dest) => {
+                // Forward to parent handler
+                const { moveElement } = useAssessment(); 
+                moveElement(el, src, dest);
+              }}
+            />
+          ))}
+          
+          {elements.length === 0 && (
+            <div className="flex items-center justify-center h-16 w-full text-gray-400 italic text-sm bg-white bg-opacity-50 rounded border border-dashed border-gray-300">
+              Drop elements here
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
@@ -136,7 +118,7 @@ const PhaseFour = () => {
   const { state, moveElement, generateResult, setPhase } = useAssessment();
   const { detailElements, stateDistribution } = state;
   
-  // Calculate subtype distribution for visualization
+  // Calculate subtype distribution
   const [subtypeDistribution, setSubtypeDistribution] = useState<SubtypeDistribution>({
     selfPreservation: 0,
     oneToOne: 0,
@@ -157,6 +139,12 @@ const PhaseFour = () => {
   const handleElementMove = (element: DetailElement, source: Container, destination: Container) => {
     moveElement(element, source, destination);
   };
+
+  // Handler for dropping elements into containers
+  const handleContainerDrop = (destination: Container) => {
+    // The actual move happens in the DraggableToken component
+    console.log('Container ready for drop:', destination);
+  };
   
   const handleComplete = () => {
     generateResult();
@@ -164,20 +152,20 @@ const PhaseFour = () => {
   
   const allElementsAssigned = detailElements.unassigned.length === 0;
   
-  // Get dominant subtype for UI styling
-  const getDominantSubtype = (): Container => {
+  // Get dominant subtype
+  const getDominantSubtype = (): string => {
     if (subtypeDistribution.selfPreservation >= subtypeDistribution.oneToOne && 
         subtypeDistribution.selfPreservation >= subtypeDistribution.social) {
-      return 'selfPreservation';
+      return 'Self-Preservation';
     } else if (subtypeDistribution.oneToOne >= subtypeDistribution.selfPreservation && 
                subtypeDistribution.oneToOne >= subtypeDistribution.social) {
-      return 'oneToOne';
+      return 'One-to-One';
     } else {
-      return 'social';
+      return 'Social';
     }
   };
   
-  // Get Stack Type (dominant vs balanced) based on algorithm in spec
+  // Get Stack Type (dominant vs balanced)
   const getStackType = (): string => {
     const highestScore = Math.max(
       subtypeDistribution.selfPreservation, 
@@ -186,43 +174,10 @@ const PhaseFour = () => {
     );
     return highestScore >= 50 ? 'dominant' : 'balanced';
   };
-  
-  // Subtype for UI
-  const subtypes = [
-    {
-      id: 'selfPreservation',
-      name: 'Self-Preservation',
-      description: 'Elements focused on physical security, health, domestic concerns, and material comfort',
-      elements: detailElements.selfPreservation,
-      color: 'green',
-      percentage: subtypeDistribution.selfPreservation
-    },
-    {
-      id: 'oneToOne',
-      name: 'One-to-One',
-      description: 'Elements focused on close personal relationships, intimacy, and individual connections',
-      elements: detailElements.oneToOne,
-      color: 'blue',
-      percentage: subtypeDistribution.oneToOne
-    },
-    {
-      id: 'social',
-      name: 'Social',
-      description: 'Elements focused on group dynamics, communities, and broader social structures',
-      elements: detailElements.social,
-      color: 'purple',
-      percentage: subtypeDistribution.social
-    }
-  ];
 
   return (
     <DndProvider backend={HTML5Backend}>
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -20 }}
-        className="animate-fade-in"
-      >
+      <div className="animate-fade-in">
         <div className="text-center mb-8">
           <h2 className="text-2xl md:text-3xl font-display font-semibold text-gray-900 mb-3">Decorate Your Tower</h2>
           <p className="text-gray-600 max-w-2xl mx-auto">
@@ -244,25 +199,42 @@ const PhaseFour = () => {
               <div className="text-sm text-gray-600 space-y-3 mt-6">
                 <p className="font-medium text-gray-800">Your subtype distribution:</p>
                 
-                {subtypes.map(subtype => (
-                  <div key={subtype.id} className="space-y-1">
-                    <div className="flex justify-between items-center">
-                      <span>{subtype.name}:</span>
-                      <span className="font-medium">{subtype.percentage}%</span>
-                    </div>
-                    <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-                      <div className={`bg-${subtype.color}-500 h-full`} style={{ width: `${subtype.percentage}%` }}></div>
-                    </div>
+                <div className="space-y-1">
+                  <div className="flex justify-between items-center">
+                    <span>Self-Preservation:</span>
+                    <span className="font-medium">{subtypeDistribution.selfPreservation}%</span>
                   </div>
-                ))}
+                  <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                    <div className="bg-green-500 h-full" style={{ width: `${subtypeDistribution.selfPreservation}%` }}></div>
+                  </div>
+                </div>
+                
+                <div className="space-y-1">
+                  <div className="flex justify-between items-center">
+                    <span>One-to-One:</span>
+                    <span className="font-medium">{subtypeDistribution.oneToOne}%</span>
+                  </div>
+                  <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                    <div className="bg-blue-500 h-full" style={{ width: `${subtypeDistribution.oneToOne}%` }}></div>
+                  </div>
+                </div>
+                
+                <div className="space-y-1">
+                  <div className="flex justify-between items-center">
+                    <span>Social:</span>
+                    <span className="font-medium">{subtypeDistribution.social}%</span>
+                  </div>
+                  <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                    <div className="bg-purple-500 h-full" style={{ width: `${subtypeDistribution.social}%` }}></div>
+                  </div>
+                </div>
                 
                 {allElementsAssigned && (
                   <div className="mt-4 p-3 bg-blue-50 rounded-lg text-sm">
                     <p className="font-medium text-blue-800">Stack Analysis:</p>
                     <p className="text-blue-700">
                       {getStackType() === 'dominant' ? 
-                        `${getDominantSubtype() === 'selfPreservation' ? 'Self-Preservation' : 
-                          getDominantSubtype() === 'oneToOne' ? 'One-to-One' : 'Social'} dominant` : 
+                        `${getDominantSubtype()} dominant` : 
                         'Balanced stack'}
                     </p>
                   </div>
@@ -294,18 +266,29 @@ const PhaseFour = () => {
             </div>
             
             <div className="space-y-6">
-              {subtypes.map(subtype => (
-                <DropTarget 
-                  key={subtype.id}
-                  container={subtype.id as Container}
-                  title={subtype.name}
-                  description={subtype.description}
-                  elements={detailElements[subtype.id as Container]}
-                  onDrop={(container) => {
-                    console.log('Drop in', container);
-                  }}
-                />
-              ))}
+              <DropTarget 
+                container="selfPreservation"
+                title="Self-Preservation"
+                description="Elements focused on physical security, health, domestic concerns, and material comfort"
+                elements={detailElements.selfPreservation}
+                onElementDrop={handleContainerDrop}
+              />
+              
+              <DropTarget 
+                container="oneToOne"
+                title="One-to-One"
+                description="Elements focused on close personal relationships, intimacy, and individual connections"
+                elements={detailElements.oneToOne}
+                onElementDrop={handleContainerDrop}
+              />
+              
+              <DropTarget 
+                container="social"
+                title="Social"
+                description="Elements focused on group dynamics, communities, and broader social structures"
+                elements={detailElements.social}
+                onElementDrop={handleContainerDrop}
+              />
             </div>
           </div>
         </div>
@@ -336,7 +319,7 @@ const PhaseFour = () => {
             )}
           </button>
         </div>
-      </motion.div>
+      </div>
     </DndProvider>
   );
 };

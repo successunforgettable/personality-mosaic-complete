@@ -56,13 +56,6 @@ const TowerVisualization = ({
     // Tower height calculation
     const towerHeight = 180; // Total height of tower in pixels
     
-    // Calculate the heights of each section based on state distribution
-    const veryGoodHeight = Math.round((distribution.veryGood / 100) * towerHeight);
-    const goodHeight = Math.round((distribution.good / 100) * towerHeight);
-    const averageHeight = Math.round((distribution.average / 100) * towerHeight);
-    const belowAverageHeight = Math.round((distribution.belowAverage / 100) * towerHeight);
-    const destructiveHeight = Math.round((distribution.destructive / 100) * towerHeight);
-    
     // Tower block widths - decreasing as they go up
     const baseWidth = 36;
     const blockWidths = [baseWidth, baseWidth - 4, baseWidth - 8, baseWidth - 12];
@@ -96,50 +89,83 @@ const TowerVisualization = ({
           {/* State segments within each block */}
           <div className="flex flex-col h-full w-full">
             {/* Very Good segment (Green) */}
-            <div 
-              className="bg-green-500" 
-              style={{ 
-                height: `${(distribution.veryGood / 100) * 100}%`,
-                opacity: 0.9 + (0.1 * (numBlocks - i) / numBlocks) // Higher blocks slightly more transparent
-              }} 
-            />
+            {distribution.veryGood > 0 && (
+              <div 
+                className="bg-green-500" 
+                style={{ 
+                  height: `${(distribution.veryGood / 100) * 100}%`,
+                  opacity: 0.9 + (0.1 * (numBlocks - i) / numBlocks) // Higher blocks slightly more transparent
+                }} 
+              />
+            )}
             
-            {/* Good segment (Teal/Mint) */}
-            <div 
-              className="bg-emerald-500" 
-              style={{ 
-                height: `${(distribution.good / 100) * 100}%`,
-                opacity: 0.85 + (0.1 * (numBlocks - i) / numBlocks)
-              }} 
-            />
+            {/* Good segment (Emerald) */}
+            {distribution.good > 0 && (
+              <div 
+                className="bg-emerald-500" 
+                style={{ 
+                  height: `${(distribution.good / 100) * 100}%`,
+                  opacity: 0.85 + (0.1 * (numBlocks - i) / numBlocks)
+                }} 
+              />
+            )}
             
-            {/* Average segment (Yellow/Amber) */}
-            <div 
-              className="bg-amber-500" 
-              style={{ 
-                height: `${(distribution.average / 100) * 100}%`,
-                opacity: 0.85 + (0.1 * (numBlocks - i) / numBlocks)
-              }} 
-            />
+            {/* Average segment (Amber) */}
+            {distribution.average > 0 && (
+              <div 
+                className="bg-amber-500" 
+                style={{ 
+                  height: `${(distribution.average / 100) * 100}%`,
+                  opacity: 0.85 + (0.1 * (numBlocks - i) / numBlocks)
+                }} 
+              />
+            )}
             
             {/* Below Average segment (Orange) */}
-            <div 
-              className="bg-orange-500" 
-              style={{ 
-                height: `${(distribution.belowAverage / 100) * 100}%`,
-                opacity: 0.8 + (0.1 * (numBlocks - i) / numBlocks)
-              }} 
-            />
+            {distribution.belowAverage > 0 && (
+              <div 
+                className="bg-orange-500" 
+                style={{ 
+                  height: `${(distribution.belowAverage / 100) * 100}%`,
+                  opacity: 0.8 + (0.1 * (numBlocks - i) / numBlocks)
+                }} 
+              />
+            )}
             
             {/* Destructive segment (Red) */}
-            <div 
-              className="bg-red-500" 
-              style={{ 
-                height: `${(distribution.destructive / 100) * 100}%`,
-                opacity: 0.8 + (0.1 * (numBlocks - i) / numBlocks)
-              }} 
-            />
+            {distribution.destructive > 0 && (
+              <div 
+                className="bg-red-500" 
+                style={{ 
+                  height: `${(distribution.destructive / 100) * 100}%`,
+                  opacity: 0.8 + (0.1 * (numBlocks - i) / numBlocks)
+                }} 
+              />
+            )}
           </div>
+          
+          {/* Add subtype decoration on the sides */}
+          {subtypeDistribution && i === 0 && (
+            <>
+              {/* Self-Preservation indicator */}
+              {subtypeDistribution.selfPreservation > 0 && (
+                <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-green-600" 
+                  style={{ opacity: Math.min(1, subtypeDistribution.selfPreservation / 50) }}></div>
+              )}
+              
+              {/* One-to-One indicator */}
+              {subtypeDistribution.oneToOne > 0 && (
+                <div className="absolute right-0 top-0 bottom-0 w-1.5 bg-blue-600" 
+                  style={{ opacity: Math.min(1, subtypeDistribution.oneToOne / 50) }}></div>
+              )}
+              
+              {/* Social indicator */}
+              {subtypeDistribution.social > 0 && (
+                <div className="absolute left-0 right-0 bottom-0 h-1.5 bg-purple-600" 
+                  style={{ opacity: Math.min(1, subtypeDistribution.social / 50) }}></div>
+              )}
+            </>
+          )}
         </motion.div>
       );
       
