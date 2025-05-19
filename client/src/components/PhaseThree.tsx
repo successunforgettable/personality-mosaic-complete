@@ -338,7 +338,7 @@ const PhaseThree = () => {
           Previous Phase
         </button>
         <button 
-          className={`px-6 py-3 ${isSaving ? 'bg-gray-400' : selectedStates.length !== 2 ? 'bg-gray-400' : 'bg-primary-500 hover:bg-primary-600'} 
+          className={`px-6 py-3 ${isSaving ? 'bg-gray-400' : selectedStates.length !== 2 ? 'bg-gray-400' : 'bg-blue-600 hover:bg-blue-700'} 
             text-white rounded-lg font-medium shadow-md transition-all flex items-center`}
           onClick={handleContinue}
           disabled={isSaving || selectedStates.length !== 2}

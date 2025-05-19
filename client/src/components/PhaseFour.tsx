@@ -23,10 +23,18 @@ const DraggableToken = ({ element, source, onDragEnd }: {
     }
   });
 
+  // Element colors based on category
+  const colors = {
+    'selfPreservation': 'from-green-400 to-green-600',
+    'oneToOne': 'from-blue-400 to-blue-600',
+    'social': 'from-purple-400 to-purple-600',
+    'unassigned': 'from-gray-300 to-gray-500'
+  };
+
   return (
     <motion.div
       ref={drag}
-      className={`w-8 h-8 rounded-full bg-gradient-to-br from-primary-400 to-primary-600 
+      className={`w-8 h-8 rounded-full bg-gradient-to-br ${colors[source]}
                 text-white flex items-center justify-center cursor-grab shadow-md 
                 border border-white ${isDragging ? 'opacity-30 scale-90' : ''}`}
       whileHover={{ scale: 1.1, boxShadow: '0 4px 8px rgba(0,0,0,0.15)' }}
@@ -52,15 +60,13 @@ const DropTarget = ({
   container, 
   title, 
   description, 
-  children, 
-  elementsCount, 
+  elements,
   onDrop 
 }: {
   container: Container,
   title: string,
   description: string,
-  elementsCount: number,
-  children: React.ReactNode,
+  elements: DetailElement[],
   onDrop: (containerId: Container) => void
 }) => {
   const { drop, isOver } = useDragAndDrop({
@@ -70,34 +76,57 @@ const DropTarget = ({
   });
 
   // Calculate fill percentage
-  const fillPercentage = (elementsCount / 10) * 100;
+  const fillPercentage = (elements.length / 10) * 100;
+  
+  // Background colors based on container type
+  const colors = {
+    'selfPreservation': 'bg-green-100',
+    'oneToOne': 'bg-blue-100',
+    'social': 'bg-purple-100',
+  };
 
   return (
     <div
       ref={drop}
-      className={`drop-target rounded-lg p-5 transition-all duration-300
-                 ${isOver ? 'border-primary-400 bg-primary-50' : 'border-dashed border'}
+      className={`drop-target rounded-lg p-4 transition-all duration-300
+                 ${isOver ? 'border-2 border-primary-400 bg-primary-50' : 'border border-dashed border-gray-300'}
                  relative overflow-hidden`}
       style={{ minHeight: '120px' }}
     >
       {/* Fill background based on number of elements */}
       <div 
-        className="absolute inset-0 bg-gradient-to-r from-primary-100 to-primary-200 transition-all duration-300 ease-out"
-        style={{ width: `${fillPercentage}%`, opacity: 0.3 }}
+        className={`absolute inset-0 transition-all duration-300 ease-out ${colors[container as keyof typeof colors] || 'bg-gray-100'}`}
+        style={{ width: `${fillPercentage}%`, opacity: 0.5 }}
       />
       
       <div className="relative z-10">
-        <h3 className="font-semibold text-gray-900 mb-1">{title}</h3>
-        <p className="text-xs text-gray-600 mb-3">{description}</p>
-        
-        <div className="flex flex-wrap gap-4 min-h-16 items-center justify-center">
-          {children}
+        <div className="flex justify-between items-center mb-2">
+          <h3 className="font-semibold text-gray-900">{title}</h3>
+          <div className="bg-white rounded-full w-6 h-6 flex items-center justify-center shadow-sm">
+            <span className="text-xs font-medium text-primary-600">{elements.length}</span>
+          </div>
         </div>
-      </div>
-      
-      {/* Count indicator */}
-      <div className="absolute top-2 right-2 bg-white rounded-full w-6 h-6 flex items-center justify-center shadow-sm">
-        <span className="text-xs font-medium text-primary-600">{elementsCount}</span>
+        <p className="text-xs text-gray-600 mb-4">{description}</p>
+        
+        {elements.length > 0 ? (
+          <div className="flex flex-wrap gap-4 min-h-16 items-center justify-center">
+            {elements.map(element => (
+              <DraggableToken 
+                key={element.id} 
+                element={element} 
+                source={container}
+                onDragEnd={(element, source, destination) => {
+                  console.log('Moving', element.name, 'from', source, 'to', destination);
+                  onDrop(destination);
+                }}
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="flex items-center justify-center h-16 text-gray-400 italic text-sm border border-dashed border-gray-300 rounded bg-white bg-opacity-50">
+            Drop elements here
+          </div>
+        )}
       </div>
     </div>
   );
@@ -135,6 +164,57 @@ const PhaseFour = () => {
   
   const allElementsAssigned = detailElements.unassigned.length === 0;
   
+  // Get dominant subtype for UI styling
+  const getDominantSubtype = (): Container => {
+    if (subtypeDistribution.selfPreservation >= subtypeDistribution.oneToOne && 
+        subtypeDistribution.selfPreservation >= subtypeDistribution.social) {
+      return 'selfPreservation';
+    } else if (subtypeDistribution.oneToOne >= subtypeDistribution.selfPreservation && 
+               subtypeDistribution.oneToOne >= subtypeDistribution.social) {
+      return 'oneToOne';
+    } else {
+      return 'social';
+    }
+  };
+  
+  // Get Stack Type (dominant vs balanced) based on algorithm in spec
+  const getStackType = (): string => {
+    const highestScore = Math.max(
+      subtypeDistribution.selfPreservation, 
+      subtypeDistribution.oneToOne, 
+      subtypeDistribution.social
+    );
+    return highestScore >= 50 ? 'dominant' : 'balanced';
+  };
+  
+  // Subtype for UI
+  const subtypes = [
+    {
+      id: 'selfPreservation',
+      name: 'Self-Preservation',
+      description: 'Elements focused on physical security, health, domestic concerns, and material comfort',
+      elements: detailElements.selfPreservation,
+      color: 'green',
+      percentage: subtypeDistribution.selfPreservation
+    },
+    {
+      id: 'oneToOne',
+      name: 'One-to-One',
+      description: 'Elements focused on close personal relationships, intimacy, and individual connections',
+      elements: detailElements.oneToOne,
+      color: 'blue',
+      percentage: subtypeDistribution.oneToOne
+    },
+    {
+      id: 'social',
+      name: 'Social',
+      description: 'Elements focused on group dynamics, communities, and broader social structures',
+      elements: detailElements.social,
+      color: 'purple',
+      percentage: subtypeDistribution.social
+    }
+  ];
+
   return (
     <DndProvider backend={HTML5Backend}>
       <motion.div
@@ -146,7 +226,7 @@ const PhaseFour = () => {
         <div className="text-center mb-8">
           <h2 className="text-2xl md:text-3xl font-display font-semibold text-gray-900 mb-3">Decorate Your Tower</h2>
           <p className="text-gray-600 max-w-2xl mx-auto">
-            Drag and drop these detail elements into the containers that best represent how you focus your energy and attention.
+            Drag and drop these detail elements into the three containers that best represent how you focus your energy and attention.
           </p>
         </div>
 
@@ -161,31 +241,32 @@ const PhaseFour = () => {
                 />
               </div>
               
-              <div className="text-sm text-gray-600 space-y-2 mt-4">
-                <p>Your subtype distribution:</p>
-                <div className="flex justify-between items-center">
-                  <span>Self-Preservation:</span>
-                  <span className="font-medium">{subtypeDistribution.selfPreservation}%</span>
-                </div>
-                <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-                  <div className="bg-green-500 h-full" style={{ width: `${subtypeDistribution.selfPreservation}%` }}></div>
-                </div>
+              <div className="text-sm text-gray-600 space-y-3 mt-6">
+                <p className="font-medium text-gray-800">Your subtype distribution:</p>
                 
-                <div className="flex justify-between items-center">
-                  <span>One-to-One:</span>
-                  <span className="font-medium">{subtypeDistribution.oneToOne}%</span>
-                </div>
-                <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-                  <div className="bg-blue-500 h-full" style={{ width: `${subtypeDistribution.oneToOne}%` }}></div>
-                </div>
+                {subtypes.map(subtype => (
+                  <div key={subtype.id} className="space-y-1">
+                    <div className="flex justify-between items-center">
+                      <span>{subtype.name}:</span>
+                      <span className="font-medium">{subtype.percentage}%</span>
+                    </div>
+                    <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                      <div className={`bg-${subtype.color}-500 h-full`} style={{ width: `${subtype.percentage}%` }}></div>
+                    </div>
+                  </div>
+                ))}
                 
-                <div className="flex justify-between items-center">
-                  <span>Social:</span>
-                  <span className="font-medium">{subtypeDistribution.social}%</span>
-                </div>
-                <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-                  <div className="bg-purple-500 h-full" style={{ width: `${subtypeDistribution.social}%` }}></div>
-                </div>
+                {allElementsAssigned && (
+                  <div className="mt-4 p-3 bg-blue-50 rounded-lg text-sm">
+                    <p className="font-medium text-blue-800">Stack Analysis:</p>
+                    <p className="text-blue-700">
+                      {getStackType() === 'dominant' ? 
+                        `${getDominantSubtype() === 'selfPreservation' ? 'Self-Preservation' : 
+                          getDominantSubtype() === 'oneToOne' ? 'One-to-One' : 'Social'} dominant` : 
+                        'Balanced stack'}
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -195,7 +276,7 @@ const PhaseFour = () => {
               <h3 className="font-semibold text-gray-900 mb-4">Available Elements</h3>
               
               {detailElements.unassigned.length > 0 ? (
-                <div className="flex flex-wrap gap-6 justify-center">
+                <div className="flex flex-wrap gap-6 justify-center p-4 border border-dashed border-gray-300 rounded-lg">
                   {detailElements.unassigned.map(element => (
                     <DraggableToken 
                       key={element.id} 
@@ -206,69 +287,25 @@ const PhaseFour = () => {
                   ))}
                 </div>
               ) : (
-                <div className="text-center py-4 text-gray-500">
-                  <p>All elements have been assigned! Review your distribution or continue.</p>
+                <div className="text-center py-4 text-gray-500 italic border border-dashed border-gray-300 rounded-lg">
+                  <p>All elements have been assigned!</p>
                 </div>
               )}
             </div>
             
             <div className="space-y-6">
-              <DropTarget 
-                container="selfPreservation"
-                title="Self-Preservation"
-                description="Elements focused on physical security, health, domestic concerns, and material comfort"
-                elementsCount={detailElements.selfPreservation.length}
-                onDrop={(container) => {
-                  console.log('Drop in', container);
-                }}
-              >
-                {detailElements.selfPreservation.map(element => (
-                  <DraggableToken 
-                    key={element.id} 
-                    element={element} 
-                    source="selfPreservation"
-                    onDragEnd={handleElementMove}
-                  />
-                ))}
-              </DropTarget>
-
-              <DropTarget 
-                container="oneToOne"
-                title="One-to-One"
-                description="Elements focused on close personal relationships, intimacy, and individual connections"
-                elementsCount={detailElements.oneToOne.length}
-                onDrop={(container) => {
-                  console.log('Drop in', container);
-                }}
-              >
-                {detailElements.oneToOne.map(element => (
-                  <DraggableToken 
-                    key={element.id} 
-                    element={element} 
-                    source="oneToOne"
-                    onDragEnd={handleElementMove}
-                  />
-                ))}
-              </DropTarget>
-
-              <DropTarget 
-                container="social"
-                title="Social"
-                description="Elements focused on group dynamics, communities, and broader social structures"
-                elementsCount={detailElements.social.length}
-                onDrop={(container) => {
-                  console.log('Drop in', container);
-                }}
-              >
-                {detailElements.social.map(element => (
-                  <DraggableToken 
-                    key={element.id} 
-                    element={element} 
-                    source="social"
-                    onDragEnd={handleElementMove}
-                  />
-                ))}
-              </DropTarget>
+              {subtypes.map(subtype => (
+                <DropTarget 
+                  key={subtype.id}
+                  container={subtype.id as Container}
+                  title={subtype.name}
+                  description={subtype.description}
+                  elements={detailElements[subtype.id as Container]}
+                  onDrop={(container) => {
+                    console.log('Drop in', container);
+                  }}
+                />
+              ))}
             </div>
           </div>
         </div>
@@ -281,7 +318,7 @@ const PhaseFour = () => {
             Previous Phase
           </button>
           <button 
-            className={`px-6 py-3 ${allElementsAssigned ? 'bg-primary-500 hover:bg-primary-600' : 'bg-gray-400 cursor-not-allowed'} 
+            className={`px-6 py-3 ${allElementsAssigned ? 'bg-blue-600 hover:bg-blue-700' : 'bg-gray-400 cursor-not-allowed'} 
               text-white rounded-lg font-medium shadow-md transition-all flex items-center gap-2`}
             onClick={handleComplete}
             disabled={!allElementsAssigned}
