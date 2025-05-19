@@ -17,9 +17,11 @@ const initialState: AssessmentState = {
   selectedFoundationStones: [],
   selectedBuildingBlocks: [],
   stateDistribution: {
-    healthy: 40,
-    average: 45,
-    unhealthy: 15
+    veryGood: 20,
+    good: 30, 
+    average: 30,
+    belowAverage: 15,
+    destructive: 5
   },
   detailElements: {
     selfPreservation: [],

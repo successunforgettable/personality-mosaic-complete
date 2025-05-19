@@ -22,6 +22,8 @@ const PhaseThree = () => {
   
   // Helper function to format state names for display
   const formatStateName = (state: keyof StateDistribution): string => {
+    if (state === 'veryGood') return 'Very Good';
+    if (state === 'belowAverage') return 'Below Average';
     return state.charAt(0).toUpperCase() + state.slice(1);
   };
   
@@ -33,17 +35,18 @@ const PhaseThree = () => {
     const state1Value = firstStatePercentage;
     const state2Value = 100 - firstStatePercentage;
     
-    // The third state gets 0%
-    const remainingState = (['healthy', 'average', 'unhealthy'] as Array<keyof StateDistribution>)
-      .find(s => !states.includes(s));
-    
-    if (!remainingState) return;
-    
+    // Initialize a new distribution with all states at 0%
     const newDistribution: StateDistribution = {
-      [state1]: state1Value,
-      [state2]: state2Value,
-      [remainingState]: 0
-    } as StateDistribution;
+      veryGood: 0,
+      good: 0,
+      average: 0,
+      belowAverage: 0,
+      destructive: 0
+    };
+    
+    // Set the two selected states' values
+    newDistribution[state1] = state1Value;
+    newDistribution[state2] = state2Value;
     
     setLocalDistribution(newDistribution);
   };
@@ -146,34 +149,64 @@ const PhaseThree = () => {
   // Define color palette card information based on technical specification
   const colorPalettes = [
     {
-      key: 'healthy' as keyof StateDistribution,
-      title: 'Healthy State',
-      description: 'Your best and most balanced self',
+      key: 'veryGood' as keyof StateDistribution,
+      title: 'Very Good State',
+      description: 'Your optimal and most integrated state',
       gradient: 'from-green-100 to-green-200',
       color: 'green',
       textColor: 'text-green-600',
       activeColor: 'bg-green-600',
-      primaryColor: '#22c55e'
+      primaryColor: '#22c55e',
+      lightColor: '#4ade80',
+      darkColor: '#166534'
+    },
+    {
+      key: 'good' as keyof StateDistribution,
+      title: 'Good State',
+      description: 'Your healthy and growth-oriented state',
+      gradient: 'from-emerald-100 to-emerald-200',
+      color: 'emerald',
+      textColor: 'text-emerald-600',
+      activeColor: 'bg-emerald-600',
+      primaryColor: '#10b981',
+      lightColor: '#34d399',
+      darkColor: '#065f46'
     },
     {
       key: 'average' as keyof StateDistribution,
       title: 'Average State',
       description: 'Your everyday functional self',
-      gradient: 'from-blue-100 to-blue-200',
-      color: 'blue',
-      textColor: 'text-blue-600',
-      activeColor: 'bg-blue-600',
-      primaryColor: '#3b82f6'
+      gradient: 'from-amber-100 to-amber-200',
+      color: 'amber',
+      textColor: 'text-amber-600',
+      activeColor: 'bg-amber-600',
+      primaryColor: '#f59e0b',
+      lightColor: '#fcd34d',
+      darkColor: '#b45309'
     },
     {
-      key: 'unhealthy' as keyof StateDistribution,
-      title: 'Unhealthy State',
+      key: 'belowAverage' as keyof StateDistribution,
+      title: 'Below Average State',
       description: 'Your stressed or reactive self',
+      gradient: 'from-orange-100 to-orange-200',
+      color: 'orange',
+      textColor: 'text-orange-600',
+      activeColor: 'bg-orange-600',
+      primaryColor: '#f97316',
+      lightColor: '#fb923c',
+      darkColor: '#c2410c'
+    },
+    {
+      key: 'destructive' as keyof StateDistribution,
+      title: 'Destructive State',
+      description: 'Your unhealthy and harmful patterns',
       gradient: 'from-red-100 to-red-200',
       color: 'red',
       textColor: 'text-red-600',
       activeColor: 'bg-red-600',
-      primaryColor: '#ef4444'
+      primaryColor: '#ef4444',
+      lightColor: '#f87171',
+      darkColor: '#b91c1c'
     }
   ];
 
@@ -266,9 +299,11 @@ const PhaseThree = () => {
             </div>
             <div className="h-4 bg-gray-100 rounded-full mt-2 overflow-hidden">
               <div className="flex h-full">
-                <div className="bg-green-500 h-full" style={{ width: `${localDistribution.healthy}%` }}></div>
-                <div className="bg-blue-500 h-full" style={{ width: `${localDistribution.average}%` }}></div>
-                <div className="bg-red-500 h-full" style={{ width: `${localDistribution.unhealthy}%` }}></div>
+                <div className="bg-green-500 h-full" style={{ width: `${localDistribution.veryGood}%` }}></div>
+                <div className="bg-emerald-500 h-full" style={{ width: `${localDistribution.good}%` }}></div>
+                <div className="bg-amber-500 h-full" style={{ width: `${localDistribution.average}%` }}></div>
+                <div className="bg-orange-500 h-full" style={{ width: `${localDistribution.belowAverage}%` }}></div>
+                <div className="bg-red-500 h-full" style={{ width: `${localDistribution.destructive}%` }}></div>
               </div>
             </div>
           </div>

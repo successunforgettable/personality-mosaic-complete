@@ -25,10 +25,12 @@ const TowerVisualization = ({
   // Use provided distribution or fallback to context
   const distribution = stateDistribution || contextStateDistribution;
   
-  // Calculate colors based on state distribution
-  const healthyColor = `rgba(74, 222, 128, ${distribution.healthy / 100})`;
-  const averageColor = `rgba(59, 130, 246, ${distribution.average / 100})`;
-  const unhealthyColor = `rgba(239, 68, 68, ${distribution.unhealthy / 100})`;
+  // Calculate colors based on state distribution (using the 5 state system)
+  const veryGoodColor = `rgba(34, 197, 94, ${distribution.veryGood / 100})`; // #22c55e
+  const goodColor = `rgba(16, 185, 129, ${distribution.good / 100})`; // #10b981
+  const averageColor = `rgba(245, 158, 11, ${distribution.average / 100})`; // #f59e0b
+  const belowAverageColor = `rgba(249, 115, 22, ${distribution.belowAverage / 100})`; // #f97316
+  const destructiveColor = `rgba(239, 68, 68, ${distribution.destructive / 100})`; // #ef4444
   
   // Tower style based on progression
   const renderFoundation = () => {
@@ -55,9 +57,11 @@ const TowerVisualization = ({
     const towerHeight = 180; // Total height of tower in pixels
     
     // Calculate the heights of each section based on state distribution
-    const healthyHeight = Math.round((distribution.healthy / 100) * towerHeight);
+    const veryGoodHeight = Math.round((distribution.veryGood / 100) * towerHeight);
+    const goodHeight = Math.round((distribution.good / 100) * towerHeight);
     const averageHeight = Math.round((distribution.average / 100) * towerHeight);
-    const unhealthyHeight = Math.round((distribution.unhealthy / 100) * towerHeight);
+    const belowAverageHeight = Math.round((distribution.belowAverage / 100) * towerHeight);
+    const destructiveHeight = Math.round((distribution.destructive / 100) * towerHeight);
     
     // Tower block widths - decreasing as they go up
     const baseWidth = 36;
@@ -91,29 +95,47 @@ const TowerVisualization = ({
         >
           {/* State segments within each block */}
           <div className="flex flex-col h-full w-full">
-            {/* Green segment (Healthy) */}
+            {/* Very Good segment (Green) */}
             <div 
               className="bg-green-500" 
               style={{ 
-                height: `${(distribution.healthy / 100) * 100}%`,
+                height: `${(distribution.veryGood / 100) * 100}%`,
                 opacity: 0.9 + (0.1 * (numBlocks - i) / numBlocks) // Higher blocks slightly more transparent
               }} 
             />
             
-            {/* Blue segment (Average) */}
+            {/* Good segment (Teal/Mint) */}
             <div 
-              className="bg-blue-500" 
+              className="bg-emerald-500" 
+              style={{ 
+                height: `${(distribution.good / 100) * 100}%`,
+                opacity: 0.85 + (0.1 * (numBlocks - i) / numBlocks)
+              }} 
+            />
+            
+            {/* Average segment (Yellow/Amber) */}
+            <div 
+              className="bg-amber-500" 
               style={{ 
                 height: `${(distribution.average / 100) * 100}%`,
                 opacity: 0.85 + (0.1 * (numBlocks - i) / numBlocks)
               }} 
             />
             
-            {/* Red segment (Unhealthy) */}
+            {/* Below Average segment (Orange) */}
+            <div 
+              className="bg-orange-500" 
+              style={{ 
+                height: `${(distribution.belowAverage / 100) * 100}%`,
+                opacity: 0.8 + (0.1 * (numBlocks - i) / numBlocks)
+              }} 
+            />
+            
+            {/* Destructive segment (Red) */}
             <div 
               className="bg-red-500" 
               style={{ 
-                height: `${(distribution.unhealthy / 100) * 100}%`,
+                height: `${(distribution.destructive / 100) * 100}%`,
                 opacity: 0.8 + (0.1 * (numBlocks - i) / numBlocks)
               }} 
             />
@@ -163,12 +185,14 @@ const TowerVisualization = ({
     return (
       <div className="w-full h-full rounded-lg shadow-lg overflow-hidden relative">
         <div 
-          className="w-full h-full bg-gradient-to-br from-primary-400 to-secondary-500"
+          className="w-full h-full"
           style={{
             background: `linear-gradient(135deg, 
-              rgba(99, 102, 241, ${distribution.healthy / 100}), 
-              rgba(139, 92, 246, ${distribution.average / 100}), 
-              rgba(239, 68, 68, ${distribution.unhealthy / 100}))`
+              rgba(34, 197, 94, ${distribution.veryGood / 100}), 
+              rgba(16, 185, 129, ${distribution.good / 100}), 
+              rgba(245, 158, 11, ${distribution.average / 100}),
+              rgba(249, 115, 22, ${distribution.belowAverage / 100}),
+              rgba(239, 68, 68, ${distribution.destructive / 100}))`
           }}
         >
           {/* Mosaic pattern overlay */}

@@ -21,9 +21,11 @@ export interface BuildingBlock {
 
 // State Distribution
 export interface StateDistribution {
-  healthy: number;
+  veryGood: number;
+  good: number;
   average: number;
-  unhealthy: number;
+  belowAverage: number;
+  destructive: number;
 }
 
 // Detail Elements

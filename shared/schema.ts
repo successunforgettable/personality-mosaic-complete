@@ -17,7 +17,7 @@ export const assessmentResults = pgTable("assessment_results", {
   userId: integer("user_id").references(() => users.id).notNull(),
   personalityType: text("personality_type").notNull(),
   influence: text("influence").notNull(),
-  stateDistribution: jsonb("state_distribution").notNull(),
+  stateDistribution: jsonb("state_distribution").notNull(), // Now stores 5 states instead of 3
   subtypeDistribution: jsonb("subtype_distribution").notNull(),
   createdAt: text("created_at").notNull().default("NOW()"),
 });
