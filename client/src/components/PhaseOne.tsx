@@ -6,6 +6,7 @@ import { FoundationStone } from '@/types/assessment';
 import { foundationStoneSets } from '@/lib/personality';
 import ProgressIndicator from './ProgressIndicator';
 import StoneSet from './StoneSet';
+import FoundationVisualization from './FoundationVisualization';
 import { toast } from '@/hooks/use-toast';
 import { useIsMobile } from '@/hooks/use-mobile';
 
@@ -209,27 +210,41 @@ const PhaseOne = () => {
         </p>
       </div>
 
-      <AnimatePresence mode="wait">
-        <motion.div 
-          key={`stone-set-${foundationSet}`}
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: -20 }}
-          transition={{ duration: 0.5 }}
-          className="mb-10"
-        >
-          {/* Using the enhanced StoneSet component for a better user experience */}
-          <StoneSet
-            stones={currentSet}
-            selectedStone={selectedFoundationStones.find(s => 
-              currentSet.some(cs => cs.id === s.id)
-            )}
-            onSelectStone={(stone) => !isSaving && handleStoneSelection(stone)}
-            setId={foundationSet}
-            isLoading={isSaving}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
+        {/* Left column: Foundation Visualization */}
+        <div className="flex justify-center">
+          <FoundationVisualization
+            selectedStones={selectedFoundationStones}
+            totalStones={9}
+            isAnimating={isSaving}
           />
-        </motion.div>
-      </AnimatePresence>
+        </div>
+        
+        {/* Right column: Stone Selection */}
+        <div>
+          <AnimatePresence mode="wait">
+            <motion.div 
+              key={`stone-set-${foundationSet}`}
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              transition={{ duration: 0.5 }}
+              className="mb-10"
+            >
+              {/* Using the enhanced StoneSet component for a better user experience */}
+              <StoneSet
+                stones={currentSet}
+                selectedStone={selectedFoundationStones.find(s => 
+                  currentSet.some(cs => cs.id === s.id)
+                )}
+                onSelectStone={(stone) => !isSaving && handleStoneSelection(stone)}
+                setId={foundationSet}
+                isLoading={isSaving}
+              />
+            </motion.div>
+          </AnimatePresence>
+        </div>
+      </div>
 
       {/* Foundation Set Indicators */}
       <div className="text-center mb-8">
