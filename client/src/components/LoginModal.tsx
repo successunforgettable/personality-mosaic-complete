@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { Eye, EyeOff, Mail, Lock, AlertCircle, Loader2, ArrowLeft } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { useToast } from "@/hooks/use-toast";
+import SocialAuthButton from "./SocialAuthButton";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -41,6 +42,7 @@ function LoginModal({
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [loginError, setLoginError] = useState<string | null>(null);
+  const [isSocialLoading, setIsSocialLoading] = useState<string | null>(null);
 
   // State for forgot password flow
   const [isForgotPasswordMode, setIsForgotPasswordMode] = useState(false);
@@ -153,6 +155,40 @@ function LoginModal({
     });
     
     navigate("/assessment");
+  };
+  
+  // Handle social authentication
+  const handleSocialAuth = async (provider: 'google' | 'facebook') => {
+    try {
+      // Set loading state for the specific provider
+      setIsSocialLoading(provider);
+      
+      // Clear any previous errors
+      setLoginError(null);
+      
+      // This would normally call OAuth endpoints
+      toast({
+        title: `${provider.charAt(0).toUpperCase() + provider.slice(1)} login`,
+        description: "This feature is coming soon. We're working on implementing OAuth integration.",
+      });
+      
+      // For now, just show a message that it's not implemented yet
+      console.log(`${provider} authentication clicked`);
+      
+      // Simulate delay
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+    } catch (error) {
+      console.error(`${provider} login failed:`, error);
+      toast({
+        title: "Authentication failed",
+        description: `Could not authenticate with ${provider}. Please try again.`,
+        variant: "destructive",
+      });
+      setLoginError(`${provider.charAt(0).toUpperCase() + provider.slice(1)} authentication failed. Please try another method.`);
+    } finally {
+      setIsSocialLoading(null);
+    }
   };
   
   const handleForgotPassword = () => {
