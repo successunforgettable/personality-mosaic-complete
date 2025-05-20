@@ -47,16 +47,31 @@ export default function Home() {
 
   return (
     <div className="font-sans">
-      {/* Hero Section */}
-      <section className="min-h-[85vh] w-full bg-gradient-to-br from-[#f1f5f9] to-[#ede9fe] relative overflow-hidden flex items-center">
-        <div className="max-w-7xl mx-auto px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+      {/* 1.1. Hero Section - full-width with 85vh height on desktop */}
+      <section className="h-auto lg:h-[85vh] w-full relative overflow-hidden flex items-center">
+        {/* 1.2. Subtle gradient animation background */}
+        <div className="absolute inset-0 bg-gradient-to-br from-[#f1f5f9] to-[#ede9fe] bg-[length:200%_200%] animate-gradient-slow">
+          {/* Decorative background shapes */}
+          <div className="absolute top-[10%] left-[5%] w-40 h-40 rounded-full bg-purple-200 opacity-30 blur-3xl"></div>
+          <div className="absolute top-[60%] right-[5%] w-60 h-60 rounded-full bg-blue-200 opacity-20 blur-3xl"></div>
+          <div className="absolute top-[30%] left-[60%] w-32 h-32 rounded-full bg-teal-200 opacity-25 blur-3xl"></div>
+        </div>
+        
+        {/* 1.3. Split layout with content left, visualization right */}
+        {/* 1.9. Ensure responsive behavior with breakpoints */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 items-center py-16 md:py-20 lg:py-0 relative z-10">
           <div className="animate-on-scroll">
-            <h1 className="text-4xl md:text-5xl font-bold text-[#1e293b] mb-6">
+            {/* 1.4. Add headline */}
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold font-inter text-[#1e293b] mb-6">
               Discover Your <span className="text-[#7c3aed]">Personality Tower</span>
             </h1>
-            <p className="text-lg md:text-xl text-[#64748b] mb-10">
+            
+            {/* 1.5. Add subheadline */}
+            <p className="text-base md:text-lg lg:text-xl text-[#64748b] mb-10 font-inter font-normal">
               Build a visual representation of your unique personality in just 5 minutes
             </p>
+            
+            {/* 1.7 & 1.8. Primary and secondary CTA buttons */}
             <div className="flex flex-col sm:flex-row gap-4">
               <div 
                 className="px-8 py-4 bg-[#7c3aed] text-white rounded-lg font-medium shadow-md hover:bg-[#6d28d9] hover:scale-[1.02] hover:shadow-lg transition-all duration-200 text-center cursor-pointer"
@@ -73,25 +88,48 @@ export default function Home() {
             </div>
           </div>
           
-          <div className="relative hidden lg:block animate-on-scroll">
-            {/* 3D Tower visualization with interactive hover effects */}
-            <div className="w-full h-96 relative">
-              {/* Base foundation */}
-              <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-[60%] h-[10%] bg-[#a78bfa] rounded-full shadow-md hover:scale-[1.03] transition-all duration-200"></div>
+          {/* 1.6. 3D interactive tower visualization - visible on tablet and larger screens */}
+          <div className="relative hidden md:block animate-on-scroll">
+            <div className="w-full h-[400px] relative perspective-1000">
+              {/* Base foundation with interactive hover effect */}
+              <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-[60%] h-[10%] bg-gradient-to-r from-[#a78bfa] to-[#8b5cf6] rounded-full shadow-lg hover:shadow-xl hover:scale-[1.03] transition-all duration-300 cursor-pointer" title="Foundation"></div>
               
-              {/* Tower layers with hover effects */}
-              <div className="absolute bottom-[10%] left-1/2 transform -translate-x-1/2 w-[50%] h-[20%] bg-gradient-to-t from-[#10b981] to-[#34d399] rounded-xl shadow-md hover:scale-[1.05] hover:rotate-1 hover:-translate-y-1 transition-all duration-200"></div>
+              {/* Tower layers with enhanced hover effects and labels */}
+              <div className="absolute bottom-[10%] left-1/2 transform -translate-x-1/2 w-[50%] h-[20%] bg-gradient-to-t from-[#10b981] to-[#34d399] rounded-xl shadow-lg hover:shadow-xl hover:scale-[1.05] hover:rotate-1 hover:-translate-y-1 transition-all duration-300 cursor-pointer" title="Very Good State">
+                <span className="opacity-0 hover:opacity-100 absolute inset-0 flex items-center justify-center text-white font-medium text-sm transition-opacity duration-300">Very Good</span>
+              </div>
               
-              <div className="absolute bottom-[30%] left-1/2 transform -translate-x-1/2 w-[45%] h-[20%] bg-gradient-to-t from-[#f97316] to-[#fb923c] rounded-xl shadow-md hover:scale-[1.05] hover:-rotate-1 hover:-translate-y-1 transition-all duration-200"></div>
+              <div className="absolute bottom-[30%] left-1/2 transform -translate-x-1/2 w-[45%] h-[20%] bg-gradient-to-t from-[#f97316] to-[#fb923c] rounded-xl shadow-lg hover:shadow-xl hover:scale-[1.05] hover:-rotate-1 hover:-translate-y-1 transition-all duration-300 cursor-pointer" title="Average State">
+                <span className="opacity-0 hover:opacity-100 absolute inset-0 flex items-center justify-center text-white font-medium text-sm transition-opacity duration-300">Average</span>
+              </div>
               
-              <div className="absolute bottom-[50%] left-1/2 transform -translate-x-1/2 w-[40%] h-[20%] bg-gradient-to-t from-[#3b82f6] to-[#60a5fa] rounded-xl shadow-md hover:scale-[1.05] hover:rotate-1 hover:-translate-y-1 transition-all duration-200"></div>
+              <div className="absolute bottom-[50%] left-1/2 transform -translate-x-1/2 w-[40%] h-[20%] bg-gradient-to-t from-[#3b82f6] to-[#60a5fa] rounded-xl shadow-lg hover:shadow-xl hover:scale-[1.05] hover:rotate-1 hover:-translate-y-1 transition-all duration-300 cursor-pointer" title="Good State">
+                <span className="opacity-0 hover:opacity-100 absolute inset-0 flex items-center justify-center text-white font-medium text-sm transition-opacity duration-300">Good</span>
+              </div>
               
-              <div className="absolute bottom-[70%] left-1/2 transform -translate-x-1/2 w-[35%] h-[20%] bg-gradient-to-t from-[#7c3aed] to-[#a78bfa] rounded-xl shadow-md hover:scale-[1.05] hover:-rotate-1 hover:-translate-y-1 transition-all duration-200"></div>
+              <div className="absolute bottom-[70%] left-1/2 transform -translate-x-1/2 w-[35%] h-[20%] bg-gradient-to-t from-[#7c3aed] to-[#a78bfa] rounded-xl shadow-lg hover:shadow-xl hover:scale-[1.05] hover:-rotate-1 hover:-translate-y-1 transition-all duration-300 cursor-pointer" title="Below Average State">
+                <span className="opacity-0 hover:opacity-100 absolute inset-0 flex items-center justify-center text-white font-medium text-sm transition-opacity duration-300">Below Average</span>
+              </div>
               
-              {/* Decorative elements */}
+              {/* Tower top with enhanced effect */}
+              <div className="absolute bottom-[90%] left-1/2 transform -translate-x-1/2 w-[25%] h-[10%] bg-gradient-to-t from-[#ec4899] to-[#f472b6] rounded-xl shadow-lg hover:shadow-xl hover:scale-[1.1] hover:rotate-2 hover:-translate-y-2 transition-all duration-300 cursor-pointer" title="Destructive State">
+                <span className="opacity-0 hover:opacity-100 absolute inset-0 flex items-center justify-center text-white font-medium text-xs transition-opacity duration-300">Destructive</span>
+              </div>
+              
+              {/* Interactive decorative elements with enhanced animations */}
               <div className="absolute top-[15%] left-[30%] w-3 h-3 bg-white rounded-full animate-pulse"></div>
-              <div className="absolute top-[40%] right-[25%] w-3 h-3 bg-white rounded-full animate-pulse"></div>
-              <div className="absolute top-[65%] left-[40%] w-3 h-3 bg-white rounded-full animate-pulse"></div>
+              <div className="absolute top-[40%] right-[25%] w-3 h-3 bg-white rounded-full animate-pulse-slow"></div>
+              <div className="absolute top-[65%] left-[40%] w-3 h-3 bg-white rounded-full animate-pulse-fast"></div>
+              <div className="absolute top-[25%] right-[35%] w-2 h-2 bg-yellow-200 rounded-full animate-float"></div>
+              <div className="absolute top-[55%] left-[25%] w-2 h-2 bg-blue-200 rounded-full animate-float-slow"></div>
+              
+              {/* Label for the tower */}
+              <div className="absolute -bottom-10 left-1/2 transform -translate-x-1/2 text-center">
+                <p className="text-sm text-[#64748b]">Interactive Tower Visualization</p>
+              </div>
+              
+              {/* Subtle shadow effect */}
+              <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-[70%] h-4 bg-black/10 rounded-full blur-md"></div>
             </div>
           </div>
         </div>
