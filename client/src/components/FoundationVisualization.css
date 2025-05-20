@@ -1,7 +1,7 @@
 .foundation-container {
   position: relative;
   width: 320px;
-  height: 320px;
+  height: 400px;
   margin: 0 auto;
 }
 
@@ -28,7 +28,7 @@
 
 .foundation-progress {
   text-align: center;
-  margin-top: 330px;
+  margin-top: 310px;
   font-size: 14px;
   color: #64748b;
 }
@@ -40,78 +40,78 @@
   height: 24px;
 }
 
-.pos-0 { top: 20px; left: 140px; } /* Top */
-.pos-1 { top: 55px; right: 55px; } /* Top-right */
-.pos-2 { right: 20px; top: 140px; } /* Right */
-.pos-3 { bottom: 55px; right: 55px; } /* Bottom-right */
-.pos-4 { bottom: 20px; left: 140px; } /* Bottom */
-.pos-5 { bottom: 55px; left: 55px; } /* Bottom-left */
-.pos-6 { left: 20px; top: 140px; } /* Left */
-.pos-7 { top: 55px; left: 55px; } /* Top-left */
-.pos-8 { top: 80px; left: 140px; } /* Extra position */
+.pos-0 { top: 0px; left: 128px; } /* Top */
+.pos-1 { top: 40px; right: 40px; } /* Top-right */
+.pos-2 { right: 0px; top: 128px; } /* Right */
+.pos-3 { bottom: 40px; right: 40px; } /* Bottom-right */
+.pos-4 { bottom: 0px; left: 128px; } /* Bottom */
+.pos-5 { bottom: 40px; left: 40px; } /* Bottom-left */
+.pos-6 { left: 0px; top: 128px; } /* Left */
+.pos-7 { top: 40px; left: 40px; } /* Top-left */
+.pos-8 { top: 80px; left: 128px; } /* Extra position */
 
 /* Lines connecting stones to center */
 .stone-line {
   position: absolute;
-  width: 120px;
+  width: 115px;
   height: 2px;
   background-color: rgba(148, 163, 184, 0.6);
-  transform-origin: center right;
+  transform-origin: left center;
 }
 
 /* Position-specific line rotations */
 .pos-0 .stone-line { 
   transform: rotate(90deg);
   top: 12px;
-  right: 24px;
+  left: 12px;
 }
 
 .pos-1 .stone-line { 
   transform: rotate(45deg);
   top: 12px;
-  right: 20px;
+  left: 12px;
 }
 
 .pos-2 .stone-line { 
   transform: rotate(0deg);
   top: 12px;
-  right: 24px; 
+  left: 12px;
 }
 
 .pos-3 .stone-line { 
   transform: rotate(-45deg);
   top: 12px;
-  right: 20px;
+  left: 12px;
 }
 
 .pos-4 .stone-line { 
   transform: rotate(-90deg);
   top: 12px;
-  right: 24px;
+  left: 12px;
 }
 
 .pos-5 .stone-line { 
   transform: rotate(-135deg);
   top: 12px;
-  right: 20px;
+  left: 12px;
 }
 
 .pos-6 .stone-line { 
   transform: rotate(180deg);
   top: 12px;
-  right: 24px;
+  left: 12px;
 }
 
 .pos-7 .stone-line { 
   transform: rotate(135deg);
   top: 12px;
-  right: 20px;
+  left: 12px;
 }
 
 .pos-8 .stone-line {
   transform: rotate(90deg);
   top: 12px;
-  right: 24px;
+  left: 12px;
 }
 
 /* Stone shapes */
@@ -129,10 +129,10 @@
 
 .stone-shape.head {
   background-color: #4f46e5;
-  border-radius: 0;
+  clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
 }
 
 .stone-shape.body {
   background-color: #0ea5e9;
-  border-radius: 50%;
+  clip-path: polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%);
 }
