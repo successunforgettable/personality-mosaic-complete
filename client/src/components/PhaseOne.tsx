@@ -6,7 +6,7 @@ import { FoundationStone } from '@/types/assessment';
 import { foundationStoneSets } from '@/lib/personality';
 import ProgressIndicator from './ProgressIndicator';
 import StoneSet from './StoneSet';
-import FoundationVisualization from './FoundationVisualization';
+import FoundationVisualization from './FoundationVisualization.jsx';
 import { toast } from '@/hooks/use-toast';
 import { useIsMobile } from '@/hooks/use-mobile';
 
