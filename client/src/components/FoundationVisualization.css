@@ -90,17 +90,17 @@
 
 .stone-shape.heart {
   background-color: #e11d48;
-  clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+  clip-path: polygon(50% 0%, 86% 25%, 100% 60%, 75% 100%, 25% 100%, 0% 60%, 14% 25%);  /* hexagon shape */
 }
 
 .stone-shape.head {
   background-color: #4f46e5;
-  clip-path: polygon(0% 25%, 50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%);
+  clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);  /* pentagon shape */
 }
 
 .stone-shape.body {
   background-color: #0ea5e9;
-  clip-path: polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%);
+  clip-path: polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%);  /* octagon shape */
 }
 
 .foundation-progress {
