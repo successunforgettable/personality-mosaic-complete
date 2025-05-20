@@ -9,6 +9,7 @@ import Assessment from "@/pages/Assessment";
 import SignUp from "@/pages/SignUp";
 import Login from "@/pages/Login";
 import UserProfile from "@/pages/UserProfile";
+import ResultsCompare from "@/pages/ResultsCompare";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { AssessmentProvider } from "./context/AssessmentContext";
@@ -44,6 +45,11 @@ function Router() {
           <Route path="/profile">
             <ProtectedRoute>
               <UserProfile />
+            </ProtectedRoute>
+          </Route>
+          <Route path="/results/compare">
+            <ProtectedRoute>
+              <ResultsCompare />
             </ProtectedRoute>
           </Route>
           <Route path="/test/validation" component={PersonalitySystemValidator} />

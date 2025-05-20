@@ -195,11 +195,7 @@ const Header = () => {
                     <div 
                       className="block px-4 py-2 text-[#64748b] cursor-pointer"
                       onClick={() => {
-                        setInfoModal({
-                          isOpen: true,
-                          title: "Profile",
-                          message: "Profile section coming soon! Complete an assessment to see your results."
-                        });
+                        navigate("/profile");
                         setMobileMenuOpen(false);
                       }}
                     >
@@ -208,11 +204,7 @@ const Header = () => {
                     <div 
                       className="block px-4 py-2 text-[#64748b] cursor-pointer"
                       onClick={() => {
-                        setInfoModal({
-                          isOpen: true,
-                          title: "Results",
-                          message: "Take an assessment first to see your results!"
-                        });
+                        navigate("/profile");
                         setMobileMenuOpen(false);
                       }}
                     >
