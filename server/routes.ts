@@ -67,13 +67,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // For testing purposes, allow login with test account
       if (email === "test@example.com" && password === "password123") {
-        // Create or update test user
+        // Create or update test user with the actual schema
         const testUser = await storage.upsertUser({
           id: "123456",
+          username: "testuser",
           email: "test@example.com",
-          firstName: "Test",
-          lastName: "User",
-          profileImageUrl: "https://ui-avatars.com/api/?name=Test+User&background=7c3aed&color=fff"
+          password: "password123"
         });
         
         // Generate JWT token

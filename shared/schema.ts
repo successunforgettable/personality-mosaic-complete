@@ -2,15 +2,13 @@ import { pgTable, text, serial, integer, jsonb, varchar, timestamp, index } from
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
-// User table for Replit Auth
+// User table - matches actual database structure
 export const users = pgTable("users", {
-  id: varchar("id").primaryKey().notNull(),
-  email: varchar("email").unique(),
-  firstName: varchar("first_name"),
-  lastName: varchar("last_name"),
-  profileImageUrl: varchar("profile_image_url"),
-  createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow(),
+  id: integer("id").primaryKey(),
+  username: text("username"),
+  password: text("password"),
+  email: text("email"),
+  created_at: text("created_at")
 });
 
 // Session storage table for Replit Auth
@@ -35,13 +33,12 @@ export const assessmentResults = pgTable("assessment_results", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
-// Schemas for Replit Auth
+// Schemas for user management
 export const upsertUserSchema = createInsertSchema(users).pick({
   id: true,
+  username: true,
+  password: true,
   email: true,
-  firstName: true,
-  lastName: true,
-  profileImageUrl: true,
 });
 
 export const insertAssessmentResultSchema = createInsertSchema(assessmentResults).pick({
