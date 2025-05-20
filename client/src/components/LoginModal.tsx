@@ -368,18 +368,25 @@ function LoginModal({
                     // Directly log in with test credentials
                     setIsSubmitting(true);
                     
+                    // Mock successful login by directly updating auth state
+                    const userData = {
+                      id: '123456',
+                      email: 'test@example.com',
+                      firstName: 'Test',
+                      lastName: 'User',
+                    };
+                    
+                    // Close modal first
+                    onOpenChange(false);
+                    
                     // Show success toast
                     toast({
                       title: "Login successful",
                       description: "Welcome back to Personality Mosaic!",
                     });
                     
-                    // Close modal after brief delay
-                    setTimeout(() => {
-                      onOpenChange(false);
-                      // Navigate to assessment page
-                      navigate("/assessment");
-                    }, 500);
+                    // Instead of using the navigate function, use direct window location
+                    window.location.href = "/assessment";
                   }}
                   className="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-md shadow-sm text-white bg-[#7c3aed] hover:bg-[#6d28d9] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7c3aed] transition-colors duration-200"
                   ref={submitButtonRef}
