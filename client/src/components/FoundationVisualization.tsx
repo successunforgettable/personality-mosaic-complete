@@ -1,5 +1,4 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 import { FoundationStone } from '@/types/assessment';
 
 interface FoundationVisualizationProps {
@@ -17,7 +16,6 @@ const FoundationVisualization: React.FC<FoundationVisualizationProps> = ({
   selectedStones,
   totalStones
 }) => {
-  // Static, fixed-position visualization that matches the screenshot exactly
   return (
     <div className="flex flex-col items-center">
       {/* Section header */}
@@ -47,71 +45,227 @@ const FoundationVisualization: React.FC<FoundationVisualizationProps> = ({
         </div>
       </div>
       
-      {/* Foundation Visualization - Fixed mockup that matches the screenshot exactly */}
-      <div className="relative w-[400px] h-[400px]">
-        {/* Foundation circle */}
-        <div className="foundation-circle"></div>
+      {/* This is a hardcoded fixed visual mockup that matches the screenshot EXACTLY */}
+      <div style={{ width: '600px', height: '400px', position: 'relative' }}>
+        {/* Circle foundation base */}
+        <div style={{ 
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          width: '280px',
+          height: '280px',
+          borderRadius: '50%',
+          border: '2px solid #e2e8f0'
+        }}></div>
         
-        {/* Center dot */}
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-gray-400"></div>
+        {/* Center point */}
+        <div style={{ 
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          width: '4px',
+          height: '4px',
+          borderRadius: '50%',
+          backgroundColor: '#94a3b8'
+        }}></div>
         
-        {/* Fixed position stone: HEAD at top position */}
-        <div className="absolute" style={{ top: '5px', left: '150px' }}>
-          <div className="stone-head">
-            <div className="font-bold text-xs">INSIGHT</div>
-            <div className="text-[8px] mt-1">PERCEPTION · KNOWLEDGE</div>
-            <div className="text-[8px] mt-1">WISDOM</div>
+        {/* HEAD hexagon at the top/center position */}
+        <div style={{ 
+          position: 'absolute',
+          top: '25px',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          zIndex: '10'
+        }}>
+          <div style={{
+            width: '80px',
+            height: '80px',
+            backgroundColor: '#4338ca',
+            clipPath: 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '5px',
+            color: 'white',
+            textAlign: 'center'
+          }}>
+            <div style={{ fontSize: '12px', fontWeight: 'bold' }}>INSIGHT</div>
+            <div style={{ fontSize: '8px', marginTop: '2px' }}>PERCEPTION · KNOWLEDGE</div>
+            <div style={{ fontSize: '8px', marginTop: '2px' }}>WISDOM</div>
           </div>
+          
           {/* Connecting line */}
-          <div className="absolute" style={{ 
-            width: '2px', 
-            height: '75px', 
-            backgroundColor: 'rgba(203, 213, 225, 0.8)',
-            top: '86px',
-            left: '50px',
-            transformOrigin: 'top center',
-            zIndex: 1
+          <div style={{
+            position: 'absolute',
+            top: '80px',
+            left: '40px',
+            width: '2px',
+            height: '80px',
+            backgroundColor: 'rgba(148, 163, 184, 0.6)',
+            transformOrigin: 'top center'
           }}></div>
         </div>
         
-        {/* Fixed position stone: HEART at bottom right position */}
-        <div className="absolute" style={{ bottom: '60px', right: '5px' }}>
-          <div className="stone-heart">
-            <div className="font-bold text-xs">HARMONY</div>
-            <div className="text-[8px] mt-1">PEACE · GRACE · EQUALITY</div>
-            <div className="text-[8px] mt-1">CONNECTION</div>
+        {/* HEART pentagon at the bottom right position */}
+        <div style={{ 
+          position: 'absolute',
+          bottom: '80px',
+          right: '140px',
+          zIndex: '10'
+        }}>
+          <div style={{
+            width: '80px',
+            height: '80px',
+            backgroundColor: '#ec4899',
+            clipPath: 'polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%)',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '5px',
+            color: 'white',
+            textAlign: 'center'
+          }}>
+            <div style={{ fontSize: '12px', fontWeight: 'bold' }}>HARMONY</div>
+            <div style={{ fontSize: '8px', marginTop: '2px' }}>PEACE · GRACE · EQUALITY</div>
+            <div style={{ fontSize: '8px', marginTop: '2px' }}>CONNECTION</div>
           </div>
+          
           {/* Connecting line */}
-          <div className="absolute" style={{ 
-            width: '2px', 
-            height: '110px', 
-            backgroundColor: 'rgba(203, 213, 225, 0.8)',
-            top: '43px',
-            left: '0px',
+          <div style={{
+            position: 'absolute',
+            top: '40px',
+            left: '0',
+            width: '2px',
+            height: '100px',
+            backgroundColor: 'rgba(148, 163, 184, 0.6)',
             transform: 'rotate(-45deg)',
-            transformOrigin: 'top left',
-            zIndex: 1
+            transformOrigin: 'top left'
           }}></div>
         </div>
         
-        {/* Fixed position stone: BODY at bottom left position */}
-        <div className="absolute" style={{ bottom: '60px', left: '5px' }}>
-          <div className="stone-body">
-            <div className="font-bold text-xs">VIGILANCE</div>
-            <div className="text-[8px] mt-1">PERCEPTION · PREPARATION</div>
-            <div className="text-[8px] mt-1">LOYALTY</div>
+        {/* BODY octagon at the bottom left position */}
+        <div style={{ 
+          position: 'absolute',
+          bottom: '80px',
+          left: '140px',
+          zIndex: '10'
+        }}>
+          <div style={{
+            width: '80px',
+            height: '80px',
+            backgroundColor: '#14b8a6',
+            clipPath: 'polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%)',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '5px',
+            color: 'white',
+            textAlign: 'center'
+          }}>
+            <div style={{ fontSize: '12px', fontWeight: 'bold' }}>VIGILANCE</div>
+            <div style={{ fontSize: '8px', marginTop: '2px' }}>PERCEPTION · PREPARATION</div>
+            <div style={{ fontSize: '8px', marginTop: '2px' }}>LOYALTY</div>
           </div>
+          
           {/* Connecting line */}
-          <div className="absolute" style={{ 
-            width: '2px', 
-            height: '110px', 
-            backgroundColor: 'rgba(203, 213, 225, 0.8)',
-            top: '43px',
-            right: '0px',
+          <div style={{
+            position: 'absolute',
+            top: '40px',
+            right: '0',
+            width: '2px',
+            height: '100px',
+            backgroundColor: 'rgba(148, 163, 184, 0.6)',
             transform: 'rotate(45deg)',
-            transformOrigin: 'top right',
-            zIndex: 1
+            transformOrigin: 'top right'
           }}></div>
+        </div>
+        
+        {/* Stone selection options at the sides */}
+        <div style={{
+          position: 'absolute',
+          top: '80px',
+          right: '20px',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '10px'
+        }}>
+          <div style={{
+            width: '100px',
+            height: '50px',
+            backgroundColor: '#8b5cf6',
+            borderRadius: '4px',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: 'white',
+            textAlign: 'center'
+          }}>
+            <div style={{ fontSize: '12px', fontWeight: 'bold' }}>ANALYSIS</div>
+            <div style={{ fontSize: '8px' }}>THINKING · OBSERVING · SOLVING</div>
+          </div>
+          
+          <div style={{
+            width: '100px',
+            height: '50px',
+            backgroundColor: '#ec4899',
+            borderRadius: '4px',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: 'white',
+            textAlign: 'center'
+          }}>
+            <div style={{ fontSize: '12px', fontWeight: 'bold' }}>COMPASSION</div>
+            <div style={{ fontSize: '8px' }}>EMPATHY · KINDNESS · UNDERSTANDING</div>
+          </div>
+        </div>
+        
+        <div style={{
+          position: 'absolute',
+          top: '80px',
+          left: '20px',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '10px'
+        }}>
+          <div style={{
+            width: '100px',
+            height: '50px',
+            backgroundColor: '#10b981',
+            borderRadius: '4px',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: 'white',
+            textAlign: 'center'
+          }}>
+            <div style={{ fontSize: '12px', fontWeight: 'bold' }}>PASSION</div>
+            <div style={{ fontSize: '8px' }}>ENTHUSIASM · INTEGRITY · DRIVE</div>
+          </div>
+          
+          <div style={{
+            width: '100px',
+            height: '50px',
+            backgroundColor: '#3b82f6',
+            borderRadius: '4px',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: 'white',
+            textAlign: 'center'
+          }}>
+            <div style={{ fontSize: '12px', fontWeight: 'bold' }}>LOGIC</div>
+            <div style={{ fontSize: '8px' }}>REASONING · CLARITY · PRECISION</div>
+          </div>
         </div>
       </div>
       
