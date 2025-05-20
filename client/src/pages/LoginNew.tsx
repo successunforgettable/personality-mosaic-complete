@@ -81,9 +81,14 @@ export default function LoginNew() {
         const returnPath = sessionStorage.getItem('returnPath') || '/assessment';
         sessionStorage.removeItem('returnPath');
         
-        // Important change: use direct window.location.href for redirection
-        // instead of React Router to avoid state sync issues
-        window.location.href = returnPath;
+        console.log("Login successful, redirecting to:", returnPath);
+        
+        // Adding a short delay to ensure the auth state is fully updated
+        setTimeout(() => {
+          // Use direct window location for redirection to ensure full page reload
+          // This avoids state synchronization issues with React Router
+          window.location.href = returnPath;
+        }, 500);
       } else {
         setGeneralError("Invalid email or password. Please try again.");
         
