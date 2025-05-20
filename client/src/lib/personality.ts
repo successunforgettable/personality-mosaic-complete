@@ -175,7 +175,12 @@ export const foundationStoneSets: FoundationStoneSet[] = [
         baselines: "EMPATHY • KINDNESS • UNDERSTANDING",
         image: "https://images.unsplash.com/photo-1518621736915-f3b1c41bfd00?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&h=250",
         category: "Heart",
-        typeScore: { "2": 5, "9": 3, "4": 2 }
+        typeScore: { "2": 5, "9": 3, "4": 2 },
+        shapeVariant: "pentagon",
+        gradientColors: {
+          from: "#EC4899",
+          to: "#8B5CF6"
+        }
       },
       {
         id: 2,
@@ -183,7 +188,12 @@ export const foundationStoneSets: FoundationStoneSet[] = [
         baselines: "LOGIC • THINKING • PROBLEM-SOLVING",
         image: "https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&h=250",
         category: "Head",
-        typeScore: { "5": 5, "1": 3, "6": 2 }
+        typeScore: { "5": 5, "1": 3, "6": 2 },
+        shapeVariant: "hexagon",
+        gradientColors: {
+          from: "#4F46E5",
+          to: "#7C3AED"
+        }
       },
       {
         id: 3,
@@ -191,7 +201,12 @@ export const foundationStoneSets: FoundationStoneSet[] = [
         baselines: "ENTHUSIASM • INTENSITY • DRIVE",
         image: "https://images.unsplash.com/photo-1538428494232-9c0d8a3ab403?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&h=250",
         category: "Body",
-        typeScore: { "8": 5, "3": 3, "7": 2 }
+        typeScore: { "8": 5, "3": 3, "7": 2 },
+        shapeVariant: "octagon",
+        gradientColors: {
+          from: "#10B981",
+          to: "#3B82F6"
+        }
       }
     ]
   },
@@ -204,7 +219,12 @@ export const foundationStoneSets: FoundationStoneSet[] = [
         baselines: "RESPONSIBILITY • HARD WORK • DEDICATION",
         image: "https://images.unsplash.com/photo-1589939705384-5185137a7f0f?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&h=250",
         category: "Head",
-        typeScore: { "1": 5, "3": 3, "6": 2 }
+        typeScore: { "1": 5, "3": 3, "6": 2 },
+        shapeVariant: "hexagon",
+        gradientColors: {
+          from: "#4F46E5",
+          to: "#7C3AED"
+        }
       },
       {
         id: 5,
@@ -212,7 +232,12 @@ export const foundationStoneSets: FoundationStoneSet[] = [
         baselines: "INNOVATION • EXPRESSION • IMAGINATION",
         image: "https://images.unsplash.com/photo-1518640467707-6811f4a6ab73?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&h=250",
         category: "Heart",
-        typeScore: { "4": 5, "7": 3, "9": 2 }
+        typeScore: { "4": 5, "7": 3, "9": 2 },
+        shapeVariant: "pentagon",
+        gradientColors: {
+          from: "#EC4899",
+          to: "#8B5CF6"
+        }
       },
       {
         id: 6,
@@ -220,7 +245,12 @@ export const foundationStoneSets: FoundationStoneSet[] = [
         baselines: "CONFIDENCE • STRENGTH • PROTECTION",
         image: "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&h=250",
         category: "Body",
-        typeScore: { "8": 5, "2": 3, "6": 2 }
+        typeScore: { "8": 5, "2": 3, "6": 2 },
+        shapeVariant: "octagon",
+        gradientColors: {
+          from: "#10B981",
+          to: "#3B82F6"
+        }
       }
     ]
   },
@@ -233,7 +263,12 @@ export const foundationStoneSets: FoundationStoneSet[] = [
         baselines: "PERCEPTION • KNOWLEDGE • WISDOM",
         image: "https://images.unsplash.com/photo-1506901437675-cde80ff9c746?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&h=250",
         category: "Head",
-        typeScore: { "5": 5, "1": 3, "4": 2 }
+        typeScore: { "5": 5, "1": 3, "4": 2 },
+        shapeVariant: "hexagon",
+        gradientColors: {
+          from: "#4F46E5",
+          to: "#7C3AED"
+        }
       },
       {
         id: 8,
@@ -241,7 +276,12 @@ export const foundationStoneSets: FoundationStoneSet[] = [
         baselines: "PEACE • BALANCE • CONNECTION",
         image: "https://images.unsplash.com/photo-1506056820413-f8fa4f246a75?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&h=250",
         category: "Heart",
-        typeScore: { "9": 5, "2": 3, "7": 2 }
+        typeScore: { "9": 5, "2": 3, "7": 2 },
+        shapeVariant: "pentagon",
+        gradientColors: {
+          from: "#EC4899",
+          to: "#8B5CF6"
+        }
       },
       {
         id: 9,
@@ -249,7 +289,12 @@ export const foundationStoneSets: FoundationStoneSet[] = [
         baselines: "CAUTION • PREPARATION • LOYALTY",
         image: "https://images.unsplash.com/photo-1568607689150-2a2a0e4f479d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&h=250",
         category: "Body",
-        typeScore: { "6": 5, "1": 3, "8": 2 }
+        typeScore: { "6": 5, "1": 3, "8": 2 },
+        shapeVariant: "octagon",
+        gradientColors: {
+          from: "#10B981",
+          to: "#3B82F6"
+        }
       }
     ]
   }
