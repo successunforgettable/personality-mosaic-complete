@@ -2,22 +2,31 @@ import { useState } from "react";
 import { useLocation } from "wouter";
 import { useToast } from "@/hooks/use-toast";
 
-export default function SimpleLogin() {
+export default function FixedSignUp() {
   const [location, setLocation] = useLocation();
   const { toast } = useToast();
   
   // Form state
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [rememberMe, setRememberMe] = useState(false);
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   
   // Error state
+  const [usernameError, setUsernameError] = useState("");
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
+  const [confirmPasswordError, setConfirmPasswordError] = useState("");
   const [generalError, setGeneralError] = useState("");
   
   // Clear errors on input change
+  const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setUsername(e.target.value);
+    setUsernameError("");
+    setGeneralError("");
+  };
+  
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
     setEmailError("");
@@ -30,14 +39,31 @@ export default function SimpleLogin() {
     setGeneralError("");
   };
   
+  const handleConfirmPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setConfirmPassword(e.target.value);
+    setConfirmPasswordError("");
+    setGeneralError("");
+  };
+  
   // Validate form
   const validateForm = () => {
     let isValid = true;
     
     // Clear all errors
+    setUsernameError("");
     setEmailError("");
     setPasswordError("");
+    setConfirmPasswordError("");
     setGeneralError("");
+    
+    // Validate username
+    if (!username.trim()) {
+      setUsernameError("Username is required");
+      isValid = false;
+    } else if (username.length < 3) {
+      setUsernameError("Username must be at least 3 characters");
+      isValid = false;
+    }
     
     // Validate email
     if (!email.trim()) {
@@ -51,6 +77,18 @@ export default function SimpleLogin() {
     // Validate password
     if (!password) {
       setPasswordError("Password is required");
+      isValid = false;
+    } else if (password.length < 6) {
+      setPasswordError("Password must be at least 6 characters");
+      isValid = false;
+    }
+    
+    // Validate confirm password
+    if (!confirmPassword) {
+      setConfirmPasswordError("Please confirm your password");
+      isValid = false;
+    } else if (confirmPassword !== password) {
+      setConfirmPasswordError("Passwords do not match");
       isValid = false;
     }
     
@@ -68,49 +106,40 @@ export default function SimpleLogin() {
     setIsLoading(true);
     
     try {
-      // Send login request to backend
-      const response = await fetch('/api/auth/login', {
+      // Send registration request to backend
+      const response = await fetch('/api/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
+          username,
           email,
           password,
         }),
       });
       
-      // If login failed
+      // If registration failed
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || 'Login failed');
+        throw new Error(errorData.message || 'Registration failed');
       }
       
-      // Login successful
-      const data = await response.json();
-      
-      // Store token in localStorage if remember me is checked
-      localStorage.setItem('auth_token', data.token);
-      
-      // Store user data
-      if (data.user) {
-        localStorage.setItem('user', JSON.stringify(data.user));
-      }
-      
+      // Registration successful
       toast({
-        title: "Login successful",
-        description: "You have been logged in successfully.",
+        title: "Registration successful",
+        description: "Your account has been created. You can now log in.",
       });
       
-      // Redirect to home page
-      setLocation("/");
+      // Redirect to login page
+      setLocation("/login");
     } catch (error: any) {
-      console.error("Login error:", error);
-      setGeneralError(error.message || "Login failed. Please check your credentials and try again.");
+      console.error("Registration error:", error);
+      setGeneralError(error.message || "Registration failed. Please try again.");
       
       toast({
-        title: "Login failed",
-        description: error.message || "Invalid email or password. Please try again.",
+        title: "Registration failed",
+        description: error.message || "There was a problem creating your account. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -118,26 +147,12 @@ export default function SimpleLogin() {
     }
   };
   
-  // Handle guest login
-  const handleGuestLogin = () => {
-    // Store guest flag in localStorage
-    localStorage.setItem('guest_session', 'true');
-    
-    toast({
-      title: "Guest access",
-      description: "You're now browsing as a guest. Your assessment results won't be saved.",
-    });
-    
-    // Redirect to assessment page
-    setLocation("/assessment");
-  };
-  
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#f1f5f9] to-[#ede9fe] px-4 py-12">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <h2 className="text-2xl font-bold text-gray-900">Welcome back</h2>
-          <p className="text-gray-600 mt-2">Sign in to your account</p>
+          <h2 className="text-2xl font-bold text-gray-900">Create your account</h2>
+          <p className="text-gray-600 mt-2">Sign up to take the Personality Mosaic assessment</p>
         </div>
         
         <div className="bg-white rounded-xl shadow-lg p-8">
@@ -148,6 +163,23 @@ export default function SimpleLogin() {
                 {generalError}
               </div>
             )}
+            
+            {/* Username field */}
+            <div className="mb-4">
+              <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-1">
+                Username
+              </label>
+              <input
+                id="username"
+                type="text"
+                value={username}
+                onChange={handleUsernameChange}
+                className={`w-full px-3 py-2 border ${usernameError ? 'border-red-500' : 'border-gray-300'} rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500`}
+                placeholder="johndoe"
+                disabled={isLoading}
+              />
+              {usernameError && <p className="mt-1 text-sm text-red-600">{usernameError}</p>}
+            </div>
             
             {/* Email field */}
             <div className="mb-4">
@@ -167,17 +199,10 @@ export default function SimpleLogin() {
             </div>
             
             {/* Password field */}
-            <div className="mb-6">
-              <div className="flex items-center justify-between">
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
-                  Password
-                </label>
-                <div className="text-sm">
-                  <span className="font-medium text-purple-600 hover:text-purple-500 cursor-pointer">
-                    Forgot password?
-                  </span>
-                </div>
-              </div>
+            <div className="mb-4">
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+                Password
+              </label>
               <input
                 id="password"
                 type="password"
@@ -190,19 +215,21 @@ export default function SimpleLogin() {
               {passwordError && <p className="mt-1 text-sm text-red-600">{passwordError}</p>}
             </div>
             
-            {/* Remember me checkbox */}
-            <div className="flex items-center mb-6">
+            {/* Confirm Password field */}
+            <div className="mb-6">
+              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-1">
+                Confirm Password
+              </label>
               <input
-                id="remember-me"
-                type="checkbox"
-                checked={rememberMe}
-                onChange={() => setRememberMe(!rememberMe)}
-                className="h-4 w-4 text-purple-600 focus:ring-purple-500 border-gray-300 rounded"
+                id="confirmPassword"
+                type="password"
+                value={confirmPassword}
+                onChange={handleConfirmPasswordChange}
+                className={`w-full px-3 py-2 border ${confirmPasswordError ? 'border-red-500' : 'border-gray-300'} rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500`}
+                placeholder="••••••••"
                 disabled={isLoading}
               />
-              <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700">
-                Remember me
-              </label>
+              {confirmPasswordError && <p className="mt-1 text-sm text-red-600">{confirmPasswordError}</p>}
             </div>
             
             {/* Submit button */}
@@ -217,42 +244,22 @@ export default function SimpleLogin() {
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                   </svg>
-                  Signing in...
+                  Creating Account...
                 </div>
               ) : (
-                "Sign in"
+                "Sign up"
               )}
             </button>
           </form>
           
-          <div className="mt-6">
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-300"></div>
-              </div>
-              <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-white text-gray-500">Or continue with</span>
-              </div>
-            </div>
-            
-            <div className="mt-6">
-              <button
-                onClick={handleGuestLogin}
-                className="w-full py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
-              >
-                Continue as Guest
-              </button>
-            </div>
-          </div>
-          
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-600">
-              Don't have an account?{' '}
+              Already have an account?{' '}
               <span
                 className="font-medium text-purple-600 hover:text-purple-500 cursor-pointer"
-                onClick={() => setLocation("/signup")}
+                onClick={() => setLocation("/login")}
               >
-                Sign up
+                Sign in
               </span>
             </p>
           </div>

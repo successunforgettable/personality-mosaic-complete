@@ -6,8 +6,14 @@ import { ZodError } from "zod";
 import * as bcrypt from "bcryptjs";
 import * as jwt from "jsonwebtoken";
 import { v4 as uuidv4 } from "uuid";
+import { pool } from "./db";
 
 import { setupAuth, isAuthenticated } from "./replitAuth";
+
+// Direct database access for SQL operations
+const db = {
+  query: (text: string, params: any[]) => pool.query(text, params)
+};
 
 // Helper function to generate JWT tokens
 const generateToken = (userId: string): string => {
@@ -53,6 +59,50 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Setup Replit Authentication
   await setupAuth(app);
   
+  // User registration endpoint
+  app.post("/api/register", async (req, res) => {
+    try {
+      const { username, email, password } = req.body;
+      
+      if (!username || !email || !password) {
+        return res.status(400).json({ message: "Username, email and password are required" });
+      }
+      
+      // Check if user with this email already exists
+      const existingUser = await db.query('SELECT * FROM users WHERE email = $1', [email]);
+      
+      if (existingUser.rows.length > 0) {
+        return res.status(409).json({ message: "User with this email already exists" });
+      }
+      
+      // Check if username is taken
+      const existingUsername = await db.query('SELECT * FROM users WHERE username = $1', [username]);
+      
+      if (existingUsername.rows.length > 0) {
+        return res.status(409).json({ message: "This username is already taken" });
+      }
+      
+      // Insert the new user
+      const result = await db.query(
+        'INSERT INTO users (username, email, password, created_at) VALUES ($1, $2, $3, NOW()) RETURNING id, username, email, created_at',
+        [username, email, password]
+      );
+      
+      const newUser = result.rows[0];
+      
+      // Return the new user (without password)
+      return res.status(201).json({
+        id: newUser.id,
+        username: newUser.username,
+        email: newUser.email,
+        created_at: newUser.created_at
+      });
+    } catch (error) {
+      console.error("Registration error:", error);
+      return res.status(500).json({ message: "Registration failed. Please try again." });
+    }
+  });
+  
   // Email/password login
   app.post("/api/auth/login", async (req, res) => {
     try {
@@ -62,21 +112,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Email and password are required" });
       }
       
-      // Find user by email
-      const user = await storage.getUserByEmail(email);
+      // Find user by email - direct DB query
+      const userResult = await db.query('SELECT * FROM users WHERE email = $1', [email]);
       
       // For testing purposes, allow login with test account
       if (email === "test@example.com" && password === "password123") {
-        // Create or update test user with the actual schema
-        const testUser = await storage.upsertUser({
-          id: "123456",
-          username: "testuser",
-          email: "test@example.com",
-          password: "password123"
-        });
+        // Check if test user exists
+        let testUser;
+        const testUserResult = await db.query('SELECT * FROM users WHERE email = $1', ['test@example.com']);
+        
+        if (testUserResult.rows.length === 0) {
+          // Create test user
+          const insertResult = await db.query(
+            'INSERT INTO users (username, email, password, created_at) VALUES ($1, $2, $3, NOW()) RETURNING id, username, email, created_at',
+            ['testuser', 'test@example.com', 'password123']
+          );
+          testUser = insertResult.rows[0];
+        } else {
+          testUser = testUserResult.rows[0];
+        }
         
         // Generate JWT token
-        const token = generateToken(testUser.id);
+        const token = generateToken(testUser.id.toString());
+        
+        // Remove password from user object before sending
+        delete testUser.password;
         
         return res.json({
           user: testUser,
@@ -84,15 +144,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
       
-      if (!user) {
+      // No user found with this email
+      if (userResult.rows.length === 0) {
         return res.status(401).json({ message: "Invalid email or password" });
       }
       
-      // Validate password (assuming we store hashed passwords)
-      // For now, we're not implementing this fully
+      const user = userResult.rows[0];
+      
+      // Validate password (direct comparison for demo - in production, use bcrypt)
+      if (user.password !== password) {
+        return res.status(401).json({ message: "Invalid email or password" });
+      }
       
       // Generate JWT token
-      const token = generateToken(user.id);
+      const token = generateToken(user.id.toString());
+      
+      // Remove password from user object before sending to client
+      delete user.password;
       
       // Return user data and token
       return res.json({
