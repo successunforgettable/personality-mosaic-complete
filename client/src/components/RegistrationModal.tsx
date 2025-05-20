@@ -172,6 +172,36 @@ export function RegistrationModal({
     
     navigate("/assessment");
   };
+  
+  // Handle social authentication
+  const handleSocialAuth = async (provider: 'google' | 'facebook') => {
+    try {
+      // Set loading state for the specific provider
+      setIsSocialLoading(provider);
+      
+      // This would normally call OAuth endpoints
+      toast({
+        title: `${provider.charAt(0).toUpperCase() + provider.slice(1)} signup`,
+        description: "This feature is coming soon. We're working on implementing OAuth integration.",
+      });
+      
+      // For now, just show a message that it's not implemented yet
+      console.log(`${provider} registration clicked`);
+      
+      // Simulate delay
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+    } catch (error) {
+      console.error(`${provider} registration failed:`, error);
+      toast({
+        title: "Authentication failed",
+        description: `Could not register with ${provider}. Please try another method.`,
+        variant: "destructive",
+      });
+    } finally {
+      setIsSocialLoading(null);
+    }
+  };
 
   return (
     <Modal open={isOpen} onOpenChange={onOpenChange}>
