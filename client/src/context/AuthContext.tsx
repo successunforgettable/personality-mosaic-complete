@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext, useEffect, ReactNode } from 'react';
+import React, { createContext, useState, useContext, useEffect, ReactNode, useRef } from 'react';
 
 // Define the user type
 export interface User {
@@ -8,6 +8,10 @@ export interface User {
   lastName?: string;
   profileImageUrl?: string;
 }
+
+// Session timeout constants
+const SESSION_TIMEOUT_MS = 30 * 60 * 1000; // 30 minutes
+const SESSION_CHECK_INTERVAL_MS = 60 * 1000; // Check every minute
 
 // Define the auth context type
 interface AuthContextType {
@@ -23,6 +27,8 @@ interface AuthContextType {
   startGuestSession: () => void;
   endGuestSession: () => void;
   sendPasswordResetEmail: (email: string) => Promise<boolean>;
+  resetSessionTimer: () => void; // Reset inactivity timer
+  sessionTimeRemaining: number; // Time remaining in session (ms)
 }
 
 // Create the context with default values
@@ -39,6 +45,8 @@ const AuthContext = createContext<AuthContextType>({
   startGuestSession: () => {},
   endGuestSession: () => {},
   sendPasswordResetEmail: async () => false,
+  resetSessionTimer: () => {},
+  sessionTimeRemaining: SESSION_TIMEOUT_MS,
 });
 
 // Auth provider props
@@ -52,6 +60,11 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [isGuest, setIsGuest] = useState<boolean>(false);
+  const [sessionTimeRemaining, setSessionTimeRemaining] = useState<number>(SESSION_TIMEOUT_MS);
+  
+  // Refs for session management
+  const lastActivityRef = useRef<number>(Date.now());
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
 
   // Check if the user is authenticated
   const checkAuthStatus = async (): Promise<boolean> => {
