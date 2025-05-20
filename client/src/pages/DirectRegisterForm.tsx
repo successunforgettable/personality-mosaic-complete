@@ -83,8 +83,9 @@ export default function DirectRegisterForm() {
     try {
       console.log("Sending registration request");
       
-      // Send registration request to backend
-      const response = await fetch('/api/register', {
+      // Send registration request to backend using auth/register endpoint
+      console.log("Sending registration to /api/auth/register");
+      const response = await fetch('/api/auth/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

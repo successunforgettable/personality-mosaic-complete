@@ -186,14 +186,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
-  // Registration endpoint - Using direct SQL instead of storage
+  // Registration endpoint for both normal and legacy registration
   app.post("/api/auth/register", async (req, res) => {
     try {
-      const { email, username, password } = req.body;
+      console.log("Registration request received:", req.body);
       
-      if (!email || !username || !password) {
-        return res.status(400).json({ message: "Email, username and password are required" });
+      // Extract fields from request
+      const { email, username, password, firstName, lastName } = req.body;
+      
+      // Check required fields
+      if (!email || !password) {
+        return res.status(400).json({ message: "Email and password are required" });
       }
+      
+      // Use username from request or generate one from email
+      const usernameToUse = username || email.split('@')[0];
       
       // Check if user with email already exists
       const emailCheckResult = await db.query('SELECT * FROM users WHERE email = $1', [email]);
@@ -203,20 +210,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       // Check if username is taken
-      const usernameCheckResult = await db.query('SELECT * FROM users WHERE username = $1', [username]);
+      const usernameCheckResult = await db.query('SELECT * FROM users WHERE username = $1', [usernameToUse]);
       
       if (usernameCheckResult.rows.length > 0) {
         return res.status(409).json({ message: "This username is already taken" });
       }
       
       // Insert the new user with direct SQL
-      // In a real implementation, we would hash the password first
+      console.log("Creating new user with username:", usernameToUse);
       const insertResult = await db.query(
         'INSERT INTO users (username, email, password, created_at) VALUES ($1, $2, $3, NOW()) RETURNING id, username, email, created_at',
-        [username, email, password]
+        [usernameToUse, email, password]
       );
       
       const user = insertResult.rows[0];
+      console.log("User created:", user);
       
       // Generate JWT token
       const token = generateToken(user.id);
@@ -230,6 +238,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.error("Registration error:", error);
       return res.status(500).json({ message: "Registration failed. Please try again." });
     }
+  });
+  
+  // Alias for /api/auth/register for backward compatibility
+  app.post("/api/register", (req, res) => {
+    console.log("Redirecting from /api/register to /api/auth/register");
+    req.url = "/api/auth/register";
+    app._router.handle(req, res);
   });
   
   // Get current user from JWT token
