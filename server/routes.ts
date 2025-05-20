@@ -237,14 +237,56 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       console.log("Creating new user with ID:", nextId, "and username:", usernameToUse);
       
-      // Insert the new user with direct SQL using an integer ID
+      // Generate email verification token
+      const verificationToken = Math.random().toString(36).substring(2, 15) + 
+                                Math.random().toString(36).substring(2, 15);
+      const tokenExpiry = new Date();
+      tokenExpiry.setHours(tokenExpiry.getHours() + 24); // Token valid for 24 hours
+      
+      // Insert the new user with direct SQL using an integer ID and verification token
       const insertResult = await db.query(
-        'INSERT INTO users (id, username, email, password, created_at) VALUES ($1, $2, $3, $4, NOW()) RETURNING id, username, email, created_at',
-        [nextId, usernameToUse, normalizedEmail, password]
+        'INSERT INTO users (id, username, email, password, created_at, email_verified, verification_token, verification_expires) VALUES ($1, $2, $3, $4, NOW(), $5, $6, $7) RETURNING id, username, email, created_at',
+        [nextId, usernameToUse, normalizedEmail, password, 'false', verificationToken, tokenExpiry]
       );
       
       const user = insertResult.rows[0];
       console.log("User created:", user);
+      
+      // Send verification email
+      try {
+        // Import email service
+        const { emailService } = await import('./emailService');
+        
+        // Create verification link
+        const verificationLink = `https://${req.hostname}/verify-email?token=${verificationToken}`;
+        
+        // Send the verification email
+        await emailService.sendEmail({
+          to: normalizedEmail,
+          subject: 'Verify Your Email - Personality Mosaic',
+          html: `
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px;">
+              <h2 style="color: #333; text-align: center;">Welcome to Personality Mosaic!</h2>
+              <p>Hello ${usernameToUse},</p>
+              <p>Thank you for signing up. Please verify your email address by clicking the button below:</p>
+              <div style="text-align: center; margin: 20px 0;">
+                <a href="${verificationLink}" style="background-color: #4a6cf7; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; display: inline-block; font-weight: bold;">Verify Email</a>
+              </div>
+              <p>Or copy and paste this link into your browser:</p>
+              <p style="word-break: break-all; background-color: #f5f5f5; padding: 10px; border-radius: 4px;"><a href="${verificationLink}">${verificationLink}</a></p>
+              <p>This link will expire in 24 hours.</p>
+              <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e0e0e0; text-align: center; color: #777; font-size: 12px;">
+                <p>© ${new Date().getFullYear()} Personality Mosaic. All rights reserved.</p>
+              </div>
+            </div>
+          `
+        });
+        
+        console.log("Verification email sent to:", normalizedEmail);
+      } catch (emailError) {
+        console.error('Failed to send verification email:', emailError);
+        // Continue with registration even if email sending fails
+      }
       
       // Generate JWT token
       const token = generateToken(user.id);
@@ -265,6 +307,79 @@ export async function registerRoutes(app: Express): Promise<Server> {
     console.log("Redirecting from /api/register to /api/auth/register");
     req.url = "/api/auth/register";
     app._router.handle(req, res);
+  });
+  
+  // Email verification endpoint
+  app.get("/api/auth/verify-email", async (req, res) => {
+    try {
+      const { token } = req.query;
+      
+      if (!token) {
+        return res.status(400).json({ success: false, message: "Verification token is required" });
+      }
+      
+      // Find user with this verification token and check if it's still valid
+      const now = new Date();
+      const userResult = await db.query(
+        'SELECT * FROM users WHERE verification_token = $1 AND verification_expires > $2',
+        [token, now]
+      );
+      
+      if (userResult.rows.length === 0) {
+        return res.status(400).json({ 
+          success: false,
+          message: "Invalid or expired verification token" 
+        });
+      }
+      
+      const user = userResult.rows[0];
+      
+      // Update user's email verification status and clear the verification token
+      await db.query(
+        'UPDATE users SET email_verified = $1, verification_token = NULL, verification_expires = NULL WHERE id = $2',
+        ['true', user.id]
+      );
+      
+      // Send confirmation email
+      try {
+        // Import email service
+        const { emailService } = await import('./emailService');
+        
+        // Send confirmation email
+        await emailService.sendEmail({
+          to: user.email,
+          subject: 'Email Verified - Personality Mosaic',
+          html: `
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px;">
+              <h2 style="color: #333; text-align: center;">Email Verified Successfully</h2>
+              <p>Hello ${user.username},</p>
+              <p>Your email has been successfully verified. You can now enjoy all features of Personality Mosaic.</p>
+              <div style="text-align: center; margin: 20px 0;">
+                <a href="https://${req.hostname}/login" style="background-color: #4a6cf7; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; display: inline-block; font-weight: bold;">Login Now</a>
+              </div>
+              <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e0e0e0; text-align: center; color: #777; font-size: 12px;">
+                <p>© ${new Date().getFullYear()} Personality Mosaic. All rights reserved.</p>
+              </div>
+            </div>
+          `
+        });
+      } catch (emailError) {
+        console.error('Failed to send verification confirmation email:', emailError);
+        // Continue with verification process even if email sending fails
+      }
+      
+      // Return success response
+      return res.json({ 
+        success: true,
+        message: "Email verified successfully. You can now log in." 
+      });
+    } catch (error) {
+      console.error("Email verification error:", error);
+      return res.status(500).json({ 
+        success: false,
+        message: "Failed to verify email. Please try again." 
+      });
+    }
   });
   
   // Request password reset endpoint

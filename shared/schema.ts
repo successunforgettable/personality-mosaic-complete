@@ -8,7 +8,14 @@ export const users = pgTable("users", {
   username: text("username"),
   password: text("password"),
   email: text("email"),
-  created_at: text("created_at")
+  created_at: text("created_at"),
+  // Email verification fields
+  email_verified: text("email_verified").default('false'),
+  verification_token: text("verification_token"),
+  verification_expires: timestamp("verification_expires"),
+  // Password reset fields
+  reset_token: text("reset_token"),
+  reset_token_expires: timestamp("reset_token_expires")
 });
 
 // Session storage table for Replit Auth
