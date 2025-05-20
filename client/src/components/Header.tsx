@@ -1,40 +1,28 @@
-import { Link, useLocation } from "wouter";
+import { useLocation } from "wouter";
 import { useState, useEffect } from "react";
 import { Brain, Menu, X, LogIn, UserPlus, User, Settings, LogOut } from "lucide-react";
+import { useAuth } from "@/context/AuthContext";
 
 const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [_, navigate] = useLocation();
   
-  // Check if user is logged in by looking in localStorage
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [userData, setUserData] = useState<any>(null);
-  const isAdmin = userData?.isAdmin || false;
-  
-  // Load user data on component mount
-  useEffect(() => {
-    const storedUser = localStorage.getItem("personality_mosaic_user");
-    if (storedUser) {
-      try {
-        const parsedUser = JSON.parse(storedUser);
-        setUserData(parsedUser);
-        setIsLoggedIn(true);
-      } catch (error) {
-        console.error("Failed to parse user data", error);
-      }
-    }
-  }, []);
+  // Use our authentication context
+  const { user, isAuthenticated, isGuest, logout } = useAuth();
   
   // Handle logout
   const handleLogout = () => {
-    localStorage.removeItem("personality_mosaic_user");
-    setIsLoggedIn(false);
-    setUserData(null);
-    setUserMenuOpen(false);
+    userMenuOpen && setUserMenuOpen(false);
+    mobileMenuOpen && setMobileMenuOpen(false);
     
-    // Redirect to home
-    navigate("/");
+    if (isGuest) {
+      // Handle guest logout
+      navigate("/");
+    } else {
+      // Handle authenticated user logout
+      logout();
+    }
   };
 
   return (
@@ -65,37 +53,49 @@ const Header = () => {
             About
           </div>
           
-          {isLoggedIn ? (
+          {isAuthenticated || isGuest ? (
             <div className="relative">
               <button 
                 onClick={() => setUserMenuOpen(!userMenuOpen)}
                 className="flex items-center space-x-1 px-3 py-2 text-sm text-[#64748b] hover:text-[#1e293b]"
               >
                 <User className="w-4 h-4 mr-1" />
-                <span>My Account</span>
+                <span>{isGuest ? "Guest" : "My Account"}</span>
               </button>
               
               {userMenuOpen && (
                 <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10">
-                  <div 
-                    className="block px-4 py-2 text-sm text-[#64748b] hover:bg-[#f8fafc] cursor-pointer"
-                    onClick={() => navigate("/profile")}
-                  >
-                    My Profile
-                  </div>
-                  <div 
-                    className="block px-4 py-2 text-sm text-[#64748b] hover:bg-[#f8fafc] cursor-pointer"
-                    onClick={() => navigate("/results")}
-                  >
-                    My Results
-                  </div>
-                  {isAdmin && (
+                  {!isGuest && (
+                    <>
+                      <div 
+                        className="block px-4 py-2 text-sm text-[#64748b] hover:bg-[#f8fafc] cursor-pointer"
+                        onClick={() => {
+                          navigate("/profile");
+                          setUserMenuOpen(false);
+                        }}
+                      >
+                        My Profile
+                      </div>
+                      <div 
+                        className="block px-4 py-2 text-sm text-[#64748b] hover:bg-[#f8fafc] cursor-pointer"
+                        onClick={() => {
+                          navigate("/results");
+                          setUserMenuOpen(false);
+                        }}
+                      >
+                        My Results
+                      </div>
+                    </>
+                  )}
+                  {isGuest && (
                     <div 
                       className="block px-4 py-2 text-sm text-[#64748b] hover:bg-[#f8fafc] cursor-pointer"
-                      onClick={() => navigate("/admin")}
+                      onClick={() => {
+                        navigate("/signup");
+                        setUserMenuOpen(false);
+                      }}
                     >
-                      <Settings className="w-4 h-4 inline mr-1" />
-                      Admin Dashboard
+                      Create Account
                     </div>
                   )}
                   <div className="border-t border-gray-100 my-1"></div>
@@ -104,7 +104,7 @@ const Header = () => {
                     className="block w-full text-left px-4 py-2 text-sm text-[#64748b] hover:bg-[#f8fafc] flex items-center"
                   >
                     <LogOut className="w-4 h-4 mr-2" />
-                    Sign Out
+                    {isGuest ? "Exit Guest Mode" : "Sign Out"}
                   </button>
                 </div>
               )}
@@ -160,35 +160,39 @@ const Header = () => {
             About
           </div>
           
-          {isLoggedIn ? (
+          {isAuthenticated || isGuest ? (
             <>
-              <div 
-                className="block px-4 py-2 text-[#64748b] cursor-pointer"
-                onClick={() => {
-                  navigate("/profile");
-                  setMobileMenuOpen(false);
-                }}
-              >
-                My Profile
-              </div>
-              <div 
-                className="block px-4 py-2 text-[#64748b] cursor-pointer"
-                onClick={() => {
-                  navigate("/results");
-                  setMobileMenuOpen(false);
-                }}
-              >
-                My Results
-              </div>
-              {isAdmin && (
+              {!isGuest && (
+                <>
+                  <div 
+                    className="block px-4 py-2 text-[#64748b] cursor-pointer"
+                    onClick={() => {
+                      navigate("/profile");
+                      setMobileMenuOpen(false);
+                    }}
+                  >
+                    My Profile
+                  </div>
+                  <div 
+                    className="block px-4 py-2 text-[#64748b] cursor-pointer"
+                    onClick={() => {
+                      navigate("/results");
+                      setMobileMenuOpen(false);
+                    }}
+                  >
+                    My Results
+                  </div>
+                </>
+              )}
+              {isGuest && (
                 <div 
                   className="block px-4 py-2 text-[#64748b] cursor-pointer"
                   onClick={() => {
-                    navigate("/admin");
+                    navigate("/signup");
                     setMobileMenuOpen(false);
                   }}
                 >
-                  Admin Dashboard
+                  Create Account
                 </div>
               )}
               <button 
@@ -199,7 +203,7 @@ const Header = () => {
                 }}
               >
                 <LogOut className="w-4 h-4 mr-2" />
-                Sign Out
+                {isGuest ? "Exit Guest Mode" : "Sign Out"}
               </button>
             </>
           ) : (

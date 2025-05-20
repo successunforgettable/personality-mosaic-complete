@@ -7,6 +7,7 @@ import { useAuth } from "@/context/AuthContext";
 const Login = () => {
   const [_, setLocation] = useLocation();
   const { toast } = useToast();
+  const { login, isAuthenticated, startGuestSession } = useAuth();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -15,6 +16,16 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      // Get return path from session storage, default to assessment
+      const returnPath = sessionStorage.getItem('returnPath') || '/assessment';
+      sessionStorage.removeItem('returnPath');
+      setLocation(returnPath);
+    }
+  }, [isAuthenticated, setLocation]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
@@ -60,38 +71,31 @@ const Login = () => {
     setIsLoading(true);
     
     try {
-      // In a real implementation, this would validate credentials against a database
-      // For demo purposes, we'll simulate a successful login if email contains '@'
-      if (!formData.email.includes('@')) {
-        throw new Error("Invalid email format");
-      }
-      
-      // Create a demo user object
-      const userData = {
-        id: Date.now().toString(),
-        email: formData.email,
-        createdAt: new Date().toISOString()
-      };
-      
-      // Store user in localStorage (simulating authentication)
-      localStorage.setItem("personality_mosaic_user", JSON.stringify(userData));
+      // We're using Replit Auth, so we redirect to the login page
+      login();
       
       toast({
-        title: "Login successful!",
-        description: "Welcome back to Personality Mosaic.",
+        title: "Redirecting to login",
+        description: "You'll be redirected to the authentication page.",
       });
-      
-      // Redirect to assessment
-      setLocation("/assessment");
     } catch (error) {
       toast({
         title: "Login failed",
-        description: "Invalid email or password. Please try again.",
+        description: "There was a problem with the authentication process. Please try again.",
         variant: "destructive",
       });
-    } finally {
       setIsLoading(false);
     }
+  };
+  
+  // Start a guest session
+  const handleGuestMode = () => {
+    startGuestSession();
+    toast({
+      title: "Guest mode activated",
+      description: "You can now take the assessment. Your results won't be saved to an account.",
+    });
+    setLocation("/assessment");
   };
 
   return (
@@ -212,6 +216,19 @@ const Login = () => {
                 </div>
               </div>
             </form>
+            
+            <div className="mt-6">
+              <button
+                type="button"
+                onClick={handleGuestMode}
+                className="w-full flex justify-center py-3 px-4 border border-[#7c3aed] rounded-md shadow-sm text-[#7c3aed] bg-white hover:bg-[#f5f3ff] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7c3aed] transition-colors duration-200"
+              >
+                Continue as Guest
+              </button>
+              <p className="text-xs text-[#64748b] text-center mt-2">
+                No account needed, but your results won't be saved
+              </p>
+            </div>
             
             <div className="mt-6 text-center">
               <p className="text-sm text-[#64748b]">
