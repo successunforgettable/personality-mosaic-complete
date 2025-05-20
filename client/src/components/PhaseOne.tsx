@@ -216,69 +216,18 @@ const PhaseOne = () => {
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: -20 }}
           transition={{ duration: 0.5 }}
-          className={`grid grid-cols-1 ${isMobile ? '' : 'md:grid-cols-3'} gap-6 mb-10`}
+          className="mb-10"
         >
-          {currentSet.map((stone, index) => (
-            <motion.div
-              ref={el => stoneRefs.current[index] = el}
-              key={stone.id}
-              initial={{ opacity: 0, scale: 0.9, y: 20 }}
-              animate={{ 
-                opacity: 1, 
-                scale: 1, 
-                y: 0,
-                transition: { delay: index * 0.15 }
-              }}
-              exit={{ opacity: 0, scale: 0.9 }}
-              whileHover={{ 
-                scale: 1.05,
-                boxShadow: "0 10px 25px rgba(0,0,0,0.1)"
-              }}
-              whileTap={{ scale: 0.98 }}
-              className="text-center py-4 transition-all cursor-pointer"
-              onClick={() => !isSaving && handleStoneSelection(stone)}
-            >
-              <div className="relative h-72 w-64 mx-auto">
-                <div 
-                  className={`absolute inset-0 hexagon-shape border-2 border-white shadow-lg ${
-                    selectedFoundationStones.some(s => s.id === stone.id) ? 'selected' : ''
-                  } ${isSaving ? 'opacity-75' : ''}`}
-                  style={{ 
-                    background: stone.category === 'Head' 
-                      ? 'linear-gradient(135deg, #4F46E5, #7C3AED)' 
-                      : stone.category === 'Heart'
-                      ? 'linear-gradient(135deg, #EC4899, #8B5CF6)'
-                      : 'linear-gradient(135deg, #10B981, #3B82F6)',
-                    boxShadow: '0 4px 12px rgba(0,0,0,0.2)'
-                  }}>
-                  <div className="absolute inset-0 hexagon-content flex flex-col items-center justify-center p-5 text-center">
-                    <div className="absolute top-3 left-1/2 transform -translate-x-1/2 bg-white rounded-full px-3 py-1">
-                      <span className="text-xs font-semibold" style={{ 
-                        color: stone.category === 'Head' 
-                          ? '#4F46E5' 
-                          : stone.category === 'Heart' 
-                          ? '#EC4899' 
-                          : '#10B981' 
-                      }}>{stone.category}</span>
-                    </div>
-                    <h3 className="font-semibold text-white text-lg mb-3 mt-4">{stone.name}</h3>
-                    <p className="text-white text-sm px-3">{stone.baselines}</p>
-                  </div>
-                </div>
-              </div>
-              
-              {/* Selection indicators */}
-              {selectedFoundationStones.some(s => s.id === stone.id) && (
-                <motion.div 
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  className="mt-2 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none rounded-full bg-green-100 text-green-800"
-                >
-                  Selected
-                </motion.div>
-              )}
-            </motion.div>
-          ))}
+          {/* Using the enhanced StoneSet component for a better user experience */}
+          <StoneSet
+            stones={currentSet}
+            selectedStone={selectedFoundationStones.find(s => 
+              currentSet.some(cs => cs.id === s.id)
+            )}
+            onSelectStone={(stone) => !isSaving && handleStoneSelection(stone)}
+            setId={foundationSet}
+            isLoading={isSaving}
+          />
         </motion.div>
       </AnimatePresence>
 

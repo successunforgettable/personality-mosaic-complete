@@ -1,6 +1,5 @@
-import React, { KeyboardEvent } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
-import { CheckIcon } from 'lucide-react';
 
 export interface StoneProps {
   id: number;
@@ -27,89 +26,86 @@ export const Stone: React.FC<StoneProps> = ({
   onClick,
   tabIndex = 0
 }) => {
-  // Handle keyboard navigation
-  const handleKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      onClick();
+  const shapeClass = `${shapeVariant}-shape`;
+  const contentClass = `${shapeVariant}-content`;
+  
+  // Define category color based on Head, Heart, or Body
+  const getCategoryColor = () => {
+    switch (category) {
+      case 'Head': return '#4F46E5'; // indigo
+      case 'Heart': return '#EC4899'; // pink
+      case 'Body': return '#10B981';  // emerald
+      default: return '#6B7280';      // gray
     }
   };
 
-  // Define shape classes based on variant
-  const shapeClass = 
-    shapeVariant === 'pentagon' ? 'pentagon-shape' :
-    shapeVariant === 'octagon' ? 'octagon-shape' :
-    'hexagon-shape'; // default
-
   return (
-    <motion.div
-      className="stone-component relative"
-      tabIndex={tabIndex}
+    <div 
+      className="stone-component relative flex flex-col items-center py-4"
       role="button"
       aria-pressed={isSelected}
-      aria-label={`Select ${name}`}
+      tabIndex={tabIndex}
       onClick={onClick}
-      onKeyDown={handleKeyDown}
-      whileHover={{ 
-        scale: 1.05,
-        boxShadow: "0 10px 25px rgba(0,0,0,0.15)"
-      }}
-      whileTap={{ scale: 0.98 }}
-      initial={{ opacity: 0, scale: 0.9 }}
-      animate={{ 
-        opacity: 1, 
-        scale: 1,
-        transition: { duration: 0.3 }
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          onClick();
+        }
       }}
     >
-      <div className="relative h-72 w-64 mx-auto">
+      <motion.div
+        className="relative h-72 w-64 mx-auto"
+        whileHover={{ scale: 1.03, transition: { duration: 0.2 } }}
+        whileTap={{ scale: 0.98 }}
+      >
         <div 
           className={`absolute inset-0 ${shapeClass} border-2 border-white shadow-lg ${
-            isSelected ? 'selected' : ''
+            isSelected ? 'ring-2 ring-offset-2 ring-blue-500' : ''
           }`}
           style={{ 
             background: `linear-gradient(135deg, ${gradientColors.from}, ${gradientColors.to})`,
             boxShadow: isSelected 
-              ? `0 0 20px ${gradientColors.from}80, 0 6px 16px rgba(0,0,0,0.2)` 
-              : '0 4px 12px rgba(0,0,0,0.15)'
+              ? '0 8px 20px rgba(0,0,0,0.3)' 
+              : '0 4px 12px rgba(0,0,0,0.2)'
           }}
         >
-          <div className="absolute inset-0 flex flex-col items-center justify-center p-5 text-center">
-            {/* Category badge */}
+          <div className={`absolute inset-0 ${contentClass} flex flex-col items-center justify-center p-5 text-center`}>
             <div className="absolute top-3 left-1/2 transform -translate-x-1/2 bg-white rounded-full px-3 py-1">
               <span 
                 className="text-xs font-semibold" 
-                style={{ color: gradientColors.from }}
+                style={{ color: getCategoryColor() }}
               >
                 {category}
               </span>
             </div>
             
-            {/* Stone name */}
             <h3 className="font-semibold text-white text-lg mb-3 mt-4">{name}</h3>
             
-            {/* Stone content/traits */}
-            <div className="text-white text-sm space-y-1">
-              {content.map((trait, index) => (
-                <p key={index} className="leading-tight">{trait}</p>
+            <div className="flex flex-wrap justify-center gap-2 mb-2">
+              {content.map((trait, idx) => (
+                <span 
+                  key={idx} 
+                  className="inline-block px-2 py-1 bg-white bg-opacity-20 rounded-md text-white text-xs"
+                >
+                  {trait}
+                </span>
               ))}
             </div>
-            
-            {/* Selection indicator */}
-            {isSelected && (
-              <motion.div 
-                className="absolute bottom-3 right-3 bg-white rounded-full p-1" 
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ type: "spring", stiffness: 500, damping: 15 }}
-              >
-                <CheckIcon className="h-4 w-4" style={{ color: gradientColors.from }} />
-              </motion.div>
-            )}
           </div>
         </div>
-      </div>
-    </motion.div>
+      </motion.div>
+      
+      {/* Selection indicator */}
+      {isSelected && (
+        <motion.div 
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          className="mt-3 inline-flex items-center justify-center px-3 py-1 text-xs font-bold leading-none rounded-full bg-green-100 text-green-800"
+        >
+          Selected
+        </motion.div>
+      )}
+    </div>
   );
 };
 
