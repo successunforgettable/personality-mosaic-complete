@@ -569,6 +569,21 @@ export default function Home() {
                 <li><a href="#" className="text-sm opacity-80 hover:opacity-100 transition-opacity">Support</a></li>
               </ul>
               
+              {/* Email Signup */}
+              <div className="mt-4">
+                <h4 className="font-semibold mb-3 text-sm">Sign up for updates</h4>
+                <div className="flex space-x-1">
+                  <input 
+                    type="email" 
+                    placeholder="Your email" 
+                    className="px-3 py-2 bg-white bg-opacity-10 border border-white border-opacity-20 rounded-l-md text-sm w-full focus:outline-none focus:ring-1 focus:ring-white"
+                  />
+                  <button className="bg-white text-[#4c1d95] px-3 py-2 rounded-r-md text-sm font-medium hover:bg-opacity-90 transition-colors">
+                    Sign Up
+                  </button>
+                </div>
+              </div>
+              
               {/* Social Media */}
               <div className="flex space-x-4 mt-4">
                 <a href="#" className="w-8 h-8 rounded-full bg-white bg-opacity-20 flex items-center justify-center hover:bg-opacity-30 transition-all">
