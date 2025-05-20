@@ -26,6 +26,9 @@ const PhaseOne = () => {
   const [hasInteracted, setHasInteracted] = useState(false);
   const stoneRefs = useRef<(HTMLDivElement | null)[]>([]);
   
+  // Time tracking for analytics
+  const phaseStartTime = useRef<number>(Date.now());
+  
   // Analytics tracking
   const logEvent = (eventName: string, eventData: any) => {
     // In a production app, this would send to an analytics service
@@ -122,7 +125,7 @@ const PhaseOne = () => {
         // Trigger a special completion animation
         setTimeout(() => {
           // Track completion time and log analytics
-          const timeSpent = Date.now() - startTimeRef.current;
+          const timeSpent = Date.now() - phaseStartTime.current;
           logEvent('foundation_phase_completed', { time_spent: timeSpent });
           
           // Show toast notification
@@ -135,7 +138,9 @@ const PhaseOne = () => {
           
           // After a delay, transition to phase 2
           setTimeout(() => {
-            setPhase(2);
+            // Move to the next phase - the context will automatically transition to phase 2
+            // since this is the last foundation set
+            nextFoundationSet(); 
           }, 2000);
         }, 1000);
       }
