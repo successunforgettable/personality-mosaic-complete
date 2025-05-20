@@ -370,6 +370,45 @@ export async function registerRoutes(app: Express): Promise<Server> {
     app._router.handle(req, res);
   });
   
+  // Migrate data from guest to registered user
+  app.post("/api/auth/migrate-guest-data", jwtAuth, async (req, res) => {
+    try {
+      const { guestId } = req.body;
+      const userId = req.user?.claims?.sub;
+      
+      if (!guestId || !userId) {
+        return res.status(400).json({ 
+          message: "Both guest ID and user ID are required for migration" 
+        });
+      }
+      
+      // Import the migration function
+      const { migrateGuestData } = await import('./guestDataMigration');
+      
+      // Perform the migration
+      const result = await migrateGuestData(guestId, userId);
+      
+      if (result.success) {
+        return res.json({
+          success: true,
+          message: `Successfully migrated ${result.migratedCount} assessment results`,
+          migratedCount: result.migratedCount
+        });
+      } else {
+        return res.status(500).json({
+          success: false,
+          message: "Failed to migrate guest data",
+          error: result.error
+        });
+      }
+    } catch (error) {
+      console.error("Guest data migration error:", error);
+      return res.status(500).json({ 
+        message: "Failed to migrate guest data. Please try again." 
+      });
+    }
+  });
+
   // Secure logout functionality
   app.post("/api/auth/logout", jwtAuth, async (req, res) => {
     try {

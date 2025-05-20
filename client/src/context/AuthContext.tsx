@@ -27,6 +27,7 @@ interface AuthContextType {
   isGuest: boolean;
   startGuestSession: () => void;
   endGuestSession: () => void;
+  migrateGuestData: (guestId: string) => Promise<boolean>;
   sendPasswordResetEmail: (email: string) => Promise<boolean>;
   resetSessionTimer: () => void; // Reset inactivity timer
   sessionTimeRemaining: number; // Time remaining in session (ms)
@@ -45,6 +46,7 @@ const AuthContext = createContext<AuthContextType>({
   isGuest: false,
   startGuestSession: () => {},
   endGuestSession: () => {},
+  migrateGuestData: async () => false,
   sendPasswordResetEmail: async () => false,
   resetSessionTimer: () => {},
   sessionTimeRemaining: SESSION_TIMEOUT_MS,
@@ -403,6 +405,56 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     checkAuth();
   }, []);
 
+  // Implementation of guest data migration
+  const migrateGuestData = async (guestId: string): Promise<boolean> => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      
+      // Check that user is authenticated but not a guest
+      if (!user || isGuest) {
+        setError("You must be logged in to a registered account to migrate data");
+        return false;
+      }
+      
+      // Call the migration endpoint
+      const response = await fetch('/api/auth/migrate-guest-data', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('auth_token')}`
+        },
+        body: JSON.stringify({ guestId })
+      });
+      
+      const data = await response.json();
+      
+      if (!response.ok) {
+        setError(data.message || "Failed to migrate guest data");
+        return false;
+      }
+      
+      console.log(`Successfully migrated ${data.migratedCount} items from guest account`);
+      toast({
+        title: "Data migration successful",
+        description: `${data.migratedCount} assessment results have been transferred to your account`,
+        variant: "default"
+      });
+      
+      // Clear any stored guest ID to prevent repeated migrations
+      localStorage.removeItem('guest_user');
+      localStorage.removeItem('guest_session');
+      
+      return true;
+    } catch (error) {
+      console.error("Error migrating guest data:", error);
+      setError("An error occurred while migrating guest data");
+      return false;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -417,6 +469,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         isGuest,
         startGuestSession,
         endGuestSession,
+        migrateGuestData,
         sendPasswordResetEmail,
         resetSessionTimer,
         sessionTimeRemaining,
