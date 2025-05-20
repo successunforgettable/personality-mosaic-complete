@@ -1,124 +1,66 @@
 import React from 'react';
 import './FoundationVisualization.css';
-import { FoundationStone } from '@/types/assessment';
 
-interface FoundationVisualizationProps {
-  selectedStones: FoundationStone[];
-  totalStones?: number;
-  isAnimating?: boolean;
-  lastSelectedStoneId?: number;
-}
-
-const FoundationVisualization: React.FC<FoundationVisualizationProps> = ({ 
-  selectedStones = [] 
-}) => {
-  // Dummy data for static visualization - you can replace with real data later
-  const dummyStones = [
-    { id: 1, type: 'heart', name: 'COMPASSION', traits: 'EMPATHY • KINDNESS • UNDERSTANDING' },
-    { id: 2, type: 'head', name: 'ANALYSIS', traits: 'LOGIC • THINKING • SOLVING' },
-    { id: 3, type: 'body', name: 'PASSION', traits: 'ENTHUSIASM • INTENSITY • DRIVE' },
-    // Add more as needed
+const FoundationVisualization = ({ selectedStones = [] }) => {
+  // STATIC TEST DATA - this is just for visual demonstration
+  const stonesToRender = [
+    { id: 1, type: 'head', name: 'INSIGHT' },
+    { id: 2, type: 'heart', name: 'HARMONY' },
+    { id: 3, type: 'body', name: 'VIGILANCE' }
   ];
   
-  // Use either real data or dummy data
-  const stonesToRender = selectedStones.length > 0 ? selectedStones.map(stone => ({
-    id: stone.id,
-    type: stone.category === 'Heart' ? 'heart' : stone.category === 'Body' ? 'body' : 'head',
-    name: stone.name
-  })) : [];
-  
   return (
-    <div className="foundation-container">
-      {/* Foundation Circle */}
-      <div className="foundation-circle">
-        {/* Center point */}
-        <div className="foundation-center"></div>
-        
-        {/* Stone positions */}
-        <div className="stone-position pos-0">
-          {stonesToRender.length > 0 && (
-            <>
-              <div className="stone-line"></div>
-              <div className={`stone-shape ${stonesToRender[0]?.type || 'heart'}`}></div>
-            </>
-          )}
-        </div>
-        
-        <div className="stone-position pos-1">
-          {stonesToRender.length > 1 && (
-            <>
-              <div className="stone-line"></div>
-              <div className={`stone-shape ${stonesToRender[1]?.type || 'head'}`}></div>
-            </>
-          )}
-        </div>
-        
-        <div className="stone-position pos-2">
-          {stonesToRender.length > 2 && (
-            <>
-              <div className="stone-line"></div>
-              <div className={`stone-shape ${stonesToRender[2]?.type || 'body'}`}></div>
-            </>
-          )}
-        </div>
-        
-        <div className="stone-position pos-3">
-          {stonesToRender.length > 3 && (
-            <>
-              <div className="stone-line"></div>
-              <div className={`stone-shape ${stonesToRender[3]?.type || 'head'}`}></div>
-            </>
-          )}
-        </div>
-        
-        <div className="stone-position pos-4">
-          {stonesToRender.length > 4 && (
-            <>
-              <div className="stone-line"></div>
-              <div className={`stone-shape ${stonesToRender[4]?.type || 'heart'}`}></div>
-            </>
-          )}
-        </div>
-        
-        <div className="stone-position pos-5">
-          {stonesToRender.length > 5 && (
-            <>
-              <div className="stone-line"></div>
-              <div className={`stone-shape ${stonesToRender[5]?.type || 'body'}`}></div>
-            </>
-          )}
-        </div>
-        
-        <div className="stone-position pos-6">
-          {stonesToRender.length > 6 && (
-            <>
-              <div className="stone-line"></div>
-              <div className={`stone-shape ${stonesToRender[6]?.type || 'head'}`}></div>
-            </>
-          )}
-        </div>
-        
-        <div className="stone-position pos-7">
-          {stonesToRender.length > 7 && (
-            <>
-              <div className="stone-line"></div>
-              <div className={`stone-shape ${stonesToRender[7]?.type || 'heart'}`}></div>
-            </>
-          )}
-        </div>
-        
-        <div className="stone-position pos-8">
-          {stonesToRender.length > 8 && (
-            <>
-              <div className="stone-line"></div>
-              <div className={`stone-shape ${stonesToRender[8]?.type || 'body'}`}></div>
-            </>
-          )}
+    <div className="flex flex-col items-center">
+      {/* Progress information */}
+      <h2 className="text-xl font-bold text-gray-800 mb-2">Complete Your Foundation</h2>
+      
+      <p className="text-center mb-6 text-gray-700 max-w-lg">
+        Choose the stone that resonates most with your core traits and personality. These selections
+        will form the foundation of your personality tower.
+      </p>
+      
+      <div className="text-center mb-6">
+        <span className="font-semibold text-gray-700">
+          {selectedStones.length} of 9 stones selected
+        </span>
+      </div>
+      
+      {/* Foundation visualization container */}
+      <div className="foundation-container">
+        {/* Foundation Circle */}
+        <div className="foundation-circle">
+          {/* Center point */}
+          <div className="foundation-center"></div>
+          
+          {/* Stones positioned as in the screenshot */}
+          <div className="stone-position top-stone">
+            <div className="stone-line top-line"></div>
+            <div className="stone-shape head">
+              <div className="stone-label">INSIGHT</div>
+              <div className="stone-traits">PERCEPTION · KNOWLEDGE<br/>WISDOM</div>
+            </div>
+          </div>
+          
+          <div className="stone-position right-stone">
+            <div className="stone-line right-line"></div>
+            <div className="stone-shape heart">
+              <div className="stone-label">HARMONY</div>
+              <div className="stone-traits">PEACE · GRACE · EQUALITY<br/>CONNECTION</div>
+            </div>
+          </div>
+          
+          <div className="stone-position left-stone">
+            <div className="stone-line left-line"></div>
+            <div className="stone-shape body">
+              <div className="stone-label">VIGILANCE</div>
+              <div className="stone-traits">CAUTION · PREPARATION<br/>LOYALTY</div>
+            </div>
+          </div>
         </div>
       </div>
       
-      <div className="foundation-progress">
-        {stonesToRender.length} of 9 stones selected
+      <div className="text-sm text-gray-500 mt-4 text-center">
+        Choose a foundation stone to integrate into your personality tower.
       </div>
     </div>
   );
