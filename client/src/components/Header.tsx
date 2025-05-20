@@ -85,7 +85,7 @@ const Header = () => {
                       <div 
                         className="block px-4 py-2 text-sm text-[#64748b] hover:bg-[#f8fafc] cursor-pointer"
                         onClick={() => {
-                          navigate("/");
+                          alert("Profile section coming soon! Complete an assessment to see your results.");
                           setUserMenuOpen(false);
                         }}
                       >
@@ -94,7 +94,7 @@ const Header = () => {
                       <div 
                         className="block px-4 py-2 text-sm text-[#64748b] hover:bg-[#f8fafc] cursor-pointer"
                         onClick={() => {
-                          navigate("/");
+                          alert("Take an assessment first to see your results!");
                           setUserMenuOpen(false);
                         }}
                       >
@@ -188,7 +188,7 @@ const Header = () => {
                   <div 
                     className="block px-4 py-2 text-[#64748b] cursor-pointer"
                     onClick={() => {
-                      navigate("/");
+                      alert("Profile section coming soon! Complete an assessment to see your results.");
                       setMobileMenuOpen(false);
                     }}
                   >
@@ -197,7 +197,7 @@ const Header = () => {
                   <div 
                     className="block px-4 py-2 text-[#64748b] cursor-pointer"
                     onClick={() => {
-                      navigate("/");
+                      alert("Take an assessment first to see your results!");
                       setMobileMenuOpen(false);
                     }}
                   >
