@@ -46,6 +46,19 @@ const jwtAuth = async (req: any, res: Response, next: Function) => {
     
     const user = result.rows[0];
     
+    // Check if token was invalidated (user logged out)
+    if (user.token_invalidated_at) {
+      const invalidatedAt = new Date(user.token_invalidated_at).getTime();
+      const tokenIssuedAt = (decoded as any).iat ? (decoded as any).iat * 1000 : 0;
+      
+      if (tokenIssuedAt < invalidatedAt) {
+        return res.status(401).json({ 
+          message: "Token has been invalidated", 
+          code: "TOKEN_INVALIDATED" 
+        });
+      }
+    }
+    
     // Remove sensitive information
     delete user.password;
     
