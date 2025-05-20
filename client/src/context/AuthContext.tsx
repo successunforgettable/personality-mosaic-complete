@@ -1,4 +1,5 @@
 import React, { createContext, useState, useContext, useEffect, ReactNode, useRef } from 'react';
+import { useToast } from "@/hooks/use-toast";
 
 // Define the user type
 export interface User {
@@ -65,6 +66,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   // Refs for session management
   const lastActivityRef = useRef<number>(Date.now());
   const timerRef = useRef<NodeJS.Timeout | null>(null);
+  
+  // Toast for user notifications
+  const { toast } = useToast();
 
   // Check if the user is authenticated
   const checkAuthStatus = async (): Promise<boolean> => {
@@ -286,6 +290,85 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   };
 
   // Check auth status on mount
+  // Session timeout management functions
+  const resetSessionTimer = () => {
+    // Update last activity timestamp
+    lastActivityRef.current = Date.now();
+    setSessionTimeRemaining(SESSION_TIMEOUT_MS);
+    
+    // Clear any existing timeout
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+    }
+    
+    // Only set timer if user is authenticated and not a guest
+    if (user && !isGuest) {
+      timerRef.current = setTimeout(checkSessionTimeout, SESSION_CHECK_INTERVAL_MS);
+    }
+  };
+  
+  // Check if session has timed out
+  const checkSessionTimeout = () => {
+    if (!user || isGuest) return; // No need to check if not logged in
+    
+    const currentTime = Date.now();
+    const lastActivity = lastActivityRef.current;
+    const timeElapsed = currentTime - lastActivity;
+    
+    // Calculate time remaining
+    const timeRemaining = Math.max(0, SESSION_TIMEOUT_MS - timeElapsed);
+    setSessionTimeRemaining(timeRemaining);
+    
+    if (timeRemaining <= 0) {
+      // Session expired, log out user
+      console.log('Session expired due to inactivity');
+      toast({
+        title: "Session expired",
+        description: "You have been logged out due to inactivity",
+        variant: "destructive"
+      });
+      logout();
+    } else {
+      // Continue checking
+      timerRef.current = setTimeout(checkSessionTimeout, SESSION_CHECK_INTERVAL_MS);
+    }
+  };
+  
+  // Set up event listeners for user activity
+  useEffect(() => {
+    // Only track activity if user is logged in and not a guest
+    if (user && !isGuest) {
+      // Reset timer on initial login
+      resetSessionTimer();
+      
+      // User activity events
+      const userActivityEvents = ['mousedown', 'keydown', 'touchstart', 'scroll'];
+      
+      // Event handler to update last activity time
+      const handleUserActivity = () => {
+        resetSessionTimer();
+      };
+      
+      // Add event listeners
+      userActivityEvents.forEach(event => {
+        window.addEventListener(event, handleUserActivity);
+      });
+      
+      // Clear event listeners on cleanup
+      return () => {
+        userActivityEvents.forEach(event => {
+          window.removeEventListener(event, handleUserActivity);
+        });
+        
+        // Clear timeout on unmount
+        if (timerRef.current) {
+          clearTimeout(timerRef.current);
+        }
+      };
+    }
+  }, [user, isGuest]);
+
+  // Initial authentication check
   useEffect(() => {
     const checkAuth = async () => {
       // First check for saved user in localStorage (if "remember me" was checked)
@@ -335,6 +418,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         startGuestSession,
         endGuestSession,
         sendPasswordResetEmail,
+        resetSessionTimer,
+        sessionTimeRemaining,
       }}
     >
       {children}
