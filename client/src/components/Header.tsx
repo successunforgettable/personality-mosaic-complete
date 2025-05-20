@@ -2,12 +2,15 @@ import { useLocation } from "wouter";
 import { useState } from "react";
 import { Brain, Menu, X, LogIn, UserPlus, User, LogOut } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
-import { useCustomAlert } from "./CustomAlert";
+import { useToast } from "@/hooks/use-toast";
 
 const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [_, navigate] = useLocation();
+  
+  // Toast notification
+  const { toast } = useToast();
   
   // Use our authentication context
   const { user, isAuthenticated, isGuest, logout } = useAuth();
@@ -86,7 +89,11 @@ const Header = () => {
                       <div 
                         className="block px-4 py-2 text-sm text-[#64748b] hover:bg-[#f8fafc] cursor-pointer"
                         onClick={() => {
-                          alert("Profile section coming soon! Complete an assessment to see your results.");
+                          toast({
+                            title: "Profile",
+                            description: "Profile section coming soon! Complete an assessment to see your results.",
+                            className: "font-inter",
+                          });
                           setUserMenuOpen(false);
                         }}
                       >
@@ -95,7 +102,11 @@ const Header = () => {
                       <div 
                         className="block px-4 py-2 text-sm text-[#64748b] hover:bg-[#f8fafc] cursor-pointer"
                         onClick={() => {
-                          alert("Take an assessment first to see your results!");
+                          toast({
+                            title: "Results",
+                            description: "Take an assessment first to see your results!",
+                            className: "font-inter",
+                          });
                           setUserMenuOpen(false);
                         }}
                       >
@@ -189,7 +200,11 @@ const Header = () => {
                   <div 
                     className="block px-4 py-2 text-[#64748b] cursor-pointer"
                     onClick={() => {
-                      alert("Profile section coming soon! Complete an assessment to see your results.");
+                      toast({
+                        title: "Profile",
+                        description: "Profile section coming soon! Complete an assessment to see your results.",
+                        className: "font-inter",
+                      });
                       setMobileMenuOpen(false);
                     }}
                   >
@@ -198,7 +213,11 @@ const Header = () => {
                   <div 
                     className="block px-4 py-2 text-[#64748b] cursor-pointer"
                     onClick={() => {
-                      alert("Take an assessment first to see your results!");
+                      toast({
+                        title: "Results",
+                        description: "Take an assessment first to see your results!",
+                        className: "font-inter",
+                      });
                       setMobileMenuOpen(false);
                     }}
                   >
