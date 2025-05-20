@@ -58,16 +58,11 @@ async function upsertUser(
   claims: any,
 ) {
   try {
-    // Create or update user in database based on the claims
-    await storage.upsertUser({
-      id: claims["sub"],
-      email: claims["email"],
-      firstName: claims["first_name"],
-      lastName: claims["last_name"],
-      profileImageUrl: claims["profile_image_url"],
-    });
+    console.log("Replit Auth upsertUser disabled - using direct SQL instead");
+    // Disabled to prevent UUID vs integer ID conflicts
+    // Will be re-implemented when database schema is updated
   } catch (error) {
-    console.error("Error upserting user:", error);
+    console.error("Error in upsertUser:", error);
   }
 }
 

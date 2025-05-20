@@ -219,7 +219,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Get the next available ID from the users table
       const maxIdResult = await db.query('SELECT MAX(id) as max_id FROM users');
-      const nextId = (maxIdResult.rows[0].max_id || 0) + 1;
+      console.log("Max ID result:", maxIdResult.rows);
+      const nextId = (parseInt(maxIdResult.rows[0]?.max_id) || 0) + 1;
+      console.log("Next ID to use:", nextId);
       
       console.log("Creating new user with ID:", nextId, "and username:", usernameToUse);
       
