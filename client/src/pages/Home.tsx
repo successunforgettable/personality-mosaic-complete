@@ -302,7 +302,7 @@ export default function Home() {
       </section>
       
       {/* 3.1. How It Works Section - light gray background */}
-      <section ref={howItWorksRef} className="py-20 bg-[#f8fafc]">
+      <section id="how-it-works" ref={howItWorksRef} className="py-20 bg-[#f8fafc]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="text-center mb-16 animate-on-scroll">
             {/* 3.2. Section header */}
