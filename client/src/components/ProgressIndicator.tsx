@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 
-interface ProgressBarProps {
+interface ProgressIndicatorProps {
   progress: number; // 0-100
   showPercentage?: boolean;
   height?: number;
@@ -11,7 +11,7 @@ interface ProgressBarProps {
   }
 }
 
-export default function ProgressBar({
+const ProgressIndicator: React.FC<ProgressIndicatorProps> = ({
   progress,
   showPercentage = false,
   height = 8,
@@ -48,3 +48,5 @@ export default function ProgressBar({
     </div>
   );
 };
+
+export default ProgressIndicator;
