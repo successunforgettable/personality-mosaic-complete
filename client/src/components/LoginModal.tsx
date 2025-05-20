@@ -385,8 +385,20 @@ function LoginModal({
                       description: "Welcome back to Personality Mosaic!",
                     });
                     
-                    // Instead of using the navigate function, use direct window location
-                    window.location.href = "/assessment";
+                    // Use navigate and make sure the user sees the assessment page
+                    try {
+                      navigate("/assessment");
+                      
+                      // As a fallback, also try direct navigation after a small delay
+                      setTimeout(() => {
+                        if (window.location.pathname !== "/assessment") {
+                          window.location.href = "/assessment";
+                        }
+                      }, 200);
+                    } catch (e) {
+                      console.error("Navigation failed, using direct URL", e);
+                      window.location.href = "/assessment";
+                    }
                   }}
                   className="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-md shadow-sm text-white bg-[#7c3aed] hover:bg-[#6d28d9] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7c3aed] transition-colors duration-200"
                   ref={submitButtonRef}
