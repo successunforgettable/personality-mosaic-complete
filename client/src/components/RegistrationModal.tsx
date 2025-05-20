@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Eye, EyeOff, Mail, User, Lock, Check, X, Loader2 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { useToast } from "@/hooks/use-toast";
-import SocialAuthButton from "./SocialAuthButton";
+import SocialAuthButton from "@/components/SocialAuthButton";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
