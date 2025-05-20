@@ -64,7 +64,25 @@ const jwtAuth = async (req: any, res: Response, next: Function) => {
     next();
   } catch (error) {
     console.error("JWT auth error:", error);
-    return res.status(401).json({ message: "Invalid or expired authentication token" });
+    
+    // Handle different token errors more specifically
+    if (error instanceof jwt.TokenExpiredError) {
+      return res.status(401).json({ 
+        message: "Authentication session has expired", 
+        code: "TOKEN_EXPIRED",
+        expired: true 
+      });
+    } else if (error instanceof jwt.JsonWebTokenError) {
+      return res.status(401).json({ 
+        message: "Invalid authentication token", 
+        code: "TOKEN_INVALID" 
+      });
+    } else {
+      return res.status(401).json({ 
+        message: "Authentication failed", 
+        code: "AUTH_ERROR" 
+      });
+    }
   }
 };
 
@@ -125,6 +143,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Email and password are required" });
       }
       
+      // Import rate limiter
+      const { rateLimiter } = await import('./rateLimiter');
+      
+      // Use IP address and email as identifiers for rate limiting
+      const ipIdentifier = req.ip || 'unknown-ip';
+      const emailIdentifier = `email:${email.toLowerCase().trim()}`;
+      
+      // Check if IP is blocked
+      const ipBlocked = rateLimiter.isBlocked(ipIdentifier);
+      if (ipBlocked.isBlocked) {
+        return res.status(429).json({
+          message: `Too many failed login attempts. Please try again after ${ipBlocked.timeRemaining} minutes.`,
+          timeRemaining: ipBlocked.timeRemaining
+        });
+      }
+      
+      // Check if email is blocked
+      const emailBlocked = rateLimiter.isBlocked(emailIdentifier);
+      if (emailBlocked.isBlocked) {
+        return res.status(429).json({
+          message: `Too many failed login attempts for this email. Please try again after ${emailBlocked.timeRemaining} minutes.`,
+          timeRemaining: emailBlocked.timeRemaining
+        });
+      }
+      
       // Find user by email - case insensitive search
       console.log("Logging in with email:", email);
       const normalizedEmail = email.toLowerCase().trim();
@@ -169,15 +212,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // No user found with this email
       if (userResult.rows.length === 0) {
+        // Record failed attempt for the IP and email
+        rateLimiter.recordFailedAttempt(ipIdentifier);
+        rateLimiter.recordFailedAttempt(emailIdentifier);
         return res.status(401).json({ message: "Invalid email or password" });
       }
       
       const user = userResult.rows[0];
       
+      // Check if email is verified (unless it's the test account)
+      if (email !== 'test@example.com' && user.email_verified === 'false') {
+        return res.status(403).json({ 
+          message: "Please verify your email before logging in",
+          needsVerification: true
+        });
+      }
+      
       // Validate password (direct comparison for demo - in production, use bcrypt)
       if (user.password !== password) {
+        // Record failed attempt for the IP and email
+        rateLimiter.recordFailedAttempt(ipIdentifier);
+        rateLimiter.recordFailedAttempt(emailIdentifier);
         return res.status(401).json({ message: "Invalid email or password" });
       }
+      
+      // Login successful - reset rate limiting
+      rateLimiter.reset(ipIdentifier);
+      rateLimiter.reset(emailIdentifier);
       
       // Generate JWT token
       const token = generateToken(user.id.toString());
@@ -307,6 +368,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
     console.log("Redirecting from /api/register to /api/auth/register");
     req.url = "/api/auth/register";
     app._router.handle(req, res);
+  });
+  
+  // Secure logout functionality
+  app.post("/api/auth/logout", jwtAuth, async (req, res) => {
+    try {
+      // Get user ID from JWT token
+      const userId = req.user?.claims?.sub;
+      
+      if (!userId) {
+        return res.status(401).json({ message: "User not authenticated" });
+      }
+      
+      // Create a record of the invalidated token
+      // In a real implementation, we would store this in a dedicated blacklist table
+      // For this implementation, we'll update the user record with a token_invalidated_at timestamp
+      await db.query(
+        'UPDATE users SET token_invalidated_at = NOW() WHERE id = $1',
+        [userId]
+      );
+      
+      return res.json({ message: "Logged out successfully" });
+    } catch (error) {
+      console.error("Logout error:", error);
+      return res.status(500).json({ message: "Logout failed" });
+    }
   });
   
   // Email verification endpoint
