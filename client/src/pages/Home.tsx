@@ -702,6 +702,185 @@ export default function Home() {
         </div>
       </section>
       
+      {/* 5.1. Testimonials Section - light purple gradient background */}
+      <section className="py-20 bg-gradient-to-b from-[#f5f3ff] to-[#ede9fe]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
+          <div className="text-center mb-16 animate-on-scroll">
+            {/* 5.2. Section header */}
+            <h2 className="text-2xl md:text-3xl lg:text-4xl font-semibold font-inter text-[#1e293b] mb-6">
+              What Others Have Discovered
+            </h2>
+            <p className="text-base md:text-lg text-[#64748b] max-w-3xl mx-auto">
+              Hear from people who have already built their personality towers and applied their insights.
+            </p>
+          </div>
+          
+          {/* 5.4. Desktop grid layout for testimonials */}
+          <div className="hidden md:grid grid-cols-1 md:grid-cols-3 gap-8 mb-12 animate-on-scroll">
+            {/* 5.3. Testimonial cards */}
+            {/* 5.3.1. Testimonial 1 */}
+            <div className="bg-white rounded-xl shadow-sm p-6 border border-[#e2e8f0] hover:shadow-md hover:-translate-y-1 transition-all duration-300">
+              <div className="flex items-start mb-4">
+                <div className="w-12 h-12 rounded-full bg-[#ede9fe] flex items-center justify-center mr-4">
+                  <span className="text-[#7c3aed] font-bold">JM</span>
+                </div>
+                <div>
+                  <h4 className="font-medium text-[#1e293b]">James Morgan</h4>
+                  <p className="text-sm text-[#64748b]">Product Manager</p>
+                </div>
+              </div>
+              <div className="mb-4">
+                <svg className="w-6 h-6 text-[#7c3aed] mb-2" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
+                </svg>
+                <p className="text-[#1e293b] italic">
+                  "The visualizer made personality assessment engaging and easy to understand. Seeing my tower helped me recognize patterns in my behavior I hadn't noticed before."
+                </p>
+              </div>
+              {/* 5.3.2. Personality type discovered */}
+              <div className="flex items-center">
+                <div className="w-8 h-8 mr-2">
+                  <div className="w-full h-full relative">
+                    <div className="absolute bottom-0 w-full h-1/5 bg-[#a78bfa] rounded-b-sm"></div>
+                    <div className="absolute bottom-1/5 w-full h-1/5 bg-[#10b981] rounded-none"></div>
+                    <div className="absolute bottom-2/5 w-full h-1/5 bg-[#f97316] rounded-none"></div>
+                    <div className="absolute bottom-3/5 w-full h-1/5 bg-[#3b82f6] rounded-none"></div>
+                    <div className="absolute bottom-4/5 w-full h-1/5 bg-[#7c3aed] rounded-t-sm"></div>
+                  </div>
+                </div>
+                <span className="text-sm font-medium text-[#7c3aed]">The Peacemaker</span>
+              </div>
+            </div>
+            
+            {/* 5.3.1. Testimonial 2 */}
+            <div className="bg-white rounded-xl shadow-sm p-6 border border-[#e2e8f0] hover:shadow-md hover:-translate-y-1 transition-all duration-300">
+              <div className="flex items-start mb-4">
+                <div className="w-12 h-12 rounded-full bg-[#ede9fe] flex items-center justify-center mr-4">
+                  <span className="text-[#7c3aed] font-bold">SR</span>
+                </div>
+                <div>
+                  <h4 className="font-medium text-[#1e293b]">Sarah Reeves</h4>
+                  <p className="text-sm text-[#64748b]">Teacher & Coach</p>
+                </div>
+              </div>
+              <div className="mb-4">
+                <svg className="w-6 h-6 text-[#7c3aed] mb-2" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
+                </svg>
+                <p className="text-[#1e293b] italic">
+                  "I was surprised how accurately the assessment captured my personality. The breakdown of different states helped me understand when I'm at my best versus when I'm struggling."
+                </p>
+              </div>
+              {/* 5.3.2. Personality type discovered */}
+              <div className="flex items-center">
+                <div className="w-8 h-8 mr-2">
+                  <div className="w-full h-full relative">
+                    <div className="absolute bottom-0 w-full h-1/5 bg-[#a78bfa] rounded-b-sm"></div>
+                    <div className="absolute bottom-1/5 w-full h-1/5 bg-[#10b981] rounded-none"></div>
+                    <div className="absolute bottom-2/5 w-full h-1/5 bg-[#f97316] rounded-none"></div>
+                    <div className="absolute bottom-3/5 w-full h-1/5 bg-[#3b82f6] rounded-none"></div>
+                    <div className="absolute bottom-4/5 w-full h-1/5 bg-[#7c3aed] rounded-t-sm"></div>
+                  </div>
+                </div>
+                <span className="text-sm font-medium text-[#7c3aed]">The Helper</span>
+              </div>
+            </div>
+            
+            {/* 5.3.1. Testimonial 3 */}
+            <div className="bg-white rounded-xl shadow-sm p-6 border border-[#e2e8f0] hover:shadow-md hover:-translate-y-1 transition-all duration-300">
+              <div className="flex items-start mb-4">
+                <div className="w-12 h-12 rounded-full bg-[#ede9fe] flex items-center justify-center mr-4">
+                  <span className="text-[#7c3aed] font-bold">DT</span>
+                </div>
+                <div>
+                  <h4 className="font-medium text-[#1e293b]">David Torres</h4>
+                  <p className="text-sm text-[#64748b]">Software Engineer</p>
+                </div>
+              </div>
+              <div className="mb-4">
+                <svg className="w-6 h-6 text-[#7c3aed] mb-2" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
+                </svg>
+                <p className="text-[#1e293b] italic">
+                  "As someone who's taken many personality tests, this one stands out with its visual approach. The tower helped me understand my traits in relation to each other rather than as isolated characteristics."
+                </p>
+              </div>
+              {/* 5.3.2. Personality type discovered */}
+              <div className="flex items-center">
+                <div className="w-8 h-8 mr-2">
+                  <div className="w-full h-full relative">
+                    <div className="absolute bottom-0 w-full h-1/5 bg-[#a78bfa] rounded-b-sm"></div>
+                    <div className="absolute bottom-1/5 w-full h-1/5 bg-[#10b981] rounded-none"></div>
+                    <div className="absolute bottom-2/5 w-full h-1/5 bg-[#f97316] rounded-none"></div>
+                    <div className="absolute bottom-3/5 w-full h-1/5 bg-[#3b82f6] rounded-none"></div>
+                    <div className="absolute bottom-4/5 w-full h-1/5 bg-[#7c3aed] rounded-t-sm"></div>
+                  </div>
+                </div>
+                <span className="text-sm font-medium text-[#7c3aed]">The Investigator</span>
+              </div>
+            </div>
+          </div>
+          
+          {/* 5.4 & 5.5. Mobile carousel with navigation dots */}
+          <div className="md:hidden mb-12 animate-on-scroll">
+            <div className="relative">
+              {/* Current testimonial (mobile) */}
+              <div className="bg-white rounded-xl shadow-sm p-6 border border-[#e2e8f0] mb-4">
+                <div className="flex items-start mb-4">
+                  <div className="w-12 h-12 rounded-full bg-[#ede9fe] flex items-center justify-center mr-4">
+                    <span className="text-[#7c3aed] font-bold">JM</span>
+                  </div>
+                  <div>
+                    <h4 className="font-medium text-[#1e293b]">James Morgan</h4>
+                    <p className="text-sm text-[#64748b]">Product Manager</p>
+                  </div>
+                </div>
+                <div className="mb-4">
+                  <svg className="w-6 h-6 text-[#7c3aed] mb-2" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
+                  </svg>
+                  <p className="text-[#1e293b] italic">
+                    "The visualizer made personality assessment engaging and easy to understand. Seeing my tower helped me recognize patterns in my behavior I hadn't noticed before."
+                  </p>
+                </div>
+                {/* Personality type discovered */}
+                <div className="flex items-center">
+                  <div className="w-8 h-8 mr-2">
+                    <div className="w-full h-full relative">
+                      <div className="absolute bottom-0 w-full h-1/5 bg-[#a78bfa] rounded-b-sm"></div>
+                      <div className="absolute bottom-1/5 w-full h-1/5 bg-[#10b981] rounded-none"></div>
+                      <div className="absolute bottom-2/5 w-full h-1/5 bg-[#f97316] rounded-none"></div>
+                      <div className="absolute bottom-3/5 w-full h-1/5 bg-[#3b82f6] rounded-none"></div>
+                      <div className="absolute bottom-4/5 w-full h-1/5 bg-[#7c3aed] rounded-t-sm"></div>
+                    </div>
+                  </div>
+                  <span className="text-sm font-medium text-[#7c3aed]">The Peacemaker</span>
+                </div>
+              </div>
+              
+              {/* Navigation dots */}
+              <div className="flex justify-center space-x-2">
+                <div className="w-3 h-3 rounded-full bg-[#7c3aed]"></div>
+                <div className="w-3 h-3 rounded-full bg-[#ddd6fe]"></div>
+                <div className="w-3 h-3 rounded-full bg-[#ddd6fe]"></div>
+              </div>
+              
+              {/* Navigation arrows */}
+              <button className="absolute top-1/2 -left-4 transform -translate-y-1/2 w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center text-[#7c3aed] border border-[#e2e8f0]">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-4 h-4">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+              </button>
+              <button className="absolute top-1/2 -right-4 transform -translate-y-1/2 w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center text-[#7c3aed] border border-[#e2e8f0]">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-4 h-4">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+      
       {/* Final Call-to-Action Section */}
       <section className="py-20 bg-gradient-to-r from-[#7c3aed] to-[#a78bfa] text-white">
         <div className="max-w-4xl mx-auto px-6 text-center animate-on-scroll">
