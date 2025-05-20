@@ -881,18 +881,25 @@ export default function Home() {
         </div>
       </section>
       
-      {/* Final Call-to-Action Section */}
-      <section className="py-20 bg-gradient-to-r from-[#7c3aed] to-[#a78bfa] text-white">
-        <div className="max-w-4xl mx-auto px-6 text-center animate-on-scroll">
-          <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-4">Ready to Build Your Personality Tower?</h2>
-          <p className="text-xl opacity-90 mb-8">Join thousands who have gained transformative insights</p>
+      {/* 6.1-6.7. Final Call-to-Action Section */}
+      <section className="py-16 md:py-20 lg:py-24 bg-gradient-to-r from-[#7c3aed] to-[#a78bfa] text-white">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 md:px-8 text-center animate-on-scroll">
+          {/* 6.2. Bold headline */}
+          <h2 className="text-2xl md:text-3xl lg:text-5xl font-bold mb-4 md:mb-6">Ready to Build Your Personality Tower?</h2>
+          
+          {/* 6.3. Subheadline */}
+          <p className="text-lg md:text-xl opacity-90 mb-8 md:mb-10">Join thousands who have gained transformative insights</p>
+          
+          {/* 6.4. Large CTA button with hover animation */}
           <div 
-            className="inline-block px-8 py-4 bg-white text-[#7c3aed] rounded-lg font-medium shadow-md hover:bg-opacity-95 hover:scale-[1.02] hover:shadow-lg transition-all duration-200 text-center text-lg cursor-pointer"
+            className="inline-block px-8 py-5 bg-white text-[#7c3aed] rounded-lg font-medium shadow-md hover:bg-opacity-95 hover:scale-[1.03] hover:shadow-lg transition-all duration-300 text-center text-lg md:text-xl cursor-pointer"
             onClick={() => window.location.href = "/signup"}
           >
-            Sign Up For Assessment
+            Begin Free Assessment
           </div>
-          <p className="mt-4 opacity-80 text-sm">Just 5 minutes • Create an account to save your results</p>
+          
+          {/* 6.5. Supporting text */}
+          <p className="mt-5 opacity-80 text-sm md:text-base">Just 5 minutes • No sign-up required to start</p>
         </div>
       </section>
     </div>
