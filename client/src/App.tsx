@@ -11,6 +11,8 @@ import Login from "@/pages/Login";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { AssessmentProvider } from "./context/AssessmentContext";
+import { AuthProvider } from "./context/AuthContext";
+import ProtectedRoute from "@/components/ProtectedRoute";
 import PersonalitySystemValidator from "./test/runValidation";
 import { useEffect } from "react";
 
