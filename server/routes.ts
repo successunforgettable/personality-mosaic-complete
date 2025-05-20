@@ -217,11 +217,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(409).json({ message: "This username is already taken" });
       }
       
-      // Get the next available ID from the users table
-      const maxIdResult = await db.query('SELECT MAX(id) as max_id FROM users');
-      console.log("Max ID result:", maxIdResult.rows);
-      const nextId = (parseInt(maxIdResult.rows[0]?.max_id) || 0) + 1;
-      console.log("Next ID to use:", nextId);
+      // Properly get the next available ID from the users table
+      // Using explicit SQL to handle null case
+      const maxIdResult = await db.query('SELECT COALESCE(MAX(id), 0) as max_id FROM users');
+      const maxId = maxIdResult.rows[0]?.max_id;
+      console.log("Max ID from database:", maxId, "Type:", typeof maxId);
+      const nextId = (typeof maxId === 'number' ? maxId : parseInt(maxId) || 0) + 1;
+      console.log("Next ID to use:", nextId, "Type:", typeof nextId);
       
       console.log("Creating new user with ID:", nextId, "and username:", usernameToUse);
       
