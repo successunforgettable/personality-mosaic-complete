@@ -14,13 +14,15 @@ interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  login: () => void;
+  login: (email: string, password: string, remember?: boolean) => Promise<boolean>;
+  register: (email: string, fullName: string, password: string) => Promise<boolean>;
   logout: () => void;
   checkAuthStatus: () => Promise<boolean>;
   error: string | null;
   isGuest: boolean;
   startGuestSession: () => void;
   endGuestSession: () => void;
+  sendPasswordResetEmail: (email: string) => Promise<boolean>;
 }
 
 // Create the context with default values
@@ -28,13 +30,15 @@ const AuthContext = createContext<AuthContextType>({
   user: null,
   isAuthenticated: false,
   isLoading: true,
-  login: () => {},
+  login: async () => false,
+  register: async () => false,
   logout: () => {},
   checkAuthStatus: async () => false,
   error: null,
   isGuest: false,
   startGuestSession: () => {},
   endGuestSession: () => {},
+  sendPasswordResetEmail: async () => false,
 });
 
 // Auth provider props
@@ -80,22 +84,115 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
   };
 
-  // Login function - redirects to the Replit Auth login page
-  const login = () => {
-    window.location.href = '/api/login';
+  // Email/password login function
+  const login = async (email: string, password: string, remember: boolean = false): Promise<boolean> => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      
+      // For demonstration purposes, we're implementing a mock authentication
+      // In a real app, this would be an API call to your authentication endpoint
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Mock successful login with test credentials
+      if (email === 'test@example.com' && password === 'password123') {
+        // Create a mock user
+        const userData: User = {
+          id: '123456',
+          email: email,
+          firstName: 'Test',
+          lastName: 'User',
+          profileImageUrl: 'https://ui-avatars.com/api/?name=Test+User&background=7c3aed&color=fff'
+        };
+        
+        // Set the user in state
+        setUser(userData);
+        
+        // Store in localStorage if remember me is checked
+        if (remember) {
+          localStorage.setItem('auth_user', JSON.stringify(userData));
+        }
+        
+        return true;
+      } else {
+        setError('Invalid email or password');
+        return false;
+      }
+    } catch (error) {
+      console.error('Login failed:', error);
+      setError('Login failed. Please try again.');
+      return false;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  
+  // Register a new user function
+  const register = async (email: string, fullName: string, password: string): Promise<boolean> => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      
+      // For demonstration purposes, we're implementing a mock registration
+      // In a real app, this would be an API call to your registration endpoint
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      // Create a mock user based on registration data
+      const nameParts = fullName.split(' ');
+      const firstName = nameParts[0];
+      const lastName = nameParts.length > 1 ? nameParts.slice(1).join(' ') : '';
+      
+      const userData: User = {
+        id: 'reg_' + Math.random().toString(36).substring(2, 9),
+        email: email,
+        firstName: firstName,
+        lastName: lastName,
+        profileImageUrl: `https://ui-avatars.com/api/?name=${encodeURIComponent(fullName)}&background=7c3aed&color=fff`
+      };
+      
+      // Set the user in state
+      setUser(userData);
+      
+      return true;
+    } catch (error) {
+      console.error('Registration failed:', error);
+      setError('Registration failed. Please try again.');
+      return false;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  
+  // Password reset email function
+  const sendPasswordResetEmail = async (email: string): Promise<boolean> => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      
+      // For demonstration purposes, we're implementing a mock password reset
+      // In a real app, this would be an API call to your password reset endpoint
+      await new Promise(resolve => setTimeout(resolve, 1200));
+      
+      // Always return success for demo purposes
+      return true;
+    } catch (error) {
+      console.error('Password reset failed:', error);
+      setError('Password reset failed. Please try again.');
+      return false;
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  // Logout function - calls the logout API and clears state
+  // Logout function - clears state and local storage
   const logout = () => {
     try {
-      // Redirect to the logout endpoint
-      window.location.href = '/api/logout';
-      
       // Clear local state
       setUser(null);
       setIsGuest(false);
       
       // Clear localStorage
+      localStorage.removeItem('auth_user');
       localStorage.removeItem('guest_session');
       localStorage.removeItem('guest_assessment_data');
     } catch (error) {
@@ -120,7 +217,20 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   // Check auth status on mount
   useEffect(() => {
     const checkAuth = async () => {
-      await checkAuthStatus();
+      // First check for saved user in localStorage (if "remember me" was checked)
+      const savedUser = localStorage.getItem('auth_user');
+      if (savedUser) {
+        try {
+          const parsedUser = JSON.parse(savedUser);
+          setUser(parsedUser);
+        } catch (e) {
+          console.error('Failed to parse saved user:', e);
+          localStorage.removeItem('auth_user');
+        }
+      } else {
+        // Only try API if no local user found
+        await checkAuthStatus();
+      }
       
       // Check for guest session in localStorage
       const guestSession = localStorage.getItem('guest_session');
@@ -139,12 +249,14 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         isAuthenticated: !!user,
         isLoading,
         login,
+        register,
         logout,
         checkAuthStatus,
         error,
         isGuest,
         startGuestSession,
         endGuestSession,
+        sendPasswordResetEmail,
       }}
     >
       {children}

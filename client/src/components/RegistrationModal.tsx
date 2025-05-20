@@ -50,7 +50,7 @@ export function RegistrationModal({
   onOpenChange,
   onSwitchToLogin
 }: RegistrationModalProps) {
-  const { login, startGuestSession } = useAuth();
+  const { register: registerUser, login, startGuestSession } = useAuth();
   const { toast } = useToast();
   const [_, navigate] = useLocation();
   const [showPassword, setShowPassword] = useState(false);

@@ -84,26 +84,24 @@ function LoginModal({
     setLoginError(null);
     
     try {
-      // In a real implementation, this would validate against the API
-      // For now, we'll use Replit Auth
+      // Attempt login with email/password
+      const success = await login(data.email, data.password, data.rememberMe || false);
       
-      // Store "remember me" preference if selected
-      if (data.rememberMe) {
-        localStorage.setItem('rememberLogin', 'true');
+      if (success) {
+        // Close the modal on success
+        onOpenChange(false);
+        
+        toast({
+          title: "Login successful",
+          description: "Welcome back!",
+        });
       } else {
-        localStorage.removeItem('rememberLogin');
+        // Set form error
+        setLoginError("Invalid email or password. Please try again.");
+        
+        // Focus password field for retry
+        passwordInputRef.current?.focus();
       }
-      
-      // Close the modal
-      onOpenChange(false);
-      
-      // Redirect to login with Replit Auth
-      login();
-      
-      toast({
-        title: "Redirecting to login",
-        description: "You'll be redirected to the authentication page.",
-      });
     } catch (error) {
       console.error("Login failed:", error);
       
