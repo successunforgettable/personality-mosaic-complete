@@ -75,9 +75,17 @@ const SignUp = () => {
     setIsLoading(true);
     
     try {
-      // Mock successful sign-up for now
-      // In a real application, this would be an API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // In a real implementation, this would be a proper API call
+      // to create the user in the database
+      const userData = {
+        id: Date.now().toString(),
+        fullName: formData.fullName,
+        email: formData.email,
+        createdAt: new Date().toISOString()
+      };
+      
+      // Store user in localStorage (simulating authentication)
+      localStorage.setItem("personality_mosaic_user", JSON.stringify(userData));
       
       toast({
         title: "Account created!",

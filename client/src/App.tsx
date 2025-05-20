@@ -19,14 +19,15 @@ function Router() {
   
   // Authentication guard for assessment page
   useEffect(() => {
-    // In a real app, this would check for a valid session or token
-    // For now, this is a simplified version that redirects to signup
-    // if the user is not authenticated
-    const isLoggedIn = false; // Replace with actual auth check
+    // Check for user in localStorage (simulating authentication)
+    const user = localStorage.getItem("personality_mosaic_user");
+    const isLoggedIn = !!user;
+    
+    // Redirect to signup if trying to access assessment without being logged in
     if (location === "/assessment" && !isLoggedIn) {
       setLocation("/signup");
     }
-  }, [location]);
+  }, [location, setLocation]);
 
   // Determine if we should hide header/footer (for login/signup pages)
   const hideHeaderFooter = ["/login", "/signup"].includes(location);
