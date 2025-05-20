@@ -6,10 +6,11 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/not-found";
 import Home from "@/pages/Home";
 import Assessment from "@/pages/Assessment";
-import SignUp from "@/pages/SignUp";
+import FixedSignUp from "@/pages/FixedSignUp";
 import SimpleLogin from "@/pages/SimpleLogin";
 import UserProfile from "@/pages/UserProfile";
 import ResultsCompare from "@/pages/ResultsCompare";
+import SignUp from "@/pages/FixedSignUp"; // Alias for backward compatibility
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { AssessmentProvider } from "./context/AssessmentContext";
@@ -40,7 +41,7 @@ function Router() {
               <Assessment />
             </ProtectedRoute>
           </Route>
-          <Route path="/signup" component={SignUp} />
+          <Route path="/signup" component={FixedSignUp} />
           <Route path="/login" component={SimpleLogin} />
           <Route path="/profile">
             <ProtectedRoute>
