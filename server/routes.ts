@@ -4,15 +4,21 @@ import { storage } from "./storage";
 import { insertAssessmentResultSchema } from "@shared/schema";
 import { ZodError } from "zod";
 
+import { setupAuth, isAuthenticated } from "./replitAuth";
+
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Setup Replit Authentication
+  await setupAuth(app);
+  
   // Save state distribution
-  app.post("/api/assessment/state-distribution", async (req, res) => {
+  app.post("/api/assessment/state-distribution", isAuthenticated, async (req: any, res) => {
     try {
-      // Check if we have valid state distribution data
-      const { userId, stateDistribution } = req.body;
+      // Get the authenticated user ID from the session
+      const userId = req.user.claims.sub;
+      const { stateDistribution } = req.body;
       
-      if (!userId || !stateDistribution) {
-        return res.status(400).json({ message: "Missing required fields: userId and stateDistribution" });
+      if (!stateDistribution) {
+        return res.status(400).json({ message: "Missing required fields: stateDistribution" });
       }
       
       // Ensure we have the required state distribution properties (5-state system)
@@ -51,11 +57,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
-  // Save assessment results
+  // Allow saving assessment results for both authenticated and guest users
   app.post("/api/assessment/results", async (req, res) => {
     try {
+      // For guest users, userId is provided in the request
+      // For authenticated users, userId comes from the session if available
+      let userId = req.body.userId;
+      
+      if (req.isAuthenticated() && req.user) {
+        const user = req.user as any;
+        userId = user.claims.sub;
+      }
+      
+      if (!userId) {
+        return res.status(400).json({ message: "User ID is required" });
+      }
+      
       // Validate the request body
-      const validatedData = insertAssessmentResultSchema.parse(req.body);
+      const validatedData = insertAssessmentResultSchema.parse({
+        ...req.body,
+        userId
+      });
       
       // Save the assessment result
       const result = await storage.createAssessmentResult(validatedData);
@@ -65,17 +87,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (error instanceof ZodError) {
         res.status(400).json({ message: "Invalid assessment data", errors: error.errors });
       } else {
+        console.error("Error creating assessment result:", error);
         res.status(500).json({ message: "Failed to save assessment result" });
       }
     }
   });
 
-  // Get assessment results for a user
-  app.get("/api/users/:userId/assessment/results", async (req, res) => {
+  // Get assessment results for the current authenticated user
+  app.get("/api/my/assessment/results", isAuthenticated, async (req: any, res) => {
     try {
-      const userId = parseInt(req.params.userId);
+      const userId = req.user.claims.sub;
       
-      if (isNaN(userId)) {
+      if (!userId) {
         return res.status(400).json({ message: "Invalid user ID" });
       }
       
@@ -83,6 +106,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       res.json(results);
     } catch (error) {
+      console.error("Error fetching assessment results:", error);
       res.status(500).json({ message: "Failed to retrieve assessment results" });
     }
   });
@@ -102,13 +126,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "Assessment result not found" });
       }
       
+      // If user is authenticated, check if this result belongs to them
+      if (req.isAuthenticated() && req.user) {
+        const user = req.user as any;
+        if (result.userId !== user.claims.sub) {
+          return res.status(403).json({ message: "Unauthorized access to assessment result" });
+        }
+      }
+      
       res.json(result);
     } catch (error) {
+      console.error("Error fetching assessment result:", error);
       res.status(500).json({ message: "Failed to retrieve assessment result" });
     }
   });
 
   const httpServer = createServer(app);
-
   return httpServer;
 }
