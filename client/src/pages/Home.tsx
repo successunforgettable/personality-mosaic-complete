@@ -1,7 +1,30 @@
 import { Link } from "wouter";
 import { motion } from "framer-motion";
+import TowerVisualization from "@/components/TowerVisualization";
+import React, { useState } from "react";
 
 const Home = () => {
+  // Demonstration state distribution - matches the screenshot
+  const [stateDistribution, setStateDistribution] = useState({
+    veryGood: 0,  
+    good: 30,     // Green 30%
+    average: 0,
+    belowAverage: 70, // Below Average 70% (orange)
+    destructive: 0
+  });
+  
+  // Handle slider change for demonstration
+  const handleSliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = parseInt(e.target.value, 10);
+    setStateDistribution({
+      veryGood: 0,
+      good: value,
+      average: 0,
+      belowAverage: 100 - value,
+      destructive: 0
+    });
+  };
+
   return (
     <div className="max-w-6xl mx-auto px-4 py-12">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-16">
@@ -36,13 +59,62 @@ const Home = () => {
           transition={{ duration: 0.6, delay: 0.2 }}
           className="relative"
         >
-          <div className="w-full h-96 bg-gradient-to-br from-primary-100 to-secondary-100 rounded-2xl overflow-hidden shadow-lg relative">
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="w-64 h-64 relative">
-                <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-48 h-12 bg-primary-200 rounded-full"></div>
-                <div className="absolute bottom-12 left-1/2 transform -translate-x-1/2 w-36 h-16 rounded-lg tower-gradient"></div>
-                <div className="absolute bottom-28 left-1/2 transform -translate-x-1/2 w-32 h-16 rounded-lg tower-gradient opacity-80"></div>
-                <div className="absolute bottom-44 left-1/2 transform -translate-x-1/2 w-24 h-24 rounded-lg tower-gradient opacity-60"></div>
+          {/* Demo Color Palette Section */}
+          <div className="w-full bg-gray-50 rounded-2xl overflow-hidden shadow-lg p-6">
+            <div className="flex flex-col space-y-6">
+              {/* State Distribution Slider */}
+              <div>
+                <div className="flex justify-between mb-2">
+                  <span className="text-green-600 font-medium">Good 30%</span>
+                  <span className="text-orange-600 font-medium">Below Average 70%</span>
+                </div>
+                
+                <div className="relative h-10 bg-gradient-to-r from-green-500 to-orange-500 rounded-full overflow-hidden">
+                  <div className="absolute inset-0 flex items-center">
+                    <div className="w-6 h-6 bg-white rounded-full shadow-md absolute" style={{ left: `30%`, transform: 'translateX(-50%)' }}>
+                      <div className="w-2 h-2 bg-gray-400 rounded-full absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"></div>
+                    </div>
+                  </div>
+                  <input 
+                    type="range" 
+                    min="0" 
+                    max="100" 
+                    value={stateDistribution.good}
+                    onChange={handleSliderChange}
+                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" 
+                  />
+                </div>
+                
+                <p className="text-sm text-gray-500 mt-2">Adjust the slider to show how much time you spend in each state</p>
+              </div>
+              
+              {/* Distribution Bar */}
+              <div>
+                <div className="flex justify-between">
+                  <span className="text-sm text-gray-600">Total Distribution</span>
+                  <span className="text-sm font-medium text-primary-600">100%</span>
+                </div>
+                <div className="h-4 bg-gray-100 rounded-full mt-2 overflow-hidden">
+                  <div className="flex h-full">
+                    <div className="bg-green-500 h-full" style={{ width: `${stateDistribution.good}%` }}></div>
+                    <div className="bg-orange-500 h-full" style={{ width: `${stateDistribution.belowAverage}%` }}></div>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Tower Visualization */}
+              <div className="mt-6">
+                <h3 className="text-xl font-semibold text-center mb-2">Your Colorful Tower</h3>
+                <p className="text-sm text-gray-600 text-center mb-4">See how your state distribution affects your tower's colors</p>
+                
+                <div className="flex justify-center">
+                  <div className="w-48 h-64">
+                    <TowerVisualization 
+                      stateDistribution={stateDistribution}
+                      showHotspots={true}
+                    />
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -92,7 +164,7 @@ const Home = () => {
               <span className="material-icons">palette</span>
             </div>
             <h3 className="text-xl font-semibold text-gray-800 mb-2">3. Color Palette</h3>
-            <p className="text-gray-600">Adjust sliders to show how much time you spend in healthy, average, and unhealthy states.</p>
+            <p className="text-gray-600">Select color palettes and adjust mixing to show how much time you spend in different psychological states.</p>
           </motion.div>
           
           <motion.div 
@@ -105,7 +177,7 @@ const Home = () => {
               <span className="material-icons">dashboard_customize</span>
             </div>
             <h3 className="text-xl font-semibold text-gray-800 mb-2">4. Detail Elements</h3>
-            <p className="text-gray-600">Add finishing touches by arranging detail elements that reflect how you focus your energy.</p>
+            <p className="text-gray-600">Drag and drop detail elements to customize how your personality tower gets decorated.</p>
           </motion.div>
         </div>
       </div>
