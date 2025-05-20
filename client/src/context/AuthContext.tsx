@@ -59,12 +59,30 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       setIsLoading(true);
       setError(null);
       
+      // Get token from localStorage
+      const token = localStorage.getItem('auth_token');
+      
+      // If no token, try to get cached user data (for backward compatibility)
+      if (!token) {
+        const storedUser = localStorage.getItem('auth_user');
+        
+        if (storedUser) {
+          setUser(JSON.parse(storedUser));
+          return true;
+        }
+        
+        // No auth data found
+        setUser(null);
+        return false;
+      }
+      
+      // With a token, verify it with the server
       const response = await fetch('/api/auth/user', {
         method: 'GET',
-        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
-        },
+          'Authorization': `Bearer ${token}`
+        }
       });
       
       if (response.ok) {
@@ -72,6 +90,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         setUser(userData);
         return true;
       } else {
+        // Token is invalid, clear it
+        localStorage.removeItem('auth_token');
+        localStorage.removeItem('auth_user');
         setUser(null);
         return false;
       }
@@ -139,28 +160,43 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       setIsLoading(true);
       setError(null);
       
-      // For demonstration purposes, we're implementing a mock registration
-      // In a real app, this would be an API call to your registration endpoint
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      // Create a mock user based on registration data
+      // Split full name into first name and last name
       const nameParts = fullName.split(' ');
       const firstName = nameParts[0];
       const lastName = nameParts.length > 1 ? nameParts.slice(1).join(' ') : '';
       
-      const userData: User = {
-        id: 'reg_' + Math.random().toString(36).substring(2, 9),
-        email: email,
-        firstName: firstName,
-        lastName: lastName,
-        profileImageUrl: `https://ui-avatars.com/api/?name=${encodeURIComponent(fullName)}&background=7c3aed&color=fff`
-      };
+      // Make the actual registration request to the backend
+      const response = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email,
+          password,
+          firstName,
+          lastName
+        }),
+      });
+      
+      // If registration failed
+      if (!response.ok) {
+        const errorData = await response.json();
+        setError(errorData.message || 'Registration failed. Please try again.');
+        return false;
+      }
+      
+      // Parse the response data
+      const { user, token } = await response.json();
+      
+      // Set the authentication token in localStorage
+      if (token) {
+        localStorage.setItem('auth_token', token);
+        localStorage.setItem('auth_user', JSON.stringify(user));
+      }
       
       // Set the user in state
-      setUser(userData);
-      
-      // Store in localStorage to persist the session
-      localStorage.setItem('auth_user', JSON.stringify(userData));
+      setUser(user);
       
       return true;
     } catch (error) {
