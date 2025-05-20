@@ -50,7 +50,14 @@ const Header = () => {
         <div className="hidden md:flex items-center space-x-4">
           <div 
             className="px-3 py-2 text-sm text-[#64748b] hover:text-[#1e293b] cursor-pointer" 
-            onClick={() => navigate("/")}
+            onClick={() => {
+              // Navigate to home page first
+              navigate("/");
+              // Then scroll to the How It Works section after a small delay
+              setTimeout(() => {
+                document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' });
+              }, 100);
+            }}
           >
             How It Works
           </div>
@@ -152,8 +159,14 @@ const Header = () => {
           <div 
             className="block px-4 py-2 text-[#64748b] cursor-pointer"
             onClick={() => {
+              // Navigate to home page first
               navigate("/");
+              // Close the mobile menu
               setMobileMenuOpen(false);
+              // Then scroll to the How It Works section after a small delay
+              setTimeout(() => {
+                document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' });
+              }, 100);
             }}
           >
             How It Works
