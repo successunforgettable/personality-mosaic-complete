@@ -1,15 +1,41 @@
 import { Link, useLocation } from "wouter";
-import { useState } from "react";
-import { Brain, Menu, X, LogIn, UserPlus, User, Settings } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Brain, Menu, X, LogIn, UserPlus, User, Settings, LogOut } from "lucide-react";
 
 const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [_, navigate] = useLocation();
   
-  // This would typically come from an auth context
-  const isLoggedIn = false;
-  const isAdmin = false;
+  // Check if user is logged in by looking in localStorage
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userData, setUserData] = useState<any>(null);
+  const isAdmin = userData?.isAdmin || false;
+  
+  // Load user data on component mount
+  useEffect(() => {
+    const storedUser = localStorage.getItem("personality_mosaic_user");
+    if (storedUser) {
+      try {
+        const parsedUser = JSON.parse(storedUser);
+        setUserData(parsedUser);
+        setIsLoggedIn(true);
+      } catch (error) {
+        console.error("Failed to parse user data", error);
+      }
+    }
+  }, []);
+  
+  // Handle logout
+  const handleLogout = () => {
+    localStorage.removeItem("personality_mosaic_user");
+    setIsLoggedIn(false);
+    setUserData(null);
+    setUserMenuOpen(false);
+    
+    // Redirect to home
+    navigate("/");
+  };
 
   return (
     <header className="bg-white shadow-sm py-4 px-6 sticky top-0 z-50">

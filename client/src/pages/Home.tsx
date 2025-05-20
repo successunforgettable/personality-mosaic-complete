@@ -58,11 +58,12 @@ export default function Home() {
               Build a visual representation of your unique personality in just 5 minutes
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
-              <Link href="/assessment">
-                <a className="px-8 py-4 bg-[#7c3aed] text-white rounded-lg font-medium shadow-md hover:bg-[#6d28d9] hover:scale-[1.02] hover:shadow-lg transition-all duration-200 text-center">
-                  Begin Your Tower
-                </a>
-              </Link>
+              <div 
+                className="px-8 py-4 bg-[#7c3aed] text-white rounded-lg font-medium shadow-md hover:bg-[#6d28d9] hover:scale-[1.02] hover:shadow-lg transition-all duration-200 text-center cursor-pointer"
+                onClick={() => window.location.href = "/signup"}
+              >
+                Begin Your Tower
+              </div>
               <button 
                 onClick={scrollToHowItWorks}
                 className="px-8 py-4 text-[#7c3aed] bg-white border border-[#7c3aed] rounded-lg font-medium hover:bg-[#f5f3ff] hover:shadow-md transition-all duration-200 text-center"

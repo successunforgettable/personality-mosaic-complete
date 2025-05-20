@@ -59,9 +59,21 @@ const Login = () => {
     setIsLoading(true);
     
     try {
-      // Mock successful login for now
-      // In a real application, this would be an API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // In a real implementation, this would validate credentials against a database
+      // For demo purposes, we'll simulate a successful login if email contains '@'
+      if (!formData.email.includes('@')) {
+        throw new Error("Invalid email format");
+      }
+      
+      // Create a demo user object
+      const userData = {
+        id: Date.now().toString(),
+        email: formData.email,
+        createdAt: new Date().toISOString()
+      };
+      
+      // Store user in localStorage (simulating authentication)
+      localStorage.setItem("personality_mosaic_user", JSON.stringify(userData));
       
       toast({
         title: "Login successful!",
