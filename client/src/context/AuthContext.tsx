@@ -86,9 +86,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   };
 
   // Logout function - calls the logout API and clears state
-  const logout = async () => {
+  const logout = () => {
     try {
-      setIsLoading(true);
       // Redirect to the logout endpoint
       window.location.href = '/api/logout';
       
@@ -96,13 +95,12 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       setUser(null);
       setIsGuest(false);
       
-      // Clear React Query cache
-      queryClient.clear();
+      // Clear localStorage
+      localStorage.removeItem('guest_session');
+      localStorage.removeItem('guest_assessment_data');
     } catch (error) {
       console.error('Logout failed:', error);
       setError('Logout failed. Please try again.');
-    } finally {
-      setIsLoading(false);
     }
   };
 

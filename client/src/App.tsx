@@ -17,20 +17,8 @@ import PersonalitySystemValidator from "./test/runValidation";
 import { useEffect } from "react";
 
 function Router() {
-  const [location, setLocation] = useLocation();
+  const [location] = useLocation();
   
-  // Authentication guard for assessment page
-  useEffect(() => {
-    // Check for user in localStorage (simulating authentication)
-    const user = localStorage.getItem("personality_mosaic_user");
-    const isLoggedIn = !!user;
-    
-    // Redirect to signup if trying to access assessment without being logged in
-    if (location === "/assessment" && !isLoggedIn) {
-      setLocation("/signup");
-    }
-  }, [location, setLocation]);
-
   // Determine if we should hide header/footer (for login/signup pages)
   const hideHeaderFooter = ["/login", "/signup"].includes(location);
 
@@ -40,7 +28,11 @@ function Router() {
       <main className={`flex-grow ${hideHeaderFooter ? "" : "mt-16"}`}>
         <Switch>
           <Route path="/" component={Home} />
-          <Route path="/assessment" component={Assessment} />
+          <Route path="/assessment">
+            <ProtectedRoute allowGuest={true}>
+              <Assessment />
+            </ProtectedRoute>
+          </Route>
           <Route path="/signup" component={SignUp} />
           <Route path="/login" component={Login} />
           <Route path="/test/validation" component={PersonalitySystemValidator} />
@@ -56,10 +48,12 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <AssessmentProvider>
-          <Toaster />
-          <Router />
-        </AssessmentProvider>
+        <AuthProvider>
+          <AssessmentProvider>
+            <Toaster />
+            <Router />
+          </AssessmentProvider>
+        </AuthProvider>
       </TooltipProvider>
     </QueryClientProvider>
   );
