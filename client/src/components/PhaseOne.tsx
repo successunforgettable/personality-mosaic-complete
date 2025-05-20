@@ -117,14 +117,26 @@ const PhaseOne = () => {
         setIsSaving(false);
       }, 300);
       
-      // If last stone is selected, show a completion message
+      // If last stone is selected, show a completion message and visual celebration
       if (foundationSet === 3) {
+        // Trigger a special completion animation
         setTimeout(() => {
+          // Track completion time and log analytics
+          const timeSpent = Date.now() - startTimeRef.current;
+          logEvent('foundation_phase_completed', { time_spent: timeSpent });
+          
+          // Show toast notification
           toast({
-            title: "Foundation Complete",
-            description: "You've successfully completed the Foundation phase!",
-            variant: "default"
+            title: "Foundation Complete!",
+            description: "You've successfully completed the Foundation phase of your personality tower!",
+            variant: "default",
+            duration: 6000 // Show for longer
           });
+          
+          // After a delay, transition to phase 2
+          setTimeout(() => {
+            setPhase(2);
+          }, 2000);
         }, 1000);
       }
       
