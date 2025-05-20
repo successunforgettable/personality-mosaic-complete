@@ -117,6 +117,43 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Setup Replit Authentication
   await setupAuth(app);
   
+  // Get authenticated user endpoint (simplified for debugging)
+  app.get('/api/auth/user', async (req, res) => {
+    try {
+      // Get token from cookie or Authorization header
+      const token = req.cookies.auth_token || 
+        (req.headers.authorization ? req.headers.authorization.split(' ')[1] : null);
+      
+      if (!token) {
+        return res.status(401).json({ message: "No authentication token provided" });
+      }
+      
+      const secret = process.env.SESSION_SECRET || "personality-mosaic-secret-key";
+      const decoded = jwt.verify(token, secret) as { userId: string };
+      
+      if (!decoded.userId) {
+        return res.status(401).json({ message: "Invalid token format" });
+      }
+      
+      // Get user from database
+      const userResult = await db.query('SELECT * FROM users WHERE id = $1', [decoded.userId]);
+      
+      if (userResult.rows.length === 0) {
+        return res.status(404).json({ message: "User not found" });
+      }
+      
+      const user = userResult.rows[0];
+      
+      // Remove sensitive info
+      delete user.password;
+      
+      return res.json(user);
+    } catch (error) {
+      console.error("Error getting user:", error);
+      return res.status(401).json({ message: "Authentication failed" });
+    }
+  });
+  
   // User registration endpoint
   app.post("/api/register", async (req, res) => {
     try {
