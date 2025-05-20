@@ -379,8 +379,8 @@ function LoginModal({
                     // Save to localStorage
                     localStorage.setItem('auth_user', JSON.stringify(userData));
                     
-                    // Also start a guest session as a fallback
-                    startGuestSession();
+                    // Don't start a guest session since we want to be properly logged in
+                    // We'll manually set the authentication state
                     
                     // Close modal first
                     onOpenChange(false);

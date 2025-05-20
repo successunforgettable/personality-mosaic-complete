@@ -223,6 +223,10 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         try {
           const parsedUser = JSON.parse(savedUser);
           setUser(parsedUser);
+          // If we have a saved user, we're not in guest mode
+          setIsGuest(false);
+          // Remove any guest session flag to avoid conflicts
+          localStorage.removeItem('guest_session');
         } catch (e) {
           console.error('Failed to parse saved user:', e);
           localStorage.removeItem('auth_user');
@@ -230,12 +234,15 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       } else {
         // Only try API if no local user found
         await checkAuthStatus();
-      }
-      
-      // Check for guest session in localStorage
-      const guestSession = localStorage.getItem('guest_session');
-      if (guestSession === 'true') {
-        setIsGuest(true);
+        
+        // Only check for guest session if not authenticated
+        if (!user) {
+          // Check for guest session in localStorage
+          const guestSession = localStorage.getItem('guest_session');
+          if (guestSession === 'true') {
+            setIsGuest(true);
+          }
+        }
       }
     };
     
