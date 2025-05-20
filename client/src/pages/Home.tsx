@@ -1,4 +1,4 @@
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import { 
   Eye, 
   Brain, 
@@ -11,11 +11,80 @@ import {
 
 export default function Home() {
   const howItWorksRef = useRef<HTMLDivElement>(null);
+  const towerRef = useRef<HTMLDivElement>(null);
+  const [rotation, setRotation] = useState({ x: 5, y: 5 });
+  const [isDragging, setIsDragging] = useState(false);
+  const [startPosition, setStartPosition] = useState({ x: 0, y: 0 });
   
   // Function to scroll to How It Works section
   const scrollToHowItWorks = () => {
     howItWorksRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
+  
+  // Handle mouse/touch interaction for tower rotation
+  const handleMouseDown = (e: React.MouseEvent | React.TouchEvent) => {
+    setIsDragging(true);
+    const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
+    const clientY = 'touches' in e ? e.touches[0].clientY : e.clientY;
+    setStartPosition({ x: clientX, y: clientY });
+  };
+  
+  const handleMouseMove = (e: MouseEvent | TouchEvent) => {
+    if (!isDragging) return;
+    
+    const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
+    const clientY = 'touches' in e ? e.touches[0].clientY : e.clientY;
+    
+    const deltaX = (clientX - startPosition.x) / 5;
+    const deltaY = (clientY - startPosition.y) / 10;
+    
+    setRotation(prev => ({
+      y: prev.y + deltaX,
+      x: Math.max(Math.min(prev.x - deltaY, 20), -20) // Limit vertical rotation
+    }));
+    
+    setStartPosition({ x: clientX, y: clientY });
+  };
+  
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+  
+  // Add event listeners for tower rotation
+  useEffect(() => {
+    if (towerRef.current) {
+      const tower = towerRef.current;
+      
+      const handleMove = (e: MouseEvent | TouchEvent) => handleMouseMove(e);
+      const handleUp = () => handleMouseUp();
+      
+      document.addEventListener('mousemove', handleMove);
+      document.addEventListener('mouseup', handleUp);
+      document.addEventListener('touchmove', handleMove);
+      document.addEventListener('touchend', handleUp);
+      
+      return () => {
+        document.removeEventListener('mousemove', handleMove);
+        document.removeEventListener('mouseup', handleUp);
+        document.removeEventListener('touchmove', handleMove);
+        document.removeEventListener('touchend', handleUp);
+      };
+    }
+  }, [isDragging, startPosition]);
+  
+  // Apply subtle animation to tower when not being dragged
+  useEffect(() => {
+    if (!isDragging && towerRef.current) {
+      const interval = setInterval(() => {
+        setRotation(prev => ({
+          ...prev,
+          y: prev.y + 0.05
+        }));
+      }, 50);
+      
+      return () => clearInterval(interval);
+    }
+  }, [isDragging]);
 
   // Intersection observer for scroll animations
   useEffect(() => {
@@ -428,6 +497,223 @@ export default function Home() {
               Start Building Now
             </div>
           </div>
+        </div>
+      </section>
+      
+      {/* 4.1. Preview/Example Section - white background */}
+      <section className="py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
+          <div className="text-center mb-16 animate-on-scroll">
+            {/* 4.2. Section header */}
+            <h2 className="text-2xl md:text-3xl lg:text-4xl font-semibold font-inter text-[#1e293b] mb-6">
+              See What You'll Discover
+            </h2>
+            <p className="text-base md:text-lg text-[#64748b] max-w-3xl mx-auto">
+              Your completed personality tower reveals insights about your personality type, operating states, and more.
+            </p>
+          </div>
+          
+          {/* 4.6. Split screen layout - visualization left, insights right */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 mb-16">
+            {/* 4.3. Interactive preview of completed personality tower */}
+            <div className="animate-on-scroll order-2 lg:order-1">
+              <div className="bg-[#f8fafc] rounded-2xl p-6 lg:p-10 shadow-sm">
+                <div className="relative h-[400px] w-full max-w-[350px] mx-auto cursor-grab active:cursor-grabbing">
+                  {/* 4.3.1-4.3.3. Interactive 3D tower with rotation and hover states */}
+                  <div 
+                    className="absolute inset-0 w-full h-full perspective-1000" 
+                    id="interactiveTower"
+                    onMouseDown={handleMouseDown}
+                    onTouchStart={handleMouseDown}
+                  >
+                    <div 
+                      ref={towerRef}
+                      className="relative w-full h-full transform-style-3d transition-transform duration-300"
+                      style={{ 
+                        transform: `rotateY(${rotation.y}deg) rotateX(${rotation.x}deg)`,
+                        transformStyle: 'preserve-3d'
+                      }}
+                    >
+                      {/* Base foundation */}
+                      <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-60 h-10 bg-gradient-to-r from-[#a78bfa] to-[#8b5cf6] rounded-full shadow-lg hover:shadow-xl hover:brightness-110 transition-all duration-300 cursor-pointer z-10" 
+                        title="Foundation"
+                        onMouseEnter={() => {
+                          document.getElementById('towerInfoBox')!.innerHTML = '<strong>Foundation:</strong> Your core personality type - The Achiever';
+                        }}
+                      >
+                      </div>
+                      
+                      {/* Tower layers */}
+                      <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2 w-56 h-24 bg-gradient-to-t from-[#22c55e] to-[#10b981] rounded-xl shadow-lg hover:shadow-xl hover:brightness-110 hover:scale-105 transition-all duration-300 cursor-pointer z-20"
+                        title="Very Good State (25%)" 
+                        onMouseEnter={() => {
+                          document.getElementById('towerInfoBox')!.innerHTML = '<strong>Very Good State (25%):</strong> Your optimal functioning where you feel most productive and balanced';
+                        }}
+                      >
+                      </div>
+                      
+                      <div className="absolute bottom-[110px] left-1/2 transform -translate-x-1/2 w-52 h-40 bg-gradient-to-t from-[#f59e0b] to-[#fbbf24] rounded-xl shadow-lg hover:shadow-xl hover:brightness-110 hover:scale-105 transition-all duration-300 cursor-pointer z-30"
+                        title="Average State (40%)" 
+                        onMouseEnter={() => {
+                          document.getElementById('towerInfoBox')!.innerHTML = '<strong>Average State (40%):</strong> Your day-to-day functioning where you spend most of your time';
+                        }}
+                      >
+                      </div>
+                      
+                      <div className="absolute bottom-[200px] left-1/2 transform -translate-x-1/2 w-48 h-28 bg-gradient-to-t from-[#3b82f6] to-[#60a5fa] rounded-xl shadow-lg hover:shadow-xl hover:brightness-110 hover:scale-105 transition-all duration-300 cursor-pointer z-40"
+                        title="Good State (20%)" 
+                        onMouseEnter={() => {
+                          document.getElementById('towerInfoBox')!.innerHTML = '<strong>Good State (20%):</strong> Your focused, positive state where you experience flow and creativity';
+                        }}
+                      >
+                      </div>
+                      
+                      <div className="absolute bottom-[272px] left-1/2 transform -translate-x-1/2 w-44 h-20 bg-gradient-to-t from-[#7c3aed] to-[#a78bfa] rounded-xl shadow-lg hover:shadow-xl hover:brightness-110 hover:scale-105 transition-all duration-300 cursor-pointer z-50"
+                        title="Below Average State (10%)" 
+                        onMouseEnter={() => {
+                          document.getElementById('towerInfoBox')!.innerHTML = '<strong>Below Average State (10%):</strong> Your stressed state when facing challenges or constraints';
+                        }}
+                      >
+                      </div>
+                      
+                      <div className="absolute bottom-[328px] left-1/2 transform -translate-x-1/2 w-36 h-16 bg-gradient-to-t from-[#ef4444] to-[#f87171] rounded-xl shadow-lg hover:shadow-xl hover:brightness-110 hover:scale-105 transition-all duration-300 cursor-pointer z-60"
+                        title="Destructive State (5%)" 
+                        onMouseEnter={() => {
+                          document.getElementById('towerInfoBox')!.innerHTML = '<strong>Destructive State (5%):</strong> Your unhealthy patterns that emerge when extremely stressed';
+                        }}
+                      >
+                      </div>
+                      
+                      {/* Subtype indicators */}
+                      <div className="absolute top-8 right-20 w-10 h-10 bg-[#eab308] rounded-full shadow-md hover:shadow-lg hover:scale-110 transition-all duration-300 animate-float-slow cursor-pointer" 
+                        title="Self-Preservation Subtype" 
+                        onMouseEnter={() => {
+                          document.getElementById('towerInfoBox')!.innerHTML = '<strong>Self-Preservation Subtype:</strong> Focus on physical comfort, security, and health';
+                        }}
+                      >
+                        <span className="absolute inset-0 flex items-center justify-center text-white text-xs font-medium">SP</span>
+                      </div>
+                      
+                      <div className="absolute top-16 left-24 w-16 h-16 bg-[#ec4899] rounded-full shadow-md hover:shadow-lg hover:scale-110 transition-all duration-300 animate-float cursor-pointer" 
+                        title="One-to-One Subtype" 
+                        onMouseEnter={() => {
+                          document.getElementById('towerInfoBox')!.innerHTML = '<strong>One-to-One Subtype:</strong> Focus on intimate relationships and connecting deeply with individuals';
+                        }}
+                      >
+                        <span className="absolute inset-0 flex items-center justify-center text-white text-xs font-medium">One-to-One</span>
+                      </div>
+                      
+                      <div className="absolute top-28 right-24 w-12 h-12 bg-[#06b6d4] rounded-full shadow-md hover:shadow-lg hover:scale-110 transition-all duration-300 animate-float-fast cursor-pointer" 
+                        title="Social Subtype" 
+                        onMouseEnter={() => {
+                          document.getElementById('towerInfoBox')!.innerHTML = '<strong>Social Subtype:</strong> Focus on group dynamics, roles in community, and belonging';
+                        }}
+                      >
+                        <span className="absolute inset-0 flex items-center justify-center text-white text-xs font-medium">SO</span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Mouse hover information box */}
+                  <div id="towerInfoBox" className="absolute bottom-4 left-0 right-0 bg-white/90 backdrop-blur-sm p-3 rounded-lg text-sm text-[#1e293b] border border-gray-100 shadow-sm transition-all duration-300">
+                    <em>Hover over tower elements to see details</em>
+                  </div>
+                  
+                  {/* Rotation hint */}
+                  <div className="absolute top-4 right-4 bg-white/80 rounded-full p-2 shadow-sm text-xs text-[#64748b] flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-1">
+                      <path d="M15 15 L19 19 M11 13 A2 2 0 0 1 13 11 A2 2 0 0 1 15 13 A2 2 0 0 1 13 15 A2 2 0 0 1 11 13 Z M3 13 A10 10 0 0 1 13 3 A8 8 0 0 1 19 5 L21 3 M21 9 L21 3 L15 3" />
+                    </svg>
+                    Drag to rotate
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            {/* 4.4. Sample insights area with report excerpts */}
+            <div className="animate-on-scroll order-1 lg:order-2">
+              <div className="bg-white p-6 rounded-xl">
+                <h3 className="text-xl font-semibold text-[#1e293b] mb-6">Your Personality Insights</h3>
+                
+                <div className="mb-6 p-5 bg-[#f8fafc] rounded-xl border border-[#e2e8f0]">
+                  <h4 className="text-lg font-medium text-[#1e293b] mb-2">The Achiever</h4>
+                  <p className="text-[#64748b] mb-3">
+                    You are ambitious, adaptable, and image-conscious. You excel at setting goals and inspiring others toward shared success while prioritizing recognition and accomplishment.
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    <span className="px-2 py-1 bg-[#ede9fe] text-[#7c3aed] text-xs rounded-full">Goal-oriented</span>
+                    <span className="px-2 py-1 bg-[#ede9fe] text-[#7c3aed] text-xs rounded-full">Adaptable</span>
+                    <span className="px-2 py-1 bg-[#ede9fe] text-[#7c3aed] text-xs rounded-full">Driven</span>
+                    <span className="px-2 py-1 bg-[#ede9fe] text-[#7c3aed] text-xs rounded-full">Image-conscious</span>
+                  </div>
+                </div>
+                
+                <div className="mb-6 p-5 bg-[#f8fafc] rounded-xl border border-[#e2e8f0]">
+                  <h4 className="text-lg font-medium text-[#1e293b] mb-2">Growth Opportunities</h4>
+                  <p className="text-[#64748b] mb-3">
+                    Your success-oriented mindset sometimes leads to prioritizing achievements over authentic self-expression. Developing deeper self-awareness can help you recognize when you're overidentifying with external validation.
+                  </p>
+                </div>
+                
+                <div className="mb-6 p-5 bg-[#f8fafc] rounded-xl border border-[#e2e8f0]">
+                  <div className="flex items-center mb-3">
+                    <div className="w-10 h-10 rounded-full bg-[#ede9fe] flex items-center justify-center mr-3">
+                      <span className="text-[#7c3aed] text-sm font-medium">40%</span>
+                    </div>
+                    <div>
+                      <h4 className="text-lg font-medium text-[#1e293b]">Average State</h4>
+                      <p className="text-xs text-[#64748b]">Where you spend most of your time</p>
+                    </div>
+                  </div>
+                  <p className="text-[#64748b]">
+                    In your average state, you focus on efficiency and managing your image. You exhibit competence, versatility, and pragmatism while maintaining social connections.
+                  </p>
+                </div>
+                
+                {/* 4.5. Callout boxes for key features */}
+                <div className="grid grid-cols-2 gap-4">
+                  {/* 4.5.1. "9 Core Personality Types" */}
+                  <div className="p-4 bg-[#f8fafc] rounded-lg border border-[#e2e8f0] hover:shadow-md transition-shadow duration-300 cursor-pointer">
+                    <div className="text-2xl font-bold text-[#7c3aed] mb-1">9</div>
+                    <div className="text-sm font-medium text-[#1e293b]">Core Personality Types</div>
+                  </div>
+                  
+                  {/* 4.5.2. "Wing Variations" (with updated terminology to "Influence") */}
+                  <div className="p-4 bg-[#f8fafc] rounded-lg border border-[#e2e8f0] hover:shadow-md transition-shadow duration-300 cursor-pointer">
+                    <div className="text-2xl font-bold text-[#7c3aed] mb-1">18</div>
+                    <div className="text-sm font-medium text-[#1e293b]">Influence Variations</div>
+                  </div>
+                  
+                  {/* 4.5.3. "Operating States" */}
+                  <div className="p-4 bg-[#f8fafc] rounded-lg border border-[#e2e8f0] hover:shadow-md transition-shadow duration-300 cursor-pointer">
+                    <div className="text-2xl font-bold text-[#7c3aed] mb-1">5</div>
+                    <div className="text-sm font-medium text-[#1e293b]">Operating States</div>
+                  </div>
+                  
+                  {/* 4.5.4. "Instinctual Variants" (with updated terminology to "Subtypes") */}
+                  <div className="p-4 bg-[#f8fafc] rounded-lg border border-[#e2e8f0] hover:shadow-md transition-shadow duration-300 cursor-pointer">
+                    <div className="text-2xl font-bold text-[#7c3aed] mb-1">3</div>
+                    <div className="text-sm font-medium text-[#1e293b]">Subtypes</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      {/* Final Call-to-Action Section */}
+      <section className="py-20 bg-gradient-to-r from-[#7c3aed] to-[#a78bfa] text-white">
+        <div className="max-w-4xl mx-auto px-6 text-center animate-on-scroll">
+          <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-4">Ready to Build Your Personality Tower?</h2>
+          <p className="text-xl opacity-90 mb-8">Join thousands who have gained transformative insights</p>
+          <div 
+            className="inline-block px-8 py-4 bg-white text-[#7c3aed] rounded-lg font-medium shadow-md hover:bg-opacity-95 hover:scale-[1.02] hover:shadow-lg transition-all duration-200 text-center text-lg cursor-pointer"
+            onClick={() => window.location.href = "/signup"}
+          >
+            Sign Up For Assessment
+          </div>
+          <p className="mt-4 opacity-80 text-sm">Just 5 minutes • Create an account to save your results</p>
         </div>
       </section>
     </div>
