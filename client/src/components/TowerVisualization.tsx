@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import React, { useState, useEffect, useRef } from 'react';
+import { motion, useAnimation } from 'framer-motion';
 import { useAssessment } from '@/context/AssessmentContext';
 import { StateDistribution, SubtypeDistribution, PersonalityType } from '@/types/assessment';
+import { useIsMobile } from '@/hooks/use-mobile';
+import '../styles/tower-animations.css';
 
 interface TowerVisualizationProps {
   stateDistribution?: StateDistribution;
@@ -23,8 +25,18 @@ const TowerVisualization = ({
     stateDistribution: contextStateDistribution
   } = state;
   
+  const isMobile = useIsMobile();
+  const controls = useAnimation();
+  const towerRef = useRef<HTMLDivElement>(null);
+  
   // Use provided distribution or fallback to context
-  const distribution = stateDistribution || contextStateDistribution;
+  const distribution = stateDistribution || contextStateDistribution || {
+    veryGood: 20,
+    good: 20,
+    average: 20,
+    belowAverage: 20,
+    destructive: 20
+  };
   
   // Calculate colors based on state distribution (using the 5 state system)
   const veryGoodColor = `rgba(34, 197, 94, ${distribution.veryGood / 100})`; // #22c55e
@@ -46,24 +58,42 @@ const TowerVisualization = ({
         className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-48 h-12 bg-primary-200 rounded-full border border-primary-300 shadow-md"
         initial={{ scale: 0.8, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
-        transition={{ duration: 0.5 }}
+        transition={{ duration: 0.5, type: "spring", stiffness: 100 }}
       />
     );
   };
   
   // Add state for animation
   const [isColorTransitioning, setIsColorTransitioning] = useState(false);
+  const [isInteracting, setIsInteracting] = useState(false);
+  
+  // Handle tower interaction
+  const handleTowerInteraction = () => {
+    if (!isInteracting && towerRef.current) {
+      setIsInteracting(true);
+      controls.start({
+        scale: [1, 1.05, 1],
+        transition: { duration: 0.5 }
+      }).then(() => setIsInteracting(false));
+    }
+  };
   
   // Detect changes to activate color transition animation
   useEffect(() => {
     if (distribution) {
       setIsColorTransitioning(true);
+      controls.start({
+        opacity: [1, 0.8, 1],
+        y: [0, -5, 0],
+        transition: { duration: 0.5 }
+      });
+      
       const timer = setTimeout(() => {
         setIsColorTransitioning(false);
-      }, 500);
+      }, 800);
       return () => clearTimeout(timer);
     }
-  }, [distribution]);
+  }, [distribution, controls]);
   
   const renderBlocks = () => {
     if (selectedBuildingBlocks.length === 0) return null;
@@ -282,7 +312,13 @@ const TowerVisualization = ({
   };
 
   return (
-    <div className="w-64 h-64 relative">
+    <motion.div 
+      ref={towerRef}
+      className={`tower-container ${isMobile ? 'scale-75 md:scale-85' : ''} w-64 h-64 relative`}
+      animate={controls}
+      whileHover={{ scale: 1.02 }}
+      onClick={handleTowerInteraction}
+    >
       {personalityType ? renderFinalTower() : (
         <>
           {/* Paint brush visualization for "painting" effect when in color palette selection phase */}
@@ -290,8 +326,12 @@ const TowerVisualization = ({
             <motion.div 
               className="absolute -top-8 left-1/2 transform -translate-x-1/2 z-10 pointer-events-none"
               initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: isColorTransitioning ? 1 : 0, y: isColorTransitioning ? 10 : -10 }}
-              transition={{ duration: 0.3 }}
+              animate={{ 
+                opacity: isColorTransitioning ? 1 : 0, 
+                y: isColorTransitioning ? 10 : -10,
+                rotate: isColorTransitioning ? [0, -5, 5, 0] : 0
+              }}
+              transition={{ duration: 0.8 }}
             >
               <div className="w-16 h-8 bg-gray-700 rounded-t-lg flex items-end justify-center">
                 <div className="w-10 h-4 bg-gray-200 rounded-b-lg"></div>
@@ -307,8 +347,11 @@ const TowerVisualization = ({
             <motion.div 
               className="absolute inset-0 z-20 pointer-events-none"
               initial={{ opacity: 0.5 }}
-              animate={{ opacity: 0 }}
-              transition={{ duration: 0.5 }}
+              animate={{ 
+                opacity: [0.5, 0.2, 0],
+                scale: [1, 1.1, 1.2]
+              }}
+              transition={{ duration: 0.8 }}
               style={{ 
                 background: 'radial-gradient(circle at center, rgba(255,255,255,0.3) 0%, transparent 70%)'
               }}
@@ -325,9 +368,48 @@ const TowerVisualization = ({
               }}
             ></div>
           )}
+          
+          {/* Interactive hotspots that appear on hover */}
+          {showHotspots && (
+            <div className="absolute inset-0 opacity-0 hover:opacity-100 transition-opacity duration-300">
+              <div className="relative w-full h-full">
+                <motion.div 
+                  className="tower-hotspot absolute top-1/4 left-0 w-6 h-6 bg-primary-500 rounded-full flex items-center justify-center cursor-pointer shadow-md"
+                  whileHover={{ scale: 1.2 }}
+                  whileTap={{ scale: 0.9 }}
+                >
+                  <span className="text-white text-xs font-bold">H</span>
+                </motion.div>
+                <motion.div 
+                  className="tower-hotspot absolute top-1/2 right-0 w-6 h-6 bg-secondary-500 rounded-full flex items-center justify-center cursor-pointer shadow-md"
+                  whileHover={{ scale: 1.2 }}
+                  whileTap={{ scale: 0.9 }}
+                >
+                  <span className="text-white text-xs font-bold">H</span>
+                </motion.div>
+                <motion.div 
+                  className="tower-hotspot absolute bottom-1/4 left-1/4 w-6 h-6 bg-amber-500 rounded-full flex items-center justify-center cursor-pointer shadow-md"
+                  whileHover={{ scale: 1.2 }}
+                  whileTap={{ scale: 0.9 }}
+                >
+                  <span className="text-white text-xs font-bold">B</span>
+                </motion.div>
+              </div>
+            </div>
+          )}
         </>
       )}
-    </div>
+      
+      {/* Accessibility labels */}
+      <span className="sr-only">
+        Tower visualization representing your personality profile with 
+        {distribution.veryGood}% Very Good traits, 
+        {distribution.good}% Good traits,
+        {distribution.average}% Average traits,
+        {distribution.belowAverage}% Below Average traits, and
+        {distribution.destructive}% Destructive traits.
+      </span>
+    </motion.div>
   );
 };
 
