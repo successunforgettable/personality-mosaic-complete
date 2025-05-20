@@ -11,15 +11,16 @@ interface ProgressBarProps {
   }
 }
 
-export default function ProgressBar({
-  progress,
-  showPercentage = false,
-  height = 8,
-  colors = {
-    background: "bg-gray-200",
-    fill: "bg-primary-500"
-  }
-}) => {
+const ProgressBar: React.FC<ProgressBarProps> = (props) => {
+  const {
+    progress,
+    showPercentage = false,
+    height = 8,
+    colors = {
+      background: "bg-gray-200",
+      fill: "bg-primary-500"
+    }
+  } = props;
   // Ensure progress is between 0-100
   const safeProgress = Math.min(100, Math.max(0, progress));
   
@@ -48,3 +49,6 @@ export default function ProgressBar({
     </div>
   );
 };
+
+export { ProgressBar };
+export default ProgressBar;

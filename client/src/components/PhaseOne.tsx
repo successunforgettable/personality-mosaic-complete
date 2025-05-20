@@ -163,7 +163,7 @@ const PhaseOne = () => {
           <span className="text-sm font-semibold text-gray-700">Phase 1 of 4: Foundation</span>
           <span className="text-sm text-gray-600">Set {foundationSet} of 3</span>
         </div>
-        <ProgressBar 
+        <ProgressIndicator 
           progress={(foundationSet - 1) * 33.33} 
           colors={{
             background: "bg-gray-200",
