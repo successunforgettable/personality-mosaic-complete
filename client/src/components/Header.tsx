@@ -85,11 +85,7 @@ const Header = () => {
                           <div 
                             className="block px-4 py-2 text-sm text-[#64748b] hover:bg-[#f8fafc] cursor-pointer"
                             onClick={() => {
-                              setInfoModal({
-                                isOpen: true,
-                                title: "Profile",
-                                message: "Profile section coming soon! Complete an assessment to see your results."
-                              });
+                              navigate("/profile");
                               setUserMenuOpen(false);
                             }}
                           >

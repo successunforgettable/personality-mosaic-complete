@@ -259,11 +259,27 @@ export default function UserProfile() {
                                 <div className="text-center p-2 bg-gray-50 rounded">
                                   <p className="text-xs text-gray-500">Dominant Subtype</p>
                                   <p className="font-medium">
-                                    {result.subtypeDistribution ? 
-                                      Object.entries(JSON.parse(result.subtypeDistribution as string))
-                                        .sort((a, b) => b[1] - a[1])[0][0]
-                                        .replace(/([A-Z])/g, ' $1')
-                                        .replace(/^./, str => str.toUpperCase())
+                                    {result.subtypeDistribution 
+                                      ? (() => {
+                                          try {
+                                            const parsed = typeof result.subtypeDistribution === 'string' 
+                                              ? JSON.parse(result.subtypeDistribution) 
+                                              : result.subtypeDistribution as Record<string, number>;
+                                            
+                                            if (parsed && typeof parsed === 'object') {
+                                              const entries = Object.entries(parsed);
+                                              if (entries.length > 0) {
+                                                const dominant = entries.sort((a, b) => Number(b[1]) - Number(a[1]))[0][0];
+                                                return dominant
+                                                  .replace(/([A-Z])/g, ' $1')
+                                                  .replace(/^./, str => str.toUpperCase());
+                                              }
+                                            }
+                                            return 'Not available';
+                                          } catch (e) {
+                                            return 'Not available';
+                                          }
+                                        })()
                                       : 'Not available'
                                     }
                                   </p>

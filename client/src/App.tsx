@@ -8,6 +8,7 @@ import Home from "@/pages/Home";
 import Assessment from "@/pages/Assessment";
 import SignUp from "@/pages/SignUp";
 import Login from "@/pages/Login";
+import UserProfile from "@/pages/UserProfile";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { AssessmentProvider } from "./context/AssessmentContext";
@@ -40,6 +41,11 @@ function Router() {
           </Route>
           <Route path="/signup" component={SignUp} />
           <Route path="/login" component={Login} />
+          <Route path="/profile">
+            <ProtectedRoute>
+              <UserProfile />
+            </ProtectedRoute>
+          </Route>
           <Route path="/test/validation" component={PersonalitySystemValidator} />
           <Route path="/:rest*" component={NotFound} />
         </Switch>
