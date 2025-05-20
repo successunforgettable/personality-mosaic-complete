@@ -22,6 +22,10 @@ function Router() {
   
   // Determine if we should hide header/footer (for login/signup pages)
   const hideHeaderFooter = ["/login", "/signup"].includes(location);
+  // For 404 page, we want to show the header/footer
+  const is404Page = !["/", "/assessment", "/signup", "/login", "/test/validation"].some(path => 
+    location === path || location.startsWith(path + "/")
+  );
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
@@ -37,7 +41,7 @@ function Router() {
           <Route path="/signup" component={SignUp} />
           <Route path="/login" component={Login} />
           <Route path="/test/validation" component={PersonalitySystemValidator} />
-          <Route component={NotFound} />
+          <Route path="/:rest*" component={NotFound} />
         </Switch>
       </main>
       {!hideHeaderFooter && <Footer />}
