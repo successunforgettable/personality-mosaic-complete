@@ -111,12 +111,33 @@ const FoundationVisualization: React.FC<FoundationVisualizationProps> = ({
         <AnimatePresence>
           {selectedStones.map((stone, index) => {
             const position = calculatePosition(index, totalStones);
-            const stoneSize = isMobile ? 50 : 70;
+            const stoneSize = isMobile ? 60 : 80;
+            
+            // Determine shape class based on category
+            let shapeClass = 'hexagon-shape';
+            if (stone.category === 'Heart') {
+              shapeClass = 'pentagon-shape';
+            } else if (stone.category === 'Body') {
+              shapeClass = 'octagon-shape';
+            }
+            
+            // Get gradient colors
+            const gradientStart = stone.category === 'Head' 
+              ? '#4F46E5' 
+              : stone.category === 'Heart' 
+              ? '#EC4899' 
+              : '#10B981';
+            
+            const gradientEnd = stone.category === 'Head' 
+              ? '#7C3AED' 
+              : stone.category === 'Heart' 
+              ? '#8B5CF6' 
+              : '#3B82F6';
             
             return (
               <motion.div
                 key={stone.id}
-                className={`absolute rounded-lg bg-gradient-to-br ${getStoneColors(stone.category)} shadow-md`}
+                className="absolute"
                 style={{
                   width: stoneSize,
                   height: stoneSize,
@@ -150,8 +171,19 @@ const FoundationVisualization: React.FC<FoundationVisualizationProps> = ({
                   stiffness: 100
                 }}
               >
-                <div className="absolute inset-0 flex items-center justify-center text-white text-xs font-semibold p-1 text-center">
-                  {stone.name}
+                <div 
+                  className="relative w-full h-full"
+                >
+                  <div 
+                    className={`${shapeClass} absolute inset-0 border-2 border-white shadow-lg z-0`}
+                    style={{ 
+                      background: `linear-gradient(135deg, ${gradientStart}, ${gradientEnd})`,
+                      boxShadow: '0 4px 12px rgba(0,0,0,0.2)'
+                    }}
+                  ></div>
+                  <div className={`${shapeClass}-content absolute inset-0 flex items-center justify-center text-white text-xs md:text-sm font-semibold p-1 text-center z-10`}>
+                    {stone.name}
+                  </div>
                 </div>
               </motion.div>
             );
