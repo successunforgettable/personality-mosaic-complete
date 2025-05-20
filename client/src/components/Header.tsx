@@ -2,6 +2,7 @@ import { useLocation } from "wouter";
 import { useState } from "react";
 import { Brain, Menu, X, LogIn, UserPlus, User, LogOut } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
+import { useCustomAlert } from "./CustomAlert";
 
 const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
