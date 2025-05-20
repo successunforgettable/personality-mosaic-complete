@@ -4,7 +4,7 @@ import { storage } from "./storage";
 import { insertAssessmentResultSchema } from "@shared/schema";
 import { ZodError } from "zod";
 import * as bcrypt from "bcryptjs";
-import * as jwt from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 import { v4 as uuidv4 } from "uuid";
 import { pool } from "./db";
 
@@ -16,9 +16,11 @@ const db = {
 };
 
 // Helper function to generate JWT tokens
-const generateToken = (userId: string): string => {
+const generateToken = (userId: string | number): string => {
   const secret = process.env.SESSION_SECRET || "personality-mosaic-secret-key";
-  return jwt.sign({ userId }, secret, { expiresIn: "30d" });
+  // Convert userId to string if it's a number to ensure consistent format
+  const userIdStr = userId.toString();
+  return jwt.sign({ userId: userIdStr }, secret, { expiresIn: "30d" });
 };
 
 // JWT-based authentication middleware
@@ -33,20 +35,31 @@ const jwtAuth = async (req: any, res: Response, next: Function) => {
     const secret = process.env.SESSION_SECRET || "personality-mosaic-secret-key";
     const decoded = jwt.verify(token, secret) as { userId: string };
     
-    // Get user from database
-    const user = await storage.getUser(decoded.userId);
+    console.log("JWT auth - decoded token:", decoded);
     
-    if (!user) {
+    // Get user from database using direct query
+    const result = await db.query('SELECT * FROM users WHERE id = $1', [decoded.userId]);
+    
+    if (result.rows.length === 0) {
       return res.status(401).json({ message: "Invalid token - user not found" });
     }
+    
+    const user = result.rows[0];
+    
+    // Remove sensitive information
+    delete user.password;
     
     // Set user in request
     req.user = { 
       claims: { 
         sub: user.id,
-        email: user.email
-      } 
+        email: user.email,
+        username: user.username
+      },
+      user
     };
+    
+    console.log("JWT auth - authenticated user:", req.user.claims);
     
     next();
   } catch (error) {

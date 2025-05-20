@@ -7,7 +7,7 @@ import NotFound from "@/pages/not-found";
 import Home from "@/pages/Home";
 import Assessment from "@/pages/Assessment";
 import FixedSignUp from "@/pages/FixedSignUp";
-import SimpleLogin from "@/pages/SimpleLogin";
+import DirectLoginForm from "@/pages/DirectLoginForm";
 import UserProfile from "@/pages/UserProfile";
 import ResultsCompare from "@/pages/ResultsCompare";
 import SignUp from "@/pages/FixedSignUp"; // Alias for backward compatibility
@@ -42,7 +42,7 @@ function Router() {
             </ProtectedRoute>
           </Route>
           <Route path="/signup" component={FixedSignUp} />
-          <Route path="/login" component={SimpleLogin} />
+          <Route path="/login" component={DirectLoginForm} />
           <Route path="/profile">
             <ProtectedRoute>
               <UserProfile />
