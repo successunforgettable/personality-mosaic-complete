@@ -71,17 +71,21 @@ const Login = () => {
     setIsLoading(true);
     
     try {
-      // We're using Replit Auth, so we redirect to the login page
-      login();
-      
+      // Using Replit Auth for authentication (OAuth)
       toast({
-        title: "Redirecting to login",
-        description: "You'll be redirected to the authentication page.",
+        title: "Redirecting to Replit Auth",
+        description: "You'll be redirected to sign in with your Replit account.",
       });
+      
+      // Small delay to show the toast before redirecting
+      setTimeout(() => {
+        // Redirect to the Replit Auth login endpoint
+        login();
+      }, 1000);
     } catch (error) {
       toast({
-        title: "Login failed",
-        description: "There was a problem with the authentication process. Please try again.",
+        title: "Login redirect failed",
+        description: "There was a problem redirecting to authentication. Please try again.",
         variant: "destructive",
       });
       setIsLoading(false);
@@ -114,6 +118,16 @@ const Login = () => {
             </div>
             <h2 className="text-2xl font-semibold text-[#1e293b] mt-4">Sign in to your account</h2>
             <p className="text-[#64748b] mt-2">Welcome back! Sign in to continue building your personality tower</p>
+            
+            {/* Information about Replit Auth */}
+            <div className="mt-4 bg-blue-50 border border-blue-200 rounded-md p-3 text-left">
+              <h3 className="text-sm font-medium text-blue-800">Secure Login with Replit</h3>
+              <p className="text-xs text-blue-700 mt-1">
+                We use Replit's secure authentication system. When you click "Sign in", 
+                you'll be redirected to authenticate with your Replit account. This provides enhanced 
+                security and a seamless login experience.
+              </p>
+            </div>
           </div>
           
           <div className="bg-white rounded-xl shadow-md p-8">

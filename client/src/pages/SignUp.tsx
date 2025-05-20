@@ -87,13 +87,18 @@ const SignUp = () => {
     setIsLoading(true);
     
     try {
-      // We're using Replit Auth, so we redirect to the login page
-      login();
-      
+      // Using Replit Auth for more secure account creation
       toast({
-        title: "Redirecting to sign up",
-        description: "You'll be redirected to create your account.",
+        title: "Redirecting to Replit Auth",
+        description: "You'll be redirected to sign in with your Replit account for enhanced security.",
+        duration: 3000,
       });
+      
+      // Small delay to show the toast message before redirecting
+      setTimeout(() => {
+        // This redirects to Replit's authentication system
+        login();
+      }, 1500);
     } catch (error) {
       toast({
         title: "Sign up failed",
@@ -130,6 +135,16 @@ const SignUp = () => {
             </div>
             <h2 className="text-2xl font-semibold text-[#1e293b] mt-4">Create your account</h2>
             <p className="text-[#64748b] mt-2">Sign up to begin your personality assessment journey</p>
+            
+            {/* Information about Replit Auth */}
+            <div className="mt-4 bg-blue-50 border border-blue-200 rounded-md p-3 text-left">
+              <h3 className="text-sm font-medium text-blue-800">Secure Authentication with Replit</h3>
+              <p className="text-xs text-blue-700 mt-1">
+                We use Replit's secure authentication system. When you click "Create Account", 
+                you'll be redirected to sign in with your Replit account. This provides enhanced 
+                security and eliminates the need to create and remember another password.
+              </p>
+            </div>
           </div>
           
           <div className="bg-white rounded-xl shadow-md p-8">
