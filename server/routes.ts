@@ -125,24 +125,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Email and password are required" });
       }
       
-      // Find user by email - direct DB query
-      const userResult = await db.query('SELECT * FROM users WHERE email = $1', [email]);
+      // Find user by email - case insensitive search
+      console.log("Logging in with email:", email);
+      const normalizedEmail = email.toLowerCase().trim();
+      const userResult = await db.query('SELECT * FROM users WHERE LOWER(email) = LOWER($1)', [normalizedEmail]);
       
       // For testing purposes, allow login with test account
       if (email === "test@example.com" && password === "password123") {
+        console.log("Logging in with test account");
         // Check if test user exists
         let testUser;
         const testUserResult = await db.query('SELECT * FROM users WHERE email = $1', ['test@example.com']);
         
         if (testUserResult.rows.length === 0) {
-          // Create test user
+          console.log("Creating test user account");
+          // Get next ID
+          const maxIdResult = await db.query('SELECT COALESCE(MAX(id), 0) as max_id FROM users');
+          const nextId = (parseInt(maxIdResult.rows[0]?.max_id) || 0) + 1;
+          
+          // Create test user with explicit ID
           const insertResult = await db.query(
-            'INSERT INTO users (username, email, password, created_at) VALUES ($1, $2, $3, NOW()) RETURNING id, username, email, created_at',
-            ['testuser', 'test@example.com', 'password123']
+            'INSERT INTO users (id, username, email, password, created_at) VALUES ($1, $2, $3, $4, NOW()) RETURNING id, username, email, created_at',
+            [nextId, 'testuser', 'test@example.com', 'password123']
           );
           testUser = insertResult.rows[0];
+          console.log("Test user created:", testUser);
         } else {
           testUser = testUserResult.rows[0];
+          console.log("Found existing test user:", testUser);
         }
         
         // Generate JWT token
