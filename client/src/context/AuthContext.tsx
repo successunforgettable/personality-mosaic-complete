@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext, useEffect, ReactNode, useRef } from 'react';
+import React, { createContext, useState, useContext, useEffect, ReactNode, useRef, useCallback } from 'react';
 import { useToast } from "@/hooks/use-toast";
 
 // Define the user type
@@ -370,6 +370,39 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
   }, [user, isGuest]);
 
+  // Automatic check and migration for guest assessment data
+  const checkForGuestData = useCallback(async () => {
+    if (!user || isGuest) return;
+    
+    const guestUser = localStorage.getItem('guest_user');
+    if (!guestUser) return;
+    
+    try {
+      const parsedGuestUser = JSON.parse(guestUser);
+      const guestId = parsedGuestUser.id;
+      
+      if (guestId && guestId.startsWith('guest_')) {
+        console.log('Found previous guest assessment data to migrate');
+        const success = await migrateGuestData(guestId);
+        
+        if (success) {
+          // Redirect to results page if there was any data migrated
+          const migrationCount = localStorage.getItem('migrated_count');
+          if (migrationCount && parseInt(migrationCount) > 0) {
+            console.log('Redirecting to results page after migration');
+            
+            // Short delay to ensure toast is shown before redirect
+            setTimeout(() => {
+              window.location.href = '/results';
+            }, 1000);
+          }
+        }
+      }
+    } catch (e) {
+      console.error('Error checking for guest assessment data:', e);
+    }
+  }, [user, isGuest]);
+
   // Initial authentication check
   useEffect(() => {
     const checkAuth = async () => {
@@ -404,6 +437,13 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     
     checkAuth();
   }, []);
+  
+  // Effect to automatically check for guest data after successful login
+  useEffect(() => {
+    if (user && !isGuest) {
+      checkForGuestData();
+    }
+  }, [user, isGuest, checkForGuestData]);
 
   // Implementation of guest data migration
   const migrateGuestData = async (guestId: string): Promise<boolean> => {
@@ -435,11 +475,18 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       }
       
       console.log(`Successfully migrated ${data.migratedCount} items from guest account`);
-      toast({
-        title: "Data migration successful",
-        description: `${data.migratedCount} assessment results have been transferred to your account`,
-        variant: "default"
-      });
+      
+      if (data.migratedCount > 0) {
+        toast({
+          title: "Assessment data transferred",
+          description: `${data.migratedCount} assessment results have been transferred to your account`,
+          variant: "default"
+        });
+        
+        // Store a flag to indicate successful migration with results
+        localStorage.setItem('assessment_migrated', 'true');
+        localStorage.setItem('migrated_count', data.migratedCount.toString());
+      }
       
       // Clear any stored guest ID to prevent repeated migrations
       localStorage.removeItem('guest_user');
