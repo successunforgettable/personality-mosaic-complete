@@ -15,6 +15,9 @@ export interface IStorage {
   getUser(id: string): Promise<User | undefined>;
   upsertUser(user: UpsertUser): Promise<User>;
   
+  // User operations for Email/Password Auth
+  getUserByEmail(email: string): Promise<User | undefined>;
+  
   // Legacy method to maintain compatibility
   getUserByUsername(username: string): Promise<User | undefined>;
   
@@ -57,6 +60,17 @@ export class DatabaseStorage implements IStorage {
     } catch (error) {
       console.error("Error upserting user:", error);
       throw error;
+    }
+  }
+  
+  // Get user by email
+  async getUserByEmail(email: string): Promise<User | undefined> {
+    try {
+      const [user] = await db.select().from(users).where(eq(users.email, email));
+      return user;
+    } catch (error) {
+      console.error("Error getting user by email:", error);
+      return undefined;
     }
   }
   

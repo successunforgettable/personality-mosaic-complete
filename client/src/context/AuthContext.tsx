@@ -89,35 +89,41 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     try {
       setIsLoading(true);
       setError(null);
-      
-      // For demonstration purposes, we're implementing a mock authentication
-      // In a real app, this would be an API call to your authentication endpoint
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Mock successful login with test credentials
-      if (email === 'test@example.com' && password === 'password123') {
-        // Create a mock user
-        const userData: User = {
-          id: '123456',
-          email: email,
-          firstName: 'Test',
-          lastName: 'User',
-          profileImageUrl: 'https://ui-avatars.com/api/?name=Test+User&background=7c3aed&color=fff'
-        };
-        
-        // Set the user in state
-        setUser(userData);
-        
-        // Store in localStorage if remember me is checked
-        if (remember) {
-          localStorage.setItem('auth_user', JSON.stringify(userData));
-        }
-        
-        return true;
-      } else {
-        setError('Invalid email or password');
+
+      // Make the actual login request to the backend
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      // If login failed
+      if (!response.ok) {
+        const errorData = await response.json();
+        setError(errorData.message || 'Invalid email or password');
         return false;
       }
+
+      // Parse the response data
+      const { user, token } = await response.json();
+
+      // Set the authentication token in localStorage
+      if (token) {
+        // Always store the token to maintain the session
+        localStorage.setItem('auth_token', token);
+        
+        // Store user data if remember me is checked
+        if (remember) {
+          localStorage.setItem('auth_user', JSON.stringify(user));
+        }
+      }
+
+      // Set the user in state
+      setUser(user);
+      
+      return true;
     } catch (error) {
       console.error('Login failed:', error);
       setError('Login failed. Please try again.');
