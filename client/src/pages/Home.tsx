@@ -368,11 +368,12 @@ export default function Home() {
                 Complete in 5-7 minutes
               </span>
             </p>
-            <Link href="/assessment">
+            <Link href="/signup">
               <a className="inline-block px-8 py-4 bg-[#7c3aed] text-white rounded-lg font-medium shadow-md hover:bg-[#6d28d9] hover:scale-[1.02] hover:shadow-lg transition-all duration-200 text-center">
-                Start Building Now
+                Sign Up to Start Building
               </a>
             </Link>
+            <p className="mt-3 text-sm text-[#64748b]">Account required to access the assessment</p>
           </div>
         </div>
       </section>
@@ -517,12 +518,12 @@ export default function Home() {
         <div className="max-w-4xl mx-auto px-6 text-center animate-on-scroll">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">Ready to Build Your Personality Tower?</h2>
           <p className="text-xl opacity-90 mb-8">Join thousands who have gained transformative insights</p>
-          <Link href="/assessment">
+          <Link href="/signup">
             <a className="inline-block px-8 py-4 bg-white text-[#7c3aed] rounded-lg font-medium shadow-md hover:bg-opacity-95 hover:scale-[1.02] hover:shadow-lg transition-all duration-200 text-center text-lg">
-              Begin Free Assessment
+              Sign Up For Assessment
             </a>
           </Link>
-          <p className="mt-4 opacity-80 text-sm">Just 5 minutes • No sign-up required to start</p>
+          <p className="mt-4 opacity-80 text-sm">Just 5 minutes • Create an account to save your results</p>
         </div>
       </section>
       
