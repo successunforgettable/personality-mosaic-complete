@@ -5,6 +5,7 @@ import { useAssessment } from '@/context/AssessmentContext';
 import { FoundationStone } from '@/types/assessment';
 import { foundationStoneSets } from '@/lib/personality';
 import ProgressIndicator from './ProgressIndicator';
+import StoneSet from './StoneSet';
 import { toast } from '@/hooks/use-toast';
 import { useIsMobile } from '@/hooks/use-mobile';
 
