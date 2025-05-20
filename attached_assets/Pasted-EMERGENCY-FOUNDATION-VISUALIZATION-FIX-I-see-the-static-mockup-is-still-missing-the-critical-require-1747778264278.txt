@@ -1,0 +1,167 @@
+EMERGENCY FOUNDATION VISUALIZATION FIX
+I see the static mockup is still missing the critical requirement of stones placed around the circular foundation. Let's try one more approach with absolute minimal code that must be followed exactly:
+Please follow these instructions with EXACT precision:
+
+1. Open client/src/components/FoundationVisualization.jsx
+
+2. DELETE ALL CODE in this file and replace with this EXACT code:
+
+import React from 'react';
+import './FoundationVisualization.css';
+
+const FoundationVisualization = ({ selectedStones = [] }) => {
+  // Show static stones for development
+  const stoneData = [
+    { type: 'heart', label: 'COMPASSION' },
+    { type: 'head', label: 'ANALYSIS' },
+    { type: 'body', label: 'PASSION' }
+  ];
+  
+  return (
+    <div className="foundation-container">
+      {/* Main Foundation Circle */}
+      <div className="foundation-circle">
+        {/* Center point */}
+        <div className="foundation-center"></div>
+        
+        {/* STATIC STONES FOR DEMO - positioned absolutely */}
+        <div className="stone stone-1">
+          <div className="stone-line"></div>
+          <div className="stone-shape heart"></div>
+        </div>
+        
+        <div className="stone stone-2">
+          <div className="stone-line"></div>
+          <div className="stone-shape head"></div>
+        </div>
+        
+        <div className="stone stone-3">
+          <div className="stone-line"></div>
+          <div className="stone-shape body"></div>
+        </div>
+      </div>
+      
+      <div className="foundation-progress">
+        3 of 9 stones selected
+      </div>
+    </div>
+  );
+};
+
+export default FoundationVisualization;
+
+3. Create a NEW file client/src/components/FoundationVisualization.css with this EXACT code:
+
+.foundation-container {
+  position: relative;
+  width: 320px;
+  height: 320px;
+  margin: 0 auto;
+}
+
+.foundation-circle {
+  width: 280px;
+  height: 280px;
+  border: 2px solid #e2e8f0;
+  border-radius: 50%;
+  position: absolute;
+  top: 20px;
+  left: 20px;
+}
+
+.foundation-center {
+  width: 10px;
+  height: 10px;
+  background-color: #94a3b8;
+  border-radius: 50%;
+  position: absolute;
+  top: 135px;
+  left: 135px;
+  z-index: 1;
+}
+
+/* Stone positions */
+.stone {
+  position: absolute;
+  width: 30px;
+  height: 30px;
+}
+
+/* Specific positions for each stone - MUST BE EXACT */
+.stone-1 {
+  top: 20px;
+  left: 130px;
+}
+
+.stone-2 {
+  top: 130px;
+  right: 20px;
+}
+
+.stone-3 {
+  bottom: 20px;
+  left: 130px;
+}
+
+/* Lines connecting to center */
+.stone-line {
+  position: absolute;
+  background-color: #94a3b8;
+  height: 2px;
+  width: 120px;
+  z-index: 0;
+}
+
+/* Line rotations for each stone */
+.stone-1 .stone-line {
+  transform: rotate(90deg);
+  transform-origin: bottom left;
+  top: 15px;
+  left: 15px;
+}
+
+.stone-2 .stone-line {
+  transform: rotate(180deg);
+  transform-origin: bottom left;
+  top: 15px;
+  left: -105px;
+}
+
+.stone-3 .stone-line {
+  transform: rotate(270deg);
+  transform-origin: bottom left;
+  top: -105px;
+  left: 15px;
+}
+
+/* Stone shapes */
+.stone-shape {
+  width: 30px;
+  height: 30px;
+  position: absolute;
+  z-index: 2;
+}
+
+.stone-shape.heart {
+  background-color: #e11d48;
+  clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+}
+
+.stone-shape.head {
+  background-color: #4f46e5;
+}
+
+.stone-shape.body {
+  background-color: #0ea5e9;
+  border-radius: 50%;
+}
+
+.foundation-progress {
+  text-align: center;
+  margin-top: 330px;
+  font-size: 14px;
+  color: #64748b;
+}
+This is the absolute minimum code needed to show THREE stones positioned at the TOP, RIGHT, and BOTTOM of the circle with connecting lines to the center.
+Once you confirm this renders correctly, we can move on to step 2 for dynamic integration.
+DO NOT MODIFY THIS CODE - implement it exactly as written first, then we can make adjustments after seeing that the basic visualization works.RetryClaude can make mistakes. Please double-check responses. 3.7 Sonnet
