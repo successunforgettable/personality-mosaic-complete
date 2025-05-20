@@ -1,0 +1,33 @@
+.test-container {
+  padding: 20px;
+  max-width: 600px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.shape-row {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 20px;
+}
+
+.test-shape {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto;
+}
+
+.heart-shape {
+  background-color: #e11d48;
+  clip-path: polygon(50% 0%, 86% 25%, 100% 60%, 75% 100%, 25% 100%, 0% 60%, 14% 25%);
+}
+
+.head-shape {
+  background-color: #4f46e5;
+  clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
+}
+
+.body-shape {
+  background-color: #0ea5e9;
+  clip-path: polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%);
+}
