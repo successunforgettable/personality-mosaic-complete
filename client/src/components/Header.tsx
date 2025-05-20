@@ -1,6 +1,6 @@
 import { useLocation } from "wouter";
-import { useState, useEffect } from "react";
-import { Brain, Menu, X, LogIn, UserPlus, User, Settings, LogOut } from "lucide-react";
+import { useState } from "react";
+import { Brain, Menu, X, LogIn, UserPlus, User, LogOut } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 
 const Header = () => {
@@ -53,7 +53,7 @@ const Header = () => {
             About
           </div>
           
-          {isAuthenticated || isGuest ? (
+          {(isAuthenticated || isGuest) ? (
             <div className="relative">
               <button 
                 onClick={() => setUserMenuOpen(!userMenuOpen)}
@@ -160,7 +160,7 @@ const Header = () => {
             About
           </div>
           
-          {isAuthenticated || isGuest ? (
+          {(isAuthenticated || isGuest) ? (
             <>
               {!isGuest && (
                 <>
