@@ -99,7 +99,11 @@ const Header = () => {
                     </div>
                   )}
                   <div className="border-t border-gray-100 my-1"></div>
-                  <button className="block w-full text-left px-4 py-2 text-sm text-[#64748b] hover:bg-[#f8fafc]">
+                  <button 
+                    onClick={handleLogout}
+                    className="block w-full text-left px-4 py-2 text-sm text-[#64748b] hover:bg-[#f8fafc] flex items-center"
+                  >
+                    <LogOut className="w-4 h-4 mr-2" />
                     Sign Out
                   </button>
                 </div>
@@ -187,7 +191,14 @@ const Header = () => {
                   Admin Dashboard
                 </div>
               )}
-              <button className="block w-full text-left px-4 py-2 text-[#64748b]">
+              <button 
+                className="block w-full text-left px-4 py-2 text-[#64748b] flex items-center"
+                onClick={() => {
+                  handleLogout();
+                  setMobileMenuOpen(false);
+                }}
+              >
+                <LogOut className="w-4 h-4 mr-2" />
                 Sign Out
               </button>
             </>

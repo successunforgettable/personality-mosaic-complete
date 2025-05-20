@@ -1,16 +1,19 @@
-import { Link } from "wouter";
+import { useLocation } from "wouter";
+import { Facebook, Twitter, Instagram, Youtube } from "lucide-react";
 
 const Footer = () => {
+  const [_, navigate] = useLocation();
+  
   return (
     <footer className="bg-gray-800 text-gray-300 py-10 px-6 mt-12">
       <div className="max-w-6xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
             <div className="flex items-center mb-4">
-              <div className="h-10 w-10 rounded-lg bg-gradient-to-r from-primary to-secondary flex items-center justify-center text-white">
-                <span className="material-icons">psychology</span>
+              <div className="h-10 w-10 rounded-lg bg-gradient-to-r from-[#7c3aed] to-[#a78bfa] flex items-center justify-center text-white">
+                <span className="font-bold">PM</span>
               </div>
-              <h2 className="ml-3 text-xl font-display font-semibold text-white">Personality Mosaic</h2>
+              <h2 className="ml-3 text-xl font-semibold text-white">Personality Mosaic</h2>
             </div>
             <p className="text-sm text-gray-400">
               Discover your unique personality through our interactive assessment and visualization system.
@@ -20,30 +23,30 @@ const Footer = () => {
           <div>
             <h3 className="font-semibold text-white mb-4">Resources</h3>
             <ul className="space-y-2 text-sm">
-              <li><Link href="/blog"><a className="hover:text-white transition-colors">Blog</a></Link></li>
-              <li><Link href="/research"><a className="hover:text-white transition-colors">Research</a></Link></li>
-              <li><Link href="/types"><a className="hover:text-white transition-colors">Personality Types</a></Link></li>
-              <li><Link href="/guides"><a className="hover:text-white transition-colors">Development Guides</a></Link></li>
+              <li><div className="hover:text-white transition-colors cursor-pointer" onClick={() => navigate("/blog")}>Blog</div></li>
+              <li><div className="hover:text-white transition-colors cursor-pointer" onClick={() => navigate("/research")}>Research</div></li>
+              <li><div className="hover:text-white transition-colors cursor-pointer" onClick={() => navigate("/types")}>Personality Types</div></li>
+              <li><div className="hover:text-white transition-colors cursor-pointer" onClick={() => navigate("/guides")}>Development Guides</div></li>
             </ul>
           </div>
           
           <div>
             <h3 className="font-semibold text-white mb-4">Company</h3>
             <ul className="space-y-2 text-sm">
-              <li><Link href="/about"><a className="hover:text-white transition-colors">About Us</a></Link></li>
-              <li><Link href="/contact"><a className="hover:text-white transition-colors">Contact</a></Link></li>
-              <li><Link href="/careers"><a className="hover:text-white transition-colors">Careers</a></Link></li>
-              <li><Link href="/press"><a className="hover:text-white transition-colors">Press Kit</a></Link></li>
+              <li><div className="hover:text-white transition-colors cursor-pointer" onClick={() => navigate("/about")}>About Us</div></li>
+              <li><div className="hover:text-white transition-colors cursor-pointer" onClick={() => navigate("/contact")}>Contact</div></li>
+              <li><div className="hover:text-white transition-colors cursor-pointer" onClick={() => navigate("/careers")}>Careers</div></li>
+              <li><div className="hover:text-white transition-colors cursor-pointer" onClick={() => navigate("/press")}>Press Kit</div></li>
             </ul>
           </div>
           
           <div>
             <h3 className="font-semibold text-white mb-4">Legal</h3>
             <ul className="space-y-2 text-sm">
-              <li><Link href="/privacy"><a className="hover:text-white transition-colors">Privacy Policy</a></Link></li>
-              <li><Link href="/terms"><a className="hover:text-white transition-colors">Terms of Service</a></Link></li>
-              <li><Link href="/cookies"><a className="hover:text-white transition-colors">Cookie Policy</a></Link></li>
-              <li><Link href="/gdpr"><a className="hover:text-white transition-colors">GDPR Compliance</a></Link></li>
+              <li><div className="hover:text-white transition-colors cursor-pointer" onClick={() => navigate("/privacy")}>Privacy Policy</div></li>
+              <li><div className="hover:text-white transition-colors cursor-pointer" onClick={() => navigate("/terms")}>Terms of Service</div></li>
+              <li><div className="hover:text-white transition-colors cursor-pointer" onClick={() => navigate("/cookies")}>Cookie Policy</div></li>
+              <li><div className="hover:text-white transition-colors cursor-pointer" onClick={() => navigate("/gdpr")}>GDPR Compliance</div></li>
             </ul>
           </div>
         </div>
@@ -51,18 +54,18 @@ const Footer = () => {
         <div className="border-t border-gray-700 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
           <p className="text-sm text-gray-400">© {new Date().getFullYear()} Personality Mosaic. All rights reserved.</p>
           <div className="flex space-x-4 mt-4 md:mt-0">
-            <a href="#" className="text-gray-400 hover:text-white transition-colors">
-              <span className="material-icons">facebook</span>
-            </a>
-            <a href="#" className="text-gray-400 hover:text-white transition-colors">
-              <span className="material-icons">twitter</span>
-            </a>
-            <a href="#" className="text-gray-400 hover:text-white transition-colors">
-              <span className="material-icons">instagram</span>
-            </a>
-            <a href="#" className="text-gray-400 hover:text-white transition-colors">
-              <span className="material-icons">youtube_searched_for</span>
-            </a>
+            <div className="text-gray-400 hover:text-white transition-colors cursor-pointer">
+              <Facebook className="h-5 w-5" />
+            </div>
+            <div className="text-gray-400 hover:text-white transition-colors cursor-pointer">
+              <Twitter className="h-5 w-5" />
+            </div>
+            <div className="text-gray-400 hover:text-white transition-colors cursor-pointer">
+              <Instagram className="h-5 w-5" />
+            </div>
+            <div className="text-gray-400 hover:text-white transition-colors cursor-pointer">
+              <Youtube className="h-5 w-5" />
+            </div>
           </div>
         </div>
       </div>
