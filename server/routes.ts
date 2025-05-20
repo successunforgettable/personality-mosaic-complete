@@ -192,7 +192,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log("Registration request received:", req.body);
       
       // Extract fields from request
-      const { email, username, password, firstName, lastName } = req.body;
+      const { email, username, password } = req.body;
       
       // Check required fields
       if (!email || !password) {
@@ -202,25 +202,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Use username from request or generate one from email
       const usernameToUse = username || email.split('@')[0];
       
-      // Check if user with email already exists
-      const emailCheckResult = await db.query('SELECT * FROM users WHERE email = $1', [email]);
+      // Check if user with email already exists - case insensitive
+      const normalizedEmail = email.toLowerCase().trim();
+      const emailCheckResult = await db.query('SELECT * FROM users WHERE LOWER(email) = LOWER($1)', [normalizedEmail]);
       
       if (emailCheckResult.rows.length > 0) {
         return res.status(409).json({ message: "User with this email already exists" });
       }
       
       // Check if username is taken
-      const usernameCheckResult = await db.query('SELECT * FROM users WHERE username = $1', [usernameToUse]);
+      const usernameCheckResult = await db.query('SELECT * FROM users WHERE LOWER(username) = LOWER($1)', [usernameToUse]);
       
       if (usernameCheckResult.rows.length > 0) {
         return res.status(409).json({ message: "This username is already taken" });
       }
       
-      // Insert the new user with direct SQL
-      console.log("Creating new user with username:", usernameToUse);
+      // Get the next available ID from the users table
+      const maxIdResult = await db.query('SELECT MAX(id) as max_id FROM users');
+      const nextId = (maxIdResult.rows[0].max_id || 0) + 1;
+      
+      console.log("Creating new user with ID:", nextId, "and username:", usernameToUse);
+      
+      // Insert the new user with direct SQL using an integer ID
       const insertResult = await db.query(
-        'INSERT INTO users (username, email, password, created_at) VALUES ($1, $2, $3, NOW()) RETURNING id, username, email, created_at',
-        [usernameToUse, email, password]
+        'INSERT INTO users (id, username, email, password, created_at) VALUES ($1, $2, $3, $4, NOW()) RETURNING id, username, email, created_at',
+        [nextId, usernameToUse, normalizedEmail, password]
       );
       
       const user = insertResult.rows[0];
