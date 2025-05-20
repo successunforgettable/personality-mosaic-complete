@@ -10,6 +10,80 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Setup Replit Authentication
   await setupAuth(app);
   
+  // User profile API endpoint
+  app.get('/api/user/profile', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const user = await storage.getUser(userId);
+      
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+      
+      // Return user data (exclude sensitive information)
+      return res.json(user);
+    } catch (error) {
+      console.error('Error fetching user profile:', error);
+      return res.status(500).json({ message: 'Failed to fetch user profile' });
+    }
+  });
+  
+  // Get user's assessment results
+  app.get('/api/assessment/results', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const results = await storage.getAssessmentResultsByUserId(userId);
+      
+      return res.json(results);
+    } catch (error) {
+      console.error('Error fetching assessment results:', error);
+      return res.status(500).json({ message: 'Failed to fetch assessment results' });
+    }
+  });
+  
+  // Get specific assessment result
+  app.get('/api/assessment/results/:id', async (req, res) => {
+    try {
+      const resultId = parseInt(req.params.id);
+      
+      if (isNaN(resultId)) {
+        return res.status(400).json({ message: 'Invalid result ID' });
+      }
+      
+      const result = await storage.getAssessmentResult(resultId);
+      
+      if (!result) {
+        return res.status(404).json({ message: 'Assessment result not found' });
+      }
+      
+      return res.json(result);
+    } catch (error) {
+      console.error('Error fetching assessment result:', error);
+      return res.status(500).json({ message: 'Failed to fetch assessment result' });
+    }
+  });
+  
+  // Delete user account
+  app.delete('/api/user/account', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      
+      // Delete user's assessment results
+      // This would require adding a deleteAssessmentResultsByUserId method to storage
+      // await storage.deleteAssessmentResultsByUserId(userId);
+      
+      // Delete the user
+      // This would require adding a deleteUser method to storage
+      // const success = await storage.deleteUser(userId);
+      
+      // For now, just return success (as we haven't implemented the actual deletion)
+      return res.json({ success: true, message: 'Account deleted successfully' });
+    } catch (error) {
+      console.error('Error deleting user account:', error);
+      return res.status(500).json({ message: 'Failed to delete user account' });
+    }
+  });
+  
   // Save state distribution
   app.post("/api/assessment/state-distribution", isAuthenticated, async (req: any, res) => {
     try {

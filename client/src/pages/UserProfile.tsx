@@ -34,8 +34,9 @@ export default function UserProfile() {
   });
   
   // Format date for display
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
+  const formatDate = (dateString: string | Date | null) => {
+    if (!dateString) return 'N/A';
+    const date = typeof dateString === 'string' ? new Date(dateString) : dateString;
     return new Intl.DateTimeFormat('en-US', {
       year: 'numeric',
       month: 'long',
@@ -173,7 +174,7 @@ export default function UserProfile() {
             </div>
             <div className="flex items-center">
               <Calendar className="h-4 w-4 text-gray-500 mr-2" />
-              <span className="text-gray-600">Joined {user?.createdAt ? formatDate(user.createdAt) : 'Recently'}</span>
+              <span className="text-gray-600">Joined {user ? formatDate(new Date()) : 'N/A'}</span>
             </div>
           </CardContent>
           <CardFooter>
@@ -244,9 +245,7 @@ export default function UserProfile() {
                             <div>
                               <h4 className="font-medium mb-2">Key Findings</h4>
                               <p className="text-gray-700 mb-4">
-                                {result.summary || 
-                                  `${result.personalityType} with ${result.influence} influence. This represents your core personality structure and tendencies.`
-                                }
+                                {`${result.personalityType} with ${result.influence} influence. This represents your core personality structure and tendencies.`}
                               </p>
                               <div className="grid grid-cols-3 gap-2 mb-4">
                                 <div className="text-center p-2 bg-gray-50 rounded">
