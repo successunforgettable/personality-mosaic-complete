@@ -1,24 +1,51 @@
 import React from 'react';
-import './FoundationVisualization.css';
 
 const FoundationVisualization = ({ selectedStones = [] }) => {
-  // Show static stones for development
-  const stoneData = [
-    { type: 'heart', label: 'COMPASSION' },
-    { type: 'head', label: 'ANALYSIS' },
-    { type: 'body', label: 'PASSION' }
-  ];
-  
   return (
-    <div className="foundation-container">
+    <div style={{ 
+      position: 'relative', 
+      width: '320px', 
+      height: '380px', 
+      margin: '0 auto' 
+    }}>
       {/* Main Foundation Circle */}
-      <div className="foundation-circle">
+      <div style={{ 
+        width: '280px', 
+        height: '280px', 
+        border: '2px solid #e2e8f0', 
+        borderRadius: '50%', 
+        position: 'absolute', 
+        top: '20px', 
+        left: '20px' 
+      }}>
         {/* Center point */}
-        <div className="foundation-center"></div>
+        <div style={{ 
+          width: '10px', 
+          height: '10px', 
+          backgroundColor: '#94a3b8', 
+          borderRadius: '50%', 
+          position: 'absolute', 
+          top: '135px', 
+          left: '135px', 
+          zIndex: 1 
+        }}></div>
         
-        {/* STATIC STONES FOR DEMO - positioned absolutely */}
-        <div className="stone stone-1">
-          <div className="stone-line"></div>
+        {/* Heart Stone (top) */}
+        <div style={{ position: 'absolute', top: '20px', left: '125px' }}>
+          {/* Connecting line */}
+          <div style={{ 
+            position: 'absolute', 
+            backgroundColor: '#94a3b8', 
+            height: '2px', 
+            width: '115px', 
+            zIndex: 0,
+            transform: 'rotate(90deg)',
+            transformOrigin: 'bottom left',
+            top: '15px',
+            left: '15px'
+          }}></div>
+          
+          {/* Heart Stone */}
           <div style={{
             width: '30px',
             height: '30px',
@@ -29,8 +56,22 @@ const FoundationVisualization = ({ selectedStones = [] }) => {
           }}></div>
         </div>
         
-        <div className="stone stone-2">
-          <div className="stone-line"></div>
+        {/* Head Stone (right) */}
+        <div style={{ position: 'absolute', top: '125px', right: '20px' }}>
+          {/* Connecting line */}
+          <div style={{ 
+            position: 'absolute', 
+            backgroundColor: '#94a3b8', 
+            height: '2px', 
+            width: '115px', 
+            zIndex: 0,
+            transform: 'rotate(180deg)',
+            transformOrigin: 'bottom left',
+            top: '15px',
+            left: '-95px'
+          }}></div>
+          
+          {/* Head Stone */}
           <div style={{
             width: '30px',
             height: '30px',
@@ -41,8 +82,22 @@ const FoundationVisualization = ({ selectedStones = [] }) => {
           }}></div>
         </div>
         
-        <div className="stone stone-3">
-          <div className="stone-line"></div>
+        {/* Body Stone (bottom) */}
+        <div style={{ position: 'absolute', bottom: '20px', left: '125px' }}>
+          {/* Connecting line */}
+          <div style={{ 
+            position: 'absolute', 
+            backgroundColor: '#94a3b8', 
+            height: '2px', 
+            width: '115px', 
+            zIndex: 0,
+            transform: 'rotate(270deg)',
+            transformOrigin: 'bottom left',
+            top: '-95px',
+            left: '15px'
+          }}></div>
+          
+          {/* Body Stone */}
           <div style={{
             width: '30px',
             height: '30px',
@@ -54,7 +109,12 @@ const FoundationVisualization = ({ selectedStones = [] }) => {
         </div>
       </div>
       
-      <div className="foundation-progress">
+      <div style={{ 
+        textAlign: 'center', 
+        marginTop: '330px', 
+        fontSize: '14px', 
+        color: '#64748b' 
+      }}>
         3 of 9 stones selected
       </div>
     </div>
