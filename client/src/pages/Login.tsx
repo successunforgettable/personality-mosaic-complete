@@ -44,16 +44,16 @@ const Login = () => {
     }
   };
 
-  const validateForm = () => {
+  const validateForm = (data = formData) => {
     const newErrors: Record<string, string> = {};
     
-    if (!formData.email.trim()) {
+    if (!data.email.trim()) {
       newErrors.email = "Email is required";
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+    } else if (!/\S+@\S+\.\S+/.test(data.email)) {
       newErrors.email = "Please enter a valid email";
     }
     
-    if (!formData.password) {
+    if (!data.password) {
       newErrors.password = "Password is required";
     }
     
@@ -67,16 +67,25 @@ const Login = () => {
     // Clear any existing errors
     setErrors({});
     
-    // Revalidate the form
-    if (!validateForm()) {
+    // Get current form data directly from the form
+    const currentData = {
+      email: formData.email,
+      password: formData.password,
+      rememberMe: formData.rememberMe
+    };
+    
+    // Revalidate the form with current data
+    if (!validateForm(currentData)) {
       return;
     }
     
     setIsLoading(true);
     
     try {
+      console.log("Attempting login with:", currentData.email);
+      
       // Attempt to login with username and password
-      const success = await login(formData.email, formData.password, formData.rememberMe);
+      const success = await login(currentData.email, currentData.password, currentData.rememberMe);
       
       if (success) {
         toast({
@@ -88,11 +97,14 @@ const Login = () => {
         const returnPath = sessionStorage.getItem('returnPath') || '/assessment';
         sessionStorage.removeItem('returnPath');
         
+        console.log("Login successful, navigating to:", returnPath);
+        
         // Delay navigation slightly to ensure the auth state updates
         setTimeout(() => {
           setLocation(returnPath);
-        }, 500);
+        }, 800);
       } else {
+        console.log("Login failed");
         toast({
           title: "Login failed",
           description: "Invalid email or password. Please try again.",
@@ -101,6 +113,7 @@ const Login = () => {
         setIsLoading(false);
       }
     } catch (error) {
+      console.error("Login error:", error);
       toast({
         title: "Login failed",
         description: "There was a problem with authentication. Please try again.",

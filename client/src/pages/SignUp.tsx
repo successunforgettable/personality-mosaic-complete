@@ -100,8 +100,11 @@ const SignUp = () => {
           description: "Your account has been created successfully!",
         });
         
-        // Redirect to the assessment page or wherever is appropriate
-        setLocation("/assessment");
+        // Delay navigation to ensure auth state is updated
+        setTimeout(() => {
+          // Redirect to the assessment page or wherever is appropriate
+          setLocation("/assessment");
+        }, 800);
       } else {
         toast({
           title: "Registration failed",
