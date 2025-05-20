@@ -13,6 +13,7 @@ import Footer from "@/components/Footer";
 import { AssessmentProvider } from "./context/AssessmentContext";
 import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
+import AuthModals from "@/components/AuthModals";
 import PersonalitySystemValidator from "./test/runValidation";
 import { useEffect } from "react";
 
@@ -52,6 +53,7 @@ function App() {
           <AssessmentProvider>
             <Toaster />
             <Router />
+            <AuthModals />
           </AssessmentProvider>
         </AuthProvider>
       </TooltipProvider>
