@@ -1,0 +1,335 @@
+Option 1: Direct SVG Implementation with Code
+Please implement this exact SVG code for the Foundation Visualization:
+
+```jsx
+// FoundationVisualization.jsx
+import React, { useEffect, useState } from 'react';
+import './FoundationVisualization.css';
+
+const FoundationVisualization = ({ selectedStones = [] }) => {
+  // Position calculations for stones around the circle
+  const calculateStonePosition = (index, totalStones = 9) => {
+    const radius = 130; // Distance from center
+    const angle = ((index * (2 * Math.PI)) / totalStones) - Math.PI/2; // Start from top
+    return {
+      x: 160 + radius * Math.cos(angle),
+      y: 160 + radius * Math.sin(angle)
+    };
+  };
+  
+  // Generate stone elements
+  const renderStones = () => {
+    return selectedStones.map((stone, index) => {
+      const position = calculateStonePosition(index);
+      const stoneType = stone.type || 'default'; // 'heart', 'head', or 'body'
+      
+      // Stone shape based on type
+      let shape = null;
+      if (stoneType === 'heart') {
+        shape = <polygon points="0,-10 8,8 -8,8" fill="#e11d48" />;
+      } else if (stoneType === 'head') {
+        shape = <rect x="-8" y="-8" width="16" height="16" fill="#4f46e5" />;
+      } else if (stoneType === 'body') {
+        shape = <circle r="8" fill="#0ea5e9" />;
+      } else {
+        shape = <circle r="8" fill="#94a3b8" />;
+      }
+      
+      return (
+        <g key={index} transform={`translate(${position.x}, ${position.y})`}>
+          {/* Connecting "spoke" line */}
+          <line 
+            x1="0" y1="0" 
+            x2={160 - position.x} y2={160 - position.y} 
+            stroke="#94a3b8" 
+            strokeWidth="2" 
+            strokeOpacity="0.6" 
+          />
+          
+          {/* Stone shape */}
+          {shape}
+          
+          {/* Stone label */}
+          <text 
+            textAnchor="middle" 
+            dy="20" 
+            fill="#1e293b" 
+            fontSize="10"
+          >
+            {stone.label || ''}
+          </text>
+        </g>
+      );
+    });
+  };
+  
+  return (
+    <div className="foundation-visualization">
+      <svg width="320" height="320" viewBox="0 0 320 320">
+        {/* Foundation circle */}
+        <circle 
+          cx="160" cy="160" r="140" 
+          fill="transparent" 
+          stroke="#e2e8f0" 
+          strokeWidth="2"
+          className="foundation-circle"
+        />
+        
+        {/* Center point */}
+        <circle 
+          cx="160" cy="160" r="5" 
+          fill="#94a3b8"
+          className="foundation-center"
+        />
+        
+        {/* Stones and connecting lines */}
+        {renderStones()}
+      </svg>
+      
+      <div className="foundation-progress">
+        {selectedStones.length} of 9 stones selected
+      </div>
+    </div>
+  );
+};
+
+export default FoundationVisualization;
+css/* FoundationVisualization.css */
+.foundation-visualization {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+.foundation-circle {
+  transition: stroke 0.3s ease;
+}
+
+.foundation-progress {
+  margin-top: 12px;
+  font-size: 14px;
+  color: #64748b;
+}
+
+/* Animation for stones flying to foundation */
+@keyframes flyToFoundation {
+  0% {
+    transform: translate(100px, 50px) scale(0.8);
+    opacity: 0.5;
+  }
+  100% {
+    transform: translate(0, 0) scale(1);
+    opacity: 1;
+  }
+}
+
+g {
+  animation: flyToFoundation 0.8s ease-out;
+}
+Option 2: Use a Simple Circle with Positioned Divs
+If SVG is proving difficult, try this simple HTML/CSS approach:
+jsx// SimpleFoundationVisualization.jsx
+import React from 'react';
+import './SimpleFoundationVisualization.css';
+
+const SimpleFoundationVisualization = ({ selectedStones = [] }) => {
+  const getStonePosition = (index) => {
+    const radius = 130;
+    const angle = ((index * (2 * Math.PI)) / 9) - Math.PI/2;
+    const left = 160 + radius * Math.cos(angle);
+    const top = 160 + radius * Math.sin(angle);
+    
+    return { left: `${left}px`, top: `${top}px` };
+  };
+  
+  return (
+    <div className="simple-foundation-container">
+      <div className="foundation-circle"></div>
+      <div className="foundation-center"></div>
+      
+      {selectedStones.map((stone, index) => {
+        const position = getStonePosition(index);
+        return (
+          <div 
+            key={index}
+            className={`foundation-stone ${stone.type || 'default'}`}
+            style={{
+              left: position.left,
+              top: position.top
+            }}
+          >
+            <div className="stone-connecting-line"></div>
+            <div className="stone-shape"></div>
+            <div className="stone-label">{stone.label || ''}</div>
+          </div>
+        );
+      })}
+      
+      <div className="foundation-progress">
+        {selectedStones.length} of 9 stones selected
+      </div>
+    </div>
+  );
+};
+
+export default SimpleFoundationVisualization;
+css/* SimpleFoundationVisualization.css */
+.simple-foundation-container {
+  width: 320px;
+  height: 320px;
+  position: relative;
+  margin: 0 auto;
+}
+
+.foundation-circle {
+  width: 280px;
+  height: 280px;
+  border: 2px solid #e2e8f0;
+  border-radius: 50%;
+  position: absolute;
+  top: 20px;
+  left: 20px;
+}
+
+.foundation-center {
+  width: 10px;
+  height: 10px;
+  background-color: #94a3b8;
+  border-radius: 50%;
+  position: absolute;
+  top: 155px;
+  left: 155px;
+}
+
+.foundation-stone {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  transform: translate(-10px, -10px);
+  z-index: 2;
+  animation: flyToPosition 0.8s ease-out;
+}
+
+.stone-connecting-line {
+  position: absolute;
+  width: 140px; /* This will need adjustment based on position */
+  height: 2px;
+  background-color: rgba(148, 163, 184, 0.6);
+  transform-origin: 0 0;
+  /* Calculate rotation based on position */
+}
+
+.stone-shape {
+  width: 20px;
+  height: 20px;
+  border-radius: 3px;
+}
+
+.stone-shape.heart {
+  background-color: #e11d48;
+  clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+}
+
+.stone-shape.head {
+  background-color: #4f46e5;
+}
+
+.stone-shape.body {
+  background-color: #0ea5e9;
+  border-radius: 50%;
+}
+
+.foundation-progress {
+  text-align: center;
+  margin-top: 340px;
+  font-size: 14px;
+  color: #64748b;
+}
+
+@keyframes flyToPosition {
+  0% {
+    transform: translate(100px, 50px) scale(0.8);
+    opacity: 0.5;
+  }
+  100% {
+    transform: translate(-10px, -10px) scale(1);
+    opacity: 1;
+  }
+}
+Option 3: Use an Existing Diagram Library
+If custom implementation is difficult, suggest using a library:
+1. Install a diagram library that can easily create the wheel-like structure:
+
+npm install react-d3-graph
+
+2. Then implement a simple graph visualization:
+
+import React from 'react';
+import { Graph } from "react-d3-graph";
+
+const FoundationWheel = ({ selectedStones = [] }) => {
+  // Create center node
+  const nodes = [{ id: "center" }];
+  
+  // Create nodes for each selected stone
+  selectedStones.forEach((stone, index) => {
+    nodes.push({ 
+      id: `stone-${index}`,
+      color: stone.type === 'heart' ? '#e11d48' : 
+             stone.type === 'head' ? '#4f46e5' : '#0ea5e9',
+      symbolType: stone.type === 'heart' ? 'diamond' :
+                 stone.type === 'head' ? 'square' : 'circle'
+    });
+  });
+  
+  // Create links from each stone to center
+  const links = selectedStones.map((_, index) => ({
+    source: `stone-${index}`,
+    target: "center"
+  }));
+  
+  // Graph configuration
+  const config = {
+    nodeHighlightBehavior: true,
+    node: {
+      color: "#94a3b8",
+      size: 120,
+      highlightStrokeColor: "blue",
+    },
+    link: {
+      highlightColor: "lightblue",
+    },
+    staticGraph: true,
+    d3: {
+      gravity: -150, // Pull nodes away from center
+      linkLength: 130 // Fixed distance for wheel-like appearance
+    }
+  };
+  
+  return (
+    <div className="foundation-wheel">
+      <Graph
+        id="foundation-graph"
+        data={{ nodes, links }}
+        config={config}
+      />
+      <div className="foundation-progress">
+        {selectedStones.length} of 9 stones selected
+      </div>
+    </div>
+  );
+};
+
+export default FoundationWheel;
+Or Simply Use a Static Image as a Last Resort
+If all else fails, consider creating a static mockup image that at least shows the correct visual design, then implement the interactive functionality later. The most important thing is to get the visual concept right.
+The key requirements that must be visually clear are:
+
+A circular foundation base
+Stones positioned around the perimeter
+"Spoke" lines connecting stones to the center
+Different stone shapes based on category
+Visual growth as stones are added
+
+Please choose whichever approach best fits your capabilities and implement it promptly.

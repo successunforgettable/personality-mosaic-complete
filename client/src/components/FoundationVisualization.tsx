@@ -12,11 +12,8 @@ interface FoundationVisualizationProps {
 
 /**
  * Circular foundation visualization component that displays selected foundation stones
- * around a circular base following exactly the specifications in section 17:
- * - Creates a 320px diameter circular foundation base
- * - Positions stones around the perimeter of the circle
- * - Draws connecting lines from stones to the center (spokes)
- * - Implements growth animations as stones are added
+ * around a circular base with visual effects and animations.
+ * Implementation follows section 17 specifications exactly.
  */
 const FoundationVisualization: React.FC<FoundationVisualizationProps> = ({
   selectedStones,
@@ -26,25 +23,23 @@ const FoundationVisualization: React.FC<FoundationVisualizationProps> = ({
 }) => {
   const isMobile = useIsMobile();
   const [isGrowing, setIsGrowing] = useState(false);
-  const stoneRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const stoneRefs = useRef<(SVGGElement | null)[]>([]);
   const prevStoneCountRef = useRef(0);
-
-  // Foundation base dimensions - exactly 320px as specified in section 17.1
-  const baseDiameter = isMobile ? 280 : 320; // Mobile adjustment
-  const baseRadius = baseDiameter / 2; // 160px radius
-
-  // Calculate positions for stones around the circle perimeter
-  const calculatePosition = (index: number, total: number) => {
-    // Calculate angle, starting from top (negative PI/2)
-    const angle = (Math.PI * 2 * index / total) - Math.PI / 2;
-    
-    // Position on the circle perimeter
-    return {
-      x: Math.cos(angle) * baseRadius,
-      y: Math.sin(angle) * baseRadius
-    };
-  };
-
+  
+  // SVG viewport settings
+  const viewSize = isMobile ? 280 : 320;
+  const centerX = viewSize / 2;
+  const centerY = viewSize / 2;
+  const radius = viewSize * 0.42; // Distance from center to stone position (slightly less than half)
+  
+  // Foundation circle settings
+  const foundationRadius = viewSize * 0.44; // Slightly larger than stone radius
+  const centerPointRadius = 5;
+  
+  // Initial animation for stones
+  const initialPositionX = 100;
+  const initialPositionY = 50;
+  
   // Trigger foundation growth animation when new stones are added
   useEffect(() => {
     const newStoneAdded = selectedStones.length > prevStoneCountRef.current;
@@ -53,7 +48,6 @@ const FoundationVisualization: React.FC<FoundationVisualizationProps> = ({
     if (newStoneAdded && selectedStones.length > 0) {
       setIsGrowing(true);
       
-      // Reset growing state after animation completes
       const timer = setTimeout(() => {
         setIsGrowing(false);
       }, 800);
@@ -61,7 +55,59 @@ const FoundationVisualization: React.FC<FoundationVisualizationProps> = ({
       return () => clearTimeout(timer);
     }
   }, [selectedStones.length]);
-
+  
+  // Calculate stone position around the circle
+  const calculateStonePosition = (index: number, total: number) => {
+    // Calculate angle, starting from top (negative PI/2)
+    const angle = (Math.PI * 2 * index / total) - Math.PI / 2;
+    
+    // Position on the circle perimeter
+    return {
+      x: centerX + radius * Math.cos(angle),
+      y: centerY + radius * Math.sin(angle)
+    };
+  };
+  
+  // Determine the shape path based on the stone category
+  const getStoneShapePath = (category: string, size: number = 10) => {
+    if (category === 'Heart') {
+      // Pentagon for Heart
+      const points = [];
+      for (let i = 0; i < 5; i++) {
+        const angle = (Math.PI * 2 * i / 5) - Math.PI / 2;
+        points.push(`${size * Math.cos(angle)},${size * Math.sin(angle)}`);
+      }
+      return `polygon(${points.join(' ')})`;
+    } else if (category === 'Body') {
+      // Octagon for Body
+      const points = [];
+      for (let i = 0; i < 8; i++) {
+        const angle = (Math.PI * 2 * i / 8) - Math.PI / 2;
+        points.push(`${size * Math.cos(angle)},${size * Math.sin(angle)}`);
+      }
+      return `polygon(${points.join(' ')})`;
+    } else {
+      // Hexagon for Head (default)
+      const points = [];
+      for (let i = 0; i < 6; i++) {
+        const angle = (Math.PI * 2 * i / 6) - Math.PI / 2;
+        points.push(`${size * Math.cos(angle)},${size * Math.sin(angle)}`);
+      }
+      return `polygon(${points.join(' ')})`;
+    }
+  };
+  
+  // Get fill color based on stone category
+  const getStoneFillColor = (category: string) => {
+    if (category === 'Heart') {
+      return '#EC4899'; // Pink
+    } else if (category === 'Body') {
+      return '#10B981'; // Emerald
+    } else {
+      return '#4F46E5'; // Indigo (Head)
+    }
+  };
+  
   return (
     <div className="flex flex-col items-center">
       {/* Progress indicator */}
@@ -82,87 +128,48 @@ const FoundationVisualization: React.FC<FoundationVisualizationProps> = ({
       </div>
       
       {/* SVG Foundation Visualization */}
-      <div className="relative" style={{ width: baseDiameter, height: baseDiameter }}>
-        {/* Circular foundation base - clearly visible as required */}
-        <motion.div 
-          className="absolute inset-0 rounded-full bg-gray-100 border border-gray-300"
-          style={{
-            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)'
-          }}
+      <svg 
+        width={viewSize} 
+        height={viewSize} 
+        viewBox={`0 0 ${viewSize} ${viewSize}`}
+        className="relative"
+      >
+        {/* Foundation circle */}
+        <motion.circle 
+          cx={centerX} 
+          cy={centerY} 
+          r={foundationRadius}
+          fill="transparent"
+          stroke="#e2e8f0"
+          strokeWidth={2 + Math.min(2, Math.floor(selectedStones.length / 3))}
           animate={{
-            scale: isGrowing ? [1, 1.03, 1] : 1,
-            boxShadow: isGrowing ? 
-              ['0 4px 12px rgba(0, 0, 0, 0.1)', '0 8px 24px rgba(0, 0, 0, 0.15)', '0 4px 12px rgba(0, 0, 0, 0.1)'] :
-              '0 4px 12px rgba(0, 0, 0, 0.1)'
+            stroke: isGrowing ? ['#e2e8f0', '#94a3b8', '#e2e8f0'] : '#e2e8f0',
+            scale: isGrowing ? [1, 1.02, 1] : 1
           }}
           transition={{ duration: 0.8 }}
-        >
-          {/* Subtle texture pattern */}
-          <div 
-            className="absolute inset-0 rounded-full overflow-hidden opacity-10"
-            style={{
-              backgroundImage: `url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23000000' fill-opacity='0.4' fill-rule='evenodd'%3E%3Ccircle cx='3' cy='3' r='3'/%3E%3Ccircle cx='13' cy='13' r='3'/%3E%3C/g%3E%3C/svg%3E")`
-            }}
-          />
-        </motion.div>
+        />
         
-        {/* Spoke lines connecting stones to center */}
-        {selectedStones.map((stone, idx) => {
-          const position = calculatePosition(idx, Math.max(totalStones, 9));
-          const isLastAdded = stone.id === lastSelectedStoneId;
-          
-          // Calculate line properties
-          const centerX = baseDiameter / 2;
-          const centerY = baseDiameter / 2;
-          const lineLength = Math.sqrt(position.x * position.x + position.y * position.y);
-          const angle = Math.atan2(position.y, position.x);
-          
-          return (
-            <motion.div 
-              key={`line-${stone.id}`}
-              className="absolute bg-gray-300"
-              style={{
-                width: 2,
-                height: lineLength,
-                top: centerY,
-                left: centerX,
-                transformOrigin: '0 0',
-                transform: `rotate(${angle}rad)`,
-                zIndex: 5
-              }}
-              initial={{ opacity: 0, scaleY: 0 }}
-              animate={{ 
-                opacity: 0.6, 
-                scaleY: 1 
-              }}
-              transition={{ 
-                duration: 0.4,
-                delay: isLastAdded ? 0 : 0.2
-              }}
-            />
-          );
-        })}
+        {/* Subtle circle pattern */}
+        <circle 
+          cx={centerX} 
+          cy={centerY} 
+          r={foundationRadius - 5}
+          fill="transparent"
+          stroke="#f8fafc"
+          strokeWidth="1"
+          strokeDasharray="3 3"
+          opacity="0.6"
+        />
         
-        {/* Center hub */}
-        <motion.div 
-          className="absolute rounded-full bg-white border border-gray-200"
-          style={{
-            width: 24,
-            height: 24,
-            top: '50%',
-            left: '50%',
-            marginLeft: -12,
-            marginTop: -12,
-            zIndex: 20,
-            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
-          }}
+        {/* Center point */}
+        <motion.circle 
+          cx={centerX} 
+          cy={centerY} 
+          r={centerPointRadius}
+          fill="#94a3b8"
           animate={{
-            scale: [1, 1.1, 1],
-            boxShadow: [
-              '0 2px 8px rgba(0, 0, 0, 0.1)',
-              '0 4px 12px rgba(0, 0, 0, 0.2)',
-              '0 2px 8px rgba(0, 0, 0, 0.1)'
-            ]
+            scale: [1, 1.2, 1],
+            fill: ['#94a3b8', '#64748b', '#94a3b8']
           }}
           transition={{
             duration: 2,
@@ -171,102 +178,125 @@ const FoundationVisualization: React.FC<FoundationVisualizationProps> = ({
           }}
         />
         
-        {/* Stones positioned around the perimeter */}
+        {/* Stones and connecting lines */}
         <AnimatePresence>
-          {selectedStones.map((stone, idx) => {
-            const pos = calculatePosition(idx, Math.max(totalStones, 9));
-            const stoneSize = isMobile ? 55 : 65;
+          {selectedStones.map((stone, index) => {
+            const position = calculateStonePosition(index, Math.max(totalStones, 9));
             const isLastAdded = stone.id === lastSelectedStoneId;
             
-            // Determine shape class based on stone category
-            let shapeClass = 'hexagon-shape'; // Head
-            if (stone.category === 'Heart') {
-              shapeClass = 'pentagon-shape';
-            } else if (stone.category === 'Body') {
-              shapeClass = 'octagon-shape';
-            }
-            
-            // Get gradient colors based on category
-            const gradientStart = stone.category === 'Head' 
-              ? '#4F46E5' // Indigo
-              : stone.category === 'Heart' 
-              ? '#EC4899' // Pink
-              : '#10B981'; // Emerald
-            
-            const gradientEnd = stone.category === 'Head' 
-              ? '#7C3AED' // Violet
-              : stone.category === 'Heart' 
-              ? '#8B5CF6' // Purple
-              : '#3B82F6'; // Blue
-            
             return (
-              <motion.div
+              <motion.g
                 key={`stone-${stone.id}`}
-                ref={el => stoneRefs.current[idx] = el}
-                className="absolute"
-                style={{
-                  width: stoneSize,
-                  height: stoneSize,
-                  // Position stone so its center is on the circle perimeter
-                  top: (baseDiameter / 2) + pos.y - (stoneSize / 2),
-                  left: (baseDiameter / 2) + pos.x - (stoneSize / 2),
-                  zIndex: 10
-                }}
+                ref={el => stoneRefs.current[index] = el}
                 initial={{ 
-                  scale: 0.2,
-                  opacity: 0,
-                  rotate: -15
+                  translateX: initialPositionX, 
+                  translateY: initialPositionY, 
+                  scale: 0.8,
+                  opacity: 0
                 }}
                 animate={{ 
-                  scale: isLastAdded ? [0.2, 1.2, 1] : 1,
-                  opacity: 1,
-                  rotate: 0,
-                  boxShadow: isLastAdded ? 
-                    ['0 0 15px rgba(255,255,255,0.8)', '0 4px 8px rgba(0,0,0,0.2)'] : 
-                    '0 4px 8px rgba(0,0,0,0.2)'
+                  translateX: 0, 
+                  translateY: 0, 
+                  scale: isLastAdded ? [0.8, 1.2, 1] : 1,
+                  opacity: 1
                 }}
                 exit={{ 
-                  scale: 0.2, 
+                  scale: 0.8, 
                   opacity: 0 
                 }}
                 transition={{ 
                   type: 'spring',
-                  damping: 20,
-                  stiffness: 300,
-                  duration: isLastAdded ? 0.8 : 0.4
+                  damping: 25,
+                  stiffness: 200,
+                  duration: isLastAdded ? 1 : 0.6
                 }}
+                style={{
+                  transformBox: 'fill-box',
+                  transformOrigin: 'center'
+                }}
+                transform={`translate(${position.x}, ${position.y})`}
               >
-                {/* Stone shape with distinct styling by category */}
-                <div className="relative w-full h-full">
-                  {/* Shape background */}
-                  <div 
-                    className={`${shapeClass} absolute inset-0 border-2 border-white shadow-md z-0`}
-                    style={{ 
-                      background: `linear-gradient(135deg, ${gradientStart}, ${gradientEnd})`,
-                    }}
-                  />
-                  {/* Stone content */}
-                  <div 
-                    className={`${shapeClass}-content absolute inset-0 flex items-center justify-center text-white text-xs font-medium p-1 text-center z-10`}
+                {/* Connecting spoke line */}
+                <motion.line
+                  x1="0"
+                  y1="0"
+                  x2={centerX - position.x}
+                  y2={centerY - position.y}
+                  stroke="#94a3b8"
+                  strokeWidth="2"
+                  strokeOpacity="0.6"
+                  initial={{ pathLength: 0 }}
+                  animate={{ pathLength: 1 }}
+                  transition={{ 
+                    duration: 0.5,
+                    delay: 0.2
+                  }}
+                />
+                
+                {/* Stone shape - using SVG elements with proper shapes */}
+                <motion.g>
+                  {/* Background shape */}
+                  {stone.category === 'Heart' ? (
+                    // Pentagon for Heart
+                    <motion.path
+                      d="M0,-12 L11.5,3.8 L7.1,15.5 L-7.1,15.5 L-11.5,3.8 Z"
+                      fill={getStoneFillColor(stone.category)}
+                      stroke="white"
+                      strokeWidth="1"
+                      animate={{ 
+                        fill: isLastAdded ? 
+                          [getStoneFillColor(stone.category), '#f8fafc', getStoneFillColor(stone.category)] : 
+                          getStoneFillColor(stone.category)
+                      }}
+                      transition={{ duration: 0.8 }}
+                    />
+                  ) : stone.category === 'Body' ? (
+                    // Octagon for Body
+                    <motion.path
+                      d="M0,-12 L8.5,-8.5 L12,-0 L8.5,8.5 L0,12 L-8.5,8.5 L-12,0 L-8.5,-8.5 Z"
+                      fill={getStoneFillColor(stone.category)}
+                      stroke="white"
+                      strokeWidth="1"
+                      animate={{ 
+                        fill: isLastAdded ? 
+                          [getStoneFillColor(stone.category), '#f8fafc', getStoneFillColor(stone.category)] : 
+                          getStoneFillColor(stone.category)
+                      }}
+                      transition={{ duration: 0.8 }}
+                    />
+                  ) : (
+                    // Hexagon for Head (default)
+                    <motion.path
+                      d="M0,-12 L10.4,-6 L10.4,6 L0,12 L-10.4,6 L-10.4,-6 Z"
+                      fill={getStoneFillColor(stone.category)}
+                      stroke="white"
+                      strokeWidth="1"
+                      animate={{ 
+                        fill: isLastAdded ? 
+                          [getStoneFillColor(stone.category), '#f8fafc', getStoneFillColor(stone.category)] : 
+                          getStoneFillColor(stone.category)
+                      }}
+                      transition={{ duration: 0.8 }}
+                    />
+                  )}
+                  
+                  {/* Stone label */}
+                  <text
+                    fontSize="7"
+                    fontWeight="500"
+                    fill="white"
+                    textAnchor="middle"
+                    dominantBaseline="middle"
+                    y="1"
                   >
                     {stone.name}
-                  </div>
-                </div>
-                
-                {/* Highlight effect for newly added stones */}
-                {isLastAdded && (
-                  <motion.div 
-                    className={`${shapeClass} absolute inset-0 bg-white z-5`}
-                    initial={{ opacity: 0.8 }}
-                    animate={{ opacity: 0 }}
-                    transition={{ duration: 1 }}
-                  />
-                )}
-              </motion.div>
+                  </text>
+                </motion.g>
+              </motion.g>
             );
           })}
         </AnimatePresence>
-      </div>
+      </svg>
     </div>
   );
 };
