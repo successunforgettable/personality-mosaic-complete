@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { Eye, EyeOff, Mail, Lock, AlertCircle } from "lucide-react";
+import { Eye, EyeOff, Mail, Lock, AlertCircle, Loader2, ArrowLeft } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { z } from "zod";
@@ -30,7 +30,7 @@ interface LoginModalProps {
   onSwitchToRegister: () => void;
 }
 
-export function LoginModal({ 
+function LoginModal({ 
   isOpen, 
   onOpenChange,
   onSwitchToRegister
@@ -41,6 +41,12 @@ export function LoginModal({
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [loginError, setLoginError] = useState<string | null>(null);
+
+  // State for forgot password flow
+  const [isForgotPasswordMode, setIsForgotPasswordMode] = useState(false);
+  const [forgotPasswordEmail, setForgotPasswordEmail] = useState("");
+  const [isSendingResetLink, setIsSendingResetLink] = useState(false);
+  const [resetLinkSent, setResetLinkSent] = useState(false);
   
   // Create refs for focus management
   const emailInputRef = useRef<HTMLInputElement | null>(null);
@@ -62,8 +68,8 @@ export function LoginModal({
   const { 
     register, 
     handleSubmit, 
-    formState: { errors }, 
-    reset 
+    formState: { errors },
+    getValues
   } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -128,183 +134,322 @@ export function LoginModal({
     
     navigate("/assessment");
   };
-
+  
   const handleForgotPassword = () => {
-    toast({
-      title: "Password Reset",
-      description: "Please check your email for password reset instructions.",
-    });
+    // Switch to forgot password mode
+    setIsForgotPasswordMode(true);
+    
+    // Pre-fill email if available
+    const currentEmail = getValues("email");
+    if (currentEmail) {
+      setForgotPasswordEmail(currentEmail);
+    }
+  };
+  
+  const handleSendResetLink = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!forgotPasswordEmail || !forgotPasswordEmail.includes('@')) {
+      toast({
+        title: "Invalid email",
+        description: "Please enter a valid email address.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    setIsSendingResetLink(true);
+    
+    try {
+      // Simulate sending a password reset email
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      setResetLinkSent(true);
+      
+      toast({
+        title: "Password reset link sent",
+        description: "Check your email for instructions on how to reset your password.",
+      });
+      
+      // After 3 seconds, return to login screen
+      setTimeout(() => {
+        setIsForgotPasswordMode(false);
+        setResetLinkSent(false);
+      }, 3000);
+    } catch (error) {
+      console.error("Failed to send reset link:", error);
+      toast({
+        title: "Failed to send reset link",
+        description: "Please try again later.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSendingResetLink(false);
+    }
+  };
+  
+  const handleBackToLogin = () => {
+    setIsForgotPasswordMode(false);
+    setResetLinkSent(false);
   };
 
   return (
-    <Modal open={isOpen} onOpenChange={onOpenChange}>
+    <Modal open={isOpen} onOpenChange={(open) => {
+      // Reset forgot password state when closing modal
+      if (!open) {
+        setIsForgotPasswordMode(false);
+        setResetLinkSent(false);
+      }
+      onOpenChange(open);
+    }}>
       <ModalContent className="sm:max-w-md">
-        <ModalHeader>
-          <ModalTitle className="text-2xl">Welcome Back</ModalTitle>
-          <ModalDescription>
-            Sign in to your account to access your saved results.
-          </ModalDescription>
-        </ModalHeader>
-        
-        {/* Show error banner if login fails */}
-        {loginError && (
-          <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md flex items-start gap-2 text-red-600">
-            <AlertCircle className="h-5 w-5 flex-shrink-0 mt-0.5" />
-            <div>
-              <p className="text-sm font-medium">{loginError}</p>
-              <p className="text-xs mt-1">Please check your credentials and try again</p>
-            </div>
-          </div>
-        )}
-        
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 px-1">
-          {/* Email field */}
-          <div className="space-y-1">
-            <label htmlFor="login-email" className="text-sm font-medium">
-              Email Address
-            </label>
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Mail className="h-5 w-5 text-gray-400" aria-hidden="true" />
+        {!isForgotPasswordMode ? (
+          // Normal Login Form
+          <>
+            <ModalHeader>
+              <ModalTitle className="text-2xl">Welcome Back</ModalTitle>
+              <ModalDescription>
+                Sign in to your account to access your saved results.
+              </ModalDescription>
+            </ModalHeader>
+            
+            {/* Show error banner if login fails */}
+            {loginError && (
+              <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md flex items-start gap-2 text-red-600">
+                <AlertCircle className="h-5 w-5 flex-shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-sm font-medium">{loginError}</p>
+                  <p className="text-xs mt-1">Please check your credentials and try again</p>
+                </div>
               </div>
-              <input
-                id="login-email"
-                type="email"
-                aria-required="true"
-                aria-invalid={!!errors.email}
-                aria-describedby={errors.email ? "email-error" : undefined}
-                className={`pl-10 pr-4 py-2 w-full border rounded-md focus:ring-2 focus:ring-[#7c3aed] focus:border-transparent ${
-                  errors.email ? 'border-red-500' : 'border-gray-300'
-                }`}
-                placeholder="you@example.com"
-                {...register("email", { 
-                  setValueAs: (value) => value.trim(),
-                })}
-                ref={(el) => {
-                  // Store ref value manually after render
-                  if (el) emailInputRef.current = el;
-                }}
-                autoComplete="email"
-              />
-            </div>
-            {errors.email && (
-              <p id="email-error" className="text-red-500 text-xs mt-1" role="alert">{errors.email.message}</p>
             )}
-          </div>
-          
-          {/* Password field */}
-          <div className="space-y-1">
-            <label htmlFor="login-password" className="text-sm font-medium">
-              Password
-            </label>
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Lock className="h-5 w-5 text-gray-400" aria-hidden="true" />
-              </div>
-              <input
-                id="login-password"
-                type={showPassword ? "text" : "password"}
-                aria-required="true"
-                aria-invalid={!!errors.password}
-                aria-describedby={errors.password ? "password-error" : undefined}
-                className={`pl-10 pr-12 py-2 w-full border rounded-md focus:ring-2 focus:ring-[#7c3aed] focus:border-transparent ${
-                  errors.password ? 'border-red-500' : 'border-gray-300'
-                }`}
-                placeholder="••••••••"
-                {...register("password")}
-                ref={(e) => {
-                  register("password").ref(e);
-                  passwordInputRef.current = e;
-                }}
-                autoComplete="current-password"
-              />
-              <button
-                type="button"
-                aria-label={showPassword ? "Hide password" : "Show password"}
-                className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                onClick={() => setShowPassword(!showPassword)}
-              >
-                {showPassword ? (
-                  <EyeOff className="h-5 w-5 text-gray-400" aria-hidden="true" />
-                ) : (
-                  <Eye className="h-5 w-5 text-gray-400" aria-hidden="true" />
+            
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 px-1">
+              {/* Email field */}
+              <div className="space-y-1">
+                <label htmlFor="login-email" className="text-sm font-medium">
+                  Email Address
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <Mail className="h-5 w-5 text-gray-400" aria-hidden="true" />
+                  </div>
+                  <input
+                    id="login-email"
+                    type="email"
+                    aria-required="true"
+                    aria-invalid={!!errors.email}
+                    aria-describedby={errors.email ? "email-error" : undefined}
+                    className={`pl-10 pr-4 py-2 w-full border rounded-md focus:ring-2 focus:ring-[#7c3aed] focus:border-transparent ${
+                      errors.email ? 'border-red-500' : 'border-gray-300'
+                    }`}
+                    placeholder="you@example.com"
+                    {...register("email")}
+                    ref={(el) => {
+                      // Store ref value manually after render
+                      if (el) emailInputRef.current = el;
+                    }}
+                    autoComplete="email"
+                  />
+                </div>
+                {errors.email && (
+                  <p id="email-error" className="text-red-500 text-xs mt-1" role="alert">{errors.email.message}</p>
                 )}
-              </button>
-            </div>
-            {errors.password && (
-              <p id="password-error" className="text-red-500 text-xs mt-1" role="alert">{errors.password.message}</p>
+              </div>
+              
+              {/* Password field */}
+              <div className="space-y-1">
+                <label htmlFor="login-password" className="text-sm font-medium">
+                  Password
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <Lock className="h-5 w-5 text-gray-400" aria-hidden="true" />
+                  </div>
+                  <input
+                    id="login-password"
+                    type={showPassword ? "text" : "password"}
+                    aria-required="true"
+                    aria-invalid={!!errors.password}
+                    aria-describedby={errors.password ? "password-error" : undefined}
+                    className={`pl-10 pr-12 py-2 w-full border rounded-md focus:ring-2 focus:ring-[#7c3aed] focus:border-transparent ${
+                      errors.password ? 'border-red-500' : 'border-gray-300'
+                    }`}
+                    placeholder="••••••••"
+                    {...register("password")}
+                    ref={(el) => {
+                      // Store ref value manually after render
+                      if (el) passwordInputRef.current = el;
+                    }}
+                    autoComplete="current-password"
+                  />
+                  <button
+                    type="button"
+                    aria-label={showPassword ? "Hide password" : "Show password"}
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? (
+                      <EyeOff className="h-5 w-5 text-gray-400" aria-hidden="true" />
+                    ) : (
+                      <Eye className="h-5 w-5 text-gray-400" aria-hidden="true" />
+                    )}
+                  </button>
+                </div>
+                {errors.password && (
+                  <p id="password-error" className="text-red-500 text-xs mt-1" role="alert">{errors.password.message}</p>
+                )}
+              </div>
+              
+              {/* Remember Me & Forgot Password */}
+              <div className="flex items-center justify-between">
+                <div className="flex items-center">
+                  <input
+                    id="login-remember"
+                    type="checkbox"
+                    className="h-4 w-4 text-[#7c3aed] border-gray-300 rounded focus:ring-[#7c3aed] focus:outline-none"
+                    {...register("rememberMe")}
+                    aria-describedby="remember-description"
+                  />
+                  <label htmlFor="login-remember" className="ml-2 block text-sm text-gray-600">
+                    Remember me
+                  </label>
+                </div>
+                <div id="remember-description" className="sr-only">
+                  Keep me signed in on this device
+                </div>
+                
+                <div className="text-sm">
+                  <button
+                    type="button"
+                    onClick={handleForgotPassword}
+                    className="font-medium text-[#7c3aed] hover:text-[#6d28d9] focus:outline-none focus:underline focus:ring-2 focus:ring-offset-2 focus:ring-[#7c3aed] rounded-sm"
+                  >
+                    Forgot password?
+                  </button>
+                </div>
+              </div>
+              
+              <div className="pt-4 space-y-3">
+                {/* Submit button */}
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-md shadow-sm text-white bg-[#7c3aed] hover:bg-[#6d28d9] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7c3aed] transition-colors duration-200"
+                  ref={submitButtonRef}
+                >
+                  {isSubmitting ? (
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  ) : null}
+                  {isSubmitting ? "Signing in..." : "Sign in"}
+                </button>
+                
+                {/* Guest mode button */}
+                <button
+                  type="button"
+                  onClick={handleGuestMode}
+                  className="w-full flex justify-center py-2.5 px-4 border border-[#7c3aed] rounded-md shadow-sm text-[#7c3aed] bg-white hover:bg-[#f5f3ff] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7c3aed] transition-colors duration-200"
+                >
+                  Continue as Guest
+                </button>
+              </div>
+              
+              {/* Switch to registration */}
+              <div className="text-center">
+                <p className="text-sm text-gray-600">
+                  Don't have an account?{' '}
+                  <button
+                    type="button"
+                    onClick={onSwitchToRegister}
+                    className="text-[#7c3aed] hover:underline font-medium"
+                  >
+                    Sign up
+                  </button>
+                </p>
+              </div>
+            </form>
+          </>
+        ) : (
+          // Forgot Password Form
+          <>
+            <ModalHeader>
+              <ModalTitle className="text-2xl">Reset Password</ModalTitle>
+              <ModalDescription>
+                {!resetLinkSent 
+                  ? "Enter your email address and we'll send you a link to reset your password."
+                  : "Check your email for instructions to reset your password."}
+              </ModalDescription>
+            </ModalHeader>
+            
+            {!resetLinkSent ? (
+              <form onSubmit={handleSendResetLink} className="space-y-4 px-1">
+                {/* Email field for password reset */}
+                <div className="space-y-1">
+                  <label htmlFor="forgot-email" className="text-sm font-medium">
+                    Email Address
+                  </label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <Mail className="h-5 w-5 text-gray-400" aria-hidden="true" />
+                    </div>
+                    <input
+                      id="forgot-email"
+                      type="email"
+                      value={forgotPasswordEmail}
+                      onChange={(e) => setForgotPasswordEmail(e.target.value)}
+                      className="pl-10 pr-4 py-2 w-full border rounded-md focus:ring-2 focus:ring-[#7c3aed] focus:border-transparent border-gray-300"
+                      placeholder="you@example.com"
+                      autoComplete="email"
+                      required
+                      aria-required="true"
+                      autoFocus
+                    />
+                  </div>
+                </div>
+                
+                <div className="pt-4 space-y-3">
+                  {/* Submit button for password reset */}
+                  <button
+                    type="submit"
+                    disabled={isSendingResetLink}
+                    className="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-md shadow-sm text-white bg-[#7c3aed] hover:bg-[#6d28d9] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7c3aed] transition-colors duration-200"
+                  >
+                    {isSendingResetLink ? (
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    ) : null}
+                    {isSendingResetLink ? "Sending..." : "Send Reset Link"}
+                  </button>
+                  
+                  {/* Back to login button */}
+                  <button
+                    type="button"
+                    onClick={handleBackToLogin}
+                    className="w-full flex justify-center items-center py-2.5 px-4 border border-gray-300 rounded-md shadow-sm text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7c3aed] transition-colors duration-200"
+                  >
+                    <ArrowLeft className="h-4 w-4 mr-2" />
+                    Back to Login
+                  </button>
+                </div>
+              </form>
+            ) : (
+              <div className="space-y-4 px-1">
+                <div className="p-4 bg-green-50 border border-green-200 rounded-md text-green-700 text-center">
+                  <p className="font-medium">Reset link sent!</p>
+                  <p className="text-sm mt-1">Please check your email inbox.</p>
+                </div>
+                
+                <button
+                  type="button"
+                  onClick={handleBackToLogin}
+                  className="w-full flex justify-center items-center py-2.5 px-4 border border-gray-300 rounded-md shadow-sm text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7c3aed] transition-colors duration-200"
+                >
+                  <ArrowLeft className="h-4 w-4 mr-2" />
+                  Return to Login
+                </button>
+              </div>
             )}
-          </div>
-          
-          {/* Remember Me & Forgot Password */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <input
-                id="login-remember"
-                type="checkbox"
-                className="h-4 w-4 text-[#7c3aed] border-gray-300 rounded focus:ring-[#7c3aed] focus:outline-none"
-                {...register("rememberMe")}
-                aria-describedby="remember-description"
-              />
-              <label htmlFor="login-remember" className="ml-2 block text-sm text-gray-600">
-                Remember me
-              </label>
-            </div>
-            <div id="remember-description" className="sr-only">
-              Keep me signed in on this device
-            </div>
-            
-            <div className="text-sm">
-              <button
-                type="button"
-                onClick={handleForgotPassword}
-                className="font-medium text-[#7c3aed] hover:text-[#6d28d9] focus:outline-none focus:underline focus:ring-2 focus:ring-offset-2 focus:ring-[#7c3aed] rounded-sm"
-              >
-                Forgot password?
-              </button>
-            </div>
-          </div>
-          
-          <div className="pt-4 space-y-3">
-            {/* Submit button */}
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-md shadow-sm text-white bg-[#7c3aed] hover:bg-[#6d28d9] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7c3aed] transition-colors duration-200"
-            >
-              {isSubmitting ? (
-                <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-              ) : null}
-              {isSubmitting ? "Signing in..." : "Sign in"}
-            </button>
-            
-            {/* Guest mode button */}
-            <button
-              type="button"
-              onClick={handleGuestMode}
-              className="w-full flex justify-center py-2.5 px-4 border border-[#7c3aed] rounded-md shadow-sm text-[#7c3aed] bg-white hover:bg-[#f5f3ff] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7c3aed] transition-colors duration-200"
-            >
-              Continue as Guest
-            </button>
-          </div>
-          
-          {/* Switch to registration */}
-          <div className="text-center">
-            <p className="text-sm text-gray-600">
-              Don't have an account?{' '}
-              <button
-                type="button"
-                onClick={onSwitchToRegister}
-                className="text-[#7c3aed] hover:underline font-medium"
-              >
-                Sign up
-              </button>
-            </p>
-          </div>
-        </form>
+          </>
+        )}
       </ModalContent>
     </Modal>
   );
