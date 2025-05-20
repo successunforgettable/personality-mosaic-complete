@@ -50,13 +50,13 @@ const Header = () => {
         <div className="hidden md:flex items-center space-x-4">
           <div 
             className="px-3 py-2 text-sm text-[#64748b] hover:text-[#1e293b] cursor-pointer" 
-            onClick={() => navigate("/#how-it-works")}
+            onClick={() => navigate("/")}
           >
             How It Works
           </div>
           <div 
             className="px-3 py-2 text-sm text-[#64748b] hover:text-[#1e293b] cursor-pointer"
-            onClick={() => navigate("/about")}
+            onClick={() => navigate("/")}
           >
             About
           </div>
@@ -152,7 +152,7 @@ const Header = () => {
           <div 
             className="block px-4 py-2 text-[#64748b] cursor-pointer"
             onClick={() => {
-              navigate("/#how-it-works");
+              navigate("/");
               setMobileMenuOpen(false);
             }}
           >
@@ -161,7 +161,7 @@ const Header = () => {
           <div 
             className="block px-4 py-2 text-[#64748b] cursor-pointer"
             onClick={() => {
-              navigate("/about");
+              navigate("/");
               setMobileMenuOpen(false);
             }}
           >
