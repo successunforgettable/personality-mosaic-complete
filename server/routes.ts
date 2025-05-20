@@ -350,14 +350,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const saltRounds = 10;
       const hashedPassword = await bcrypt.hash(password, saltRounds);
       
+      // Process name fields
+      const firstNameValue = firstName || null;
+      const lastNameValue = lastName || null;
+      
       // Log security event
       console.log(`[SECURITY] New user registration initiated for ${sanitizedEmail}`);
-      
-      // Insert the new user with direct SQL using an integer ID and verification token
-      const insertResult = await db.query(
-        'INSERT INTO users (id, username, email, password, first_name, last_name, created_at, email_verified, verification_token, verification_expires) VALUES ($1, $2, $3, $4, $5, $6, NOW(), $7, $8, $9) RETURNING id, username, email, created_at',
-        [nextId, sanitizedUsername, sanitizedEmail, hashedPassword, firstName || null, lastName || null, 'false', verificationToken, tokenExpiry]
-      );
+
+      let insertResult;
+      try {
+        // Insert the new user with direct SQL using an integer ID and verification token
+        insertResult = await db.query(
+          'INSERT INTO users (id, username, email, password, first_name, last_name, created_at, email_verified, verification_token, verification_expires) VALUES ($1, $2, $3, $4, $5, $6, NOW(), $7, $8, $9) RETURNING id, username, email, created_at',
+          [nextId, sanitizedUsername, sanitizedEmail, hashedPassword, firstNameValue, lastNameValue, 'false', verificationToken, tokenExpiry]
+        );
+      } catch (error) {
+        console.error("Error inserting user:", error);
+        
+        // If there's an issue with the first_name/last_name columns, try without them
+        console.log("Attempting fallback user creation without name fields");
+        insertResult = await db.query(
+          'INSERT INTO users (id, username, email, password, created_at, email_verified, verification_token, verification_expires) VALUES ($1, $2, $3, $4, NOW(), $5, $6, $7) RETURNING id, username, email, created_at',
+          [nextId, sanitizedUsername, sanitizedEmail, hashedPassword, 'false', verificationToken, tokenExpiry]
+        );
+      }
       
       const user = insertResult.rows[0];
       console.log("User created:", user);
@@ -399,7 +415,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       // Generate JWT token
-      const token = generateToken(user.id);
+      const token = generateToken(user.id.toString());
       
       // Return user data and token
       return res.status(201).json({
