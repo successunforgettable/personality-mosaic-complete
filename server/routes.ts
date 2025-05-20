@@ -301,26 +301,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
           [resetToken, tokenExpiry, user.id]
         );
         
-        // In a real application, send an email with the reset link
-        // For demo purposes, we'll just log it to the console
-        console.log(`Password reset requested for ${email}`);
-        console.log(`Reset link would be: https://${req.hostname}/reset-password?token=${resetToken}`);
-        
-        // In a production environment, you would use SendGrid or another email service:
-        /*
+        // Create the reset link
         const resetLink = `https://${req.hostname}/reset-password?token=${resetToken}`;
-        await sendEmail({
+        
+        // Import email service
+        const { emailService } = await import('./emailService');
+        
+        // Send the password reset email
+        await emailService.sendEmail({
           to: email,
-          from: 'noreply@personalitymosaic.com',
-          subject: 'Password Reset Request',
+          subject: 'Password Reset Request - Personality Mosaic',
           html: `
-            <p>You have requested to reset your password for your Personality Mosaic account.</p>
-            <p>Please click the link below to reset your password. This link will expire in 1 hour.</p>
-            <p><a href="${resetLink}">${resetLink}</a></p>
-            <p>If you did not request this password reset, please ignore this email.</p>
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px;">
+              <h2 style="color: #333; text-align: center;">Password Reset Request</h2>
+              <p>Hello,</p>
+              <p>You have requested to reset your password for your Personality Mosaic account.</p>
+              <p>Please click the button below to reset your password. This link will expire in 1 hour.</p>
+              <div style="text-align: center; margin: 20px 0;">
+                <a href="${resetLink}" style="background-color: #4a6cf7; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; display: inline-block; font-weight: bold;">Reset Password</a>
+              </div>
+              <p>Or copy and paste this link into your browser:</p>
+              <p style="word-break: break-all; background-color: #f5f5f5; padding: 10px; border-radius: 4px;"><a href="${resetLink}">${resetLink}</a></p>
+              <p>If you did not request this password reset, please ignore this email and your password will remain unchanged.</p>
+              <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e0e0e0; text-align: center; color: #777; font-size: 12px;">
+                <p>© ${new Date().getFullYear()} Personality Mosaic. All rights reserved.</p>
+              </div>
+            </div>
           `
         });
-        */
       }
       
       // Always return success to prevent email enumeration
@@ -363,6 +371,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
         'UPDATE users SET password = $1, reset_token = NULL, reset_token_expires = NULL WHERE id = $2',
         [newPassword, user.id]
       );
+      
+      // Send confirmation email
+      if (user.email) {
+        try {
+          // Import email service
+          const { emailService } = await import('./emailService');
+          
+          // Send the password reset confirmation email
+          await emailService.sendEmail({
+            to: user.email,
+            subject: 'Your Password Has Been Reset - Personality Mosaic',
+            html: `
+              <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px;">
+                <h2 style="color: #333; text-align: center;">Password Reset Successful</h2>
+                <p>Hello,</p>
+                <p>Your password for Personality Mosaic has been successfully reset.</p>
+                <p>If you did not make this change, please contact support immediately as your account may have been compromised.</p>
+                <div style="text-align: center; margin: 20px 0;">
+                  <a href="https://${req.hostname}/login" style="background-color: #4a6cf7; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; display: inline-block; font-weight: bold;">Login Now</a>
+                </div>
+                <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e0e0e0; text-align: center; color: #777; font-size: 12px;">
+                  <p>© ${new Date().getFullYear()} Personality Mosaic. All rights reserved.</p>
+                </div>
+              </div>
+            `
+          });
+        } catch (emailError) {
+          // Just log the error but don't fail the password reset
+          console.error('Failed to send password reset confirmation email:', emailError);
+        }
+      }
       
       return res.json({ message: "Password has been reset successfully" });
     } catch (error) {
