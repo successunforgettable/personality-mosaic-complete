@@ -1,0 +1,253 @@
+Emergency Fix for Foundation Visualization
+This situation requires a completely different approach since multiple attempts have failed. Let's use a direct, step-by-step solution with extreme clarity:
+1. Create a Simplified Static Version First
+Create a simple HTML/CSS mockup first to establish the correct visual:
+
+1. Open the file client/src/components/FoundationVisualization.jsx
+
+2. Replace ALL existing code with exactly this:
+
+import React from 'react';
+import './FoundationVisualization.css';
+
+const FoundationVisualization = ({ selectedStones = [] }) => {
+  // Dummy data for static visualization - you can replace with real data later
+  const dummyStones = [
+    { id: 1, type: 'heart', name: 'COMPASSION', traits: 'EMPATHY • KINDNESS • UNDERSTANDING' },
+    { id: 2, type: 'head', name: 'ANALYSIS', traits: 'LOGIC • THINKING • SOLVING' },
+    { id: 3, type: 'body', name: 'PASSION', traits: 'ENTHUSIASM • INTENSITY • DRIVE' },
+    // Add more as needed
+  ];
+  
+  // Use either real data or dummy data
+  const stonesToRender = selectedStones.length > 0 ? selectedStones : [];
+  
+  return (
+    <div className="foundation-container">
+      {/* Foundation Circle */}
+      <div className="foundation-circle">
+        {/* Center point */}
+        <div className="foundation-center"></div>
+        
+        {/* Stone positions */}
+        <div className="stone-position pos-0">
+          {stonesToRender.length > 0 && (
+            <>
+              <div className="stone-line"></div>
+              <div className={`stone-shape ${stonesToRender[0]?.type || 'heart'}`}></div>
+            </>
+          )}
+        </div>
+        
+        <div className="stone-position pos-1">
+          {stonesToRender.length > 1 && (
+            <>
+              <div className="stone-line"></div>
+              <div className={`stone-shape ${stonesToRender[1]?.type || 'head'}`}></div>
+            </>
+          )}
+        </div>
+        
+        <div className="stone-position pos-2">
+          {stonesToRender.length > 2 && (
+            <>
+              <div className="stone-line"></div>
+              <div className={`stone-shape ${stonesToRender[2]?.type || 'body'}`}></div>
+            </>
+          )}
+        </div>
+        
+        {/* Add positions 3-8 with the same pattern */}
+      </div>
+      
+      <div className="foundation-progress">
+        {stonesToRender.length} of 9 stones selected
+      </div>
+    </div>
+  );
+};
+
+export default FoundationVisualization;
+
+3. Create a new file client/src/components/FoundationVisualization.css with this content:
+
+.foundation-container {
+  position: relative;
+  width: 320px;
+  height: 320px;
+  margin: 0 auto;
+}
+
+.foundation-circle {
+  width: 280px;
+  height: 280px;
+  border: 2px solid #e2e8f0;
+  border-radius: 50%;
+  position: absolute;
+  top: 20px;
+  left: 20px;
+}
+
+.foundation-center {
+  width: 10px;
+  height: 10px;
+  background-color: #94a3b8;
+  border-radius: 50%;
+  position: absolute;
+  top: 135px;
+  left: 135px;
+  z-index: 1;
+}
+
+.foundation-progress {
+  text-align: center;
+  margin-top: 330px;
+  font-size: 14px;
+  color: #64748b;
+}
+
+/* Stone positions in a circle */
+.stone-position {
+  position: absolute;
+  width: 24px;
+  height: 24px;
+}
+
+.pos-0 { top: 20px; left: 140px; } /* Top */
+.pos-1 { top: 55px; right: 55px; } /* Top-right */
+.pos-2 { right: 20px; top: 140px; } /* Right */
+.pos-3 { bottom: 55px; right: 55px; } /* Bottom-right */
+.pos-4 { bottom: 20px; left: 140px; } /* Bottom */
+.pos-5 { bottom: 55px; left: 55px; } /* Bottom-left */
+.pos-6 { left: 20px; top: 140px; } /* Left */
+.pos-7 { top: 55px; left: 55px; } /* Top-left */
+.pos-8 { top: 80px; left: 140px; } /* Extra position */
+
+/* Lines connecting stones to center */
+.stone-line {
+  position: absolute;
+  width: 120px;
+  height: 2px;
+  background-color: rgba(148, 163, 184, 0.6);
+  transform-origin: center right;
+}
+
+/* Position-specific line rotations */
+.pos-0 .stone-line { 
+  transform: rotate(90deg);
+  top: 12px;
+  right: 24px;
+}
+
+.pos-1 .stone-line { 
+  transform: rotate(45deg);
+  top: 12px;
+  right: 20px;
+}
+
+.pos-2 .stone-line { 
+  transform: rotate(0deg);
+  top: 12px;
+  right: 24px; 
+}
+
+.pos-3 .stone-line { 
+  transform: rotate(-45deg);
+  top: 12px;
+  right: 20px;
+}
+
+.pos-4 .stone-line { 
+  transform: rotate(-90deg);
+  top: 12px;
+  right: 24px;
+}
+
+.pos-5 .stone-line { 
+  transform: rotate(-135deg);
+  top: 12px;
+  right: 20px;
+}
+
+.pos-6 .stone-line { 
+  transform: rotate(180deg);
+  top: 12px;
+  right: 24px;
+}
+
+.pos-7 .stone-line { 
+  transform: rotate(135deg);
+  top: 12px;
+  right: 20px;
+}
+
+.pos-8 .stone-line {
+  transform: rotate(90deg);
+  top: 12px;
+  right: 24px;
+}
+
+/* Stone shapes */
+.stone-shape {
+  width: 24px;
+  height: 24px;
+  z-index: 2;
+  position: absolute;
+}
+
+.stone-shape.heart {
+  background-color: #e11d48;
+  clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+}
+
+.stone-shape.head {
+  background-color: #4f46e5;
+  border-radius: 0;
+}
+
+.stone-shape.body {
+  background-color: #0ea5e9;
+  border-radius: 50%;
+}
+2. Test with Hard-coded Data First
+To get the correct visual structure before adding interactivity:
+
+1. Modify the component to show a static visualization first:
+
+const FoundationVisualization = () => {
+  // STATIC TEST DATA - remove this later
+  const stonesToRender = [
+    { id: 1, type: 'heart', name: 'COMPASSION' },
+    { id: 2, type: 'head', name: 'ANALYSIS' },
+    { id: 3, type: 'body', name: 'PASSION' }
+  ];
+  
+  // Rest of component stays the same
+3. Add Actual Data Integration Last
+ONLY AFTER the static version looks correct:
+
+1. Replace the static data with the actual selectedStones prop
+
+2. Connect the selection tracking by updating the component:
+
+const FoundationVisualization = ({ selectedStones = [] }) => {
+  // No dummy data, just use the real selectedStones
+  
+  return (
+    <div className="foundation-container">
+      {/* Same visualization code as before */}
+      <div className="foundation-progress">
+        {selectedStones.length} of 9 stones selected
+      </div>
+    </div>
+  );
+};
+Why This Will Work
+
+Creating a simple, static HTML/CSS version first ensures the correct visual before adding complexity
+Hard-coded positions guarantee the circular arrangement
+Using absolute positioning avoids layout calculation issues
+Testing with dummy data verifies the visual concept before integration
+Breaking the task into small steps prevents overwhelming errors
+
+This is a last-resort approach to get a functional visualization that matches the specification. Focus on getting the basic visual structure correct, then add interactivity.

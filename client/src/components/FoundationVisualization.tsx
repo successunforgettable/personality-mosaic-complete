@@ -1,4 +1,5 @@
 import React from 'react';
+import './FoundationVisualization.css';
 import { FoundationStone } from '@/types/assessment';
 
 interface FoundationVisualizationProps {
@@ -8,14 +9,25 @@ interface FoundationVisualizationProps {
   lastSelectedStoneId?: number;
 }
 
-/**
- * Circular foundation visualization component that displays selected foundation stones
- * around a circular base with visual effects and animations.
- */
-const FoundationVisualization: React.FC<FoundationVisualizationProps> = ({
-  selectedStones,
-  totalStones
+const FoundationVisualization: React.FC<FoundationVisualizationProps> = ({ 
+  selectedStones = [],
+  totalStones = 9
 }) => {
+  // Map the foundation stone categories to the types needed for visualization
+  const mapCategoryToType = (category: string): 'heart' | 'head' | 'body' => {
+    if (category === 'Heart') return 'heart';
+    if (category === 'Body') return 'body';
+    return 'head'; // Default/Head
+  };
+  
+  // Use the actual selected stones, mapped to include the visual type
+  const stonesToRender = selectedStones.map(stone => ({
+    id: stone.id,
+    type: mapCategoryToType(stone.category),
+    name: stone.name,
+    traits: stone.content?.join(' • ') || ''
+  }));
+  
   return (
     <div className="flex flex-col items-center">
       {/* Section header */}
@@ -29,12 +41,12 @@ const FoundationVisualization: React.FC<FoundationVisualizationProps> = ({
       {/* Selected stones indicator */}
       <div className="mb-4 text-center">
         <span className="font-semibold text-gray-700">
-          {selectedStones.length} of 9 stones selected
+          {selectedStones.length} of {totalStones} stones selected
         </span>
         
         {/* Progress dots */}
         <div className="flex justify-center space-x-1 mt-1">
-          {Array.from({ length: 9 }).map((_, i) => (
+          {Array.from({ length: totalStones }).map((_, i) => (
             <div 
               key={i}
               className={`h-1.5 w-4 rounded-full ${
@@ -45,232 +57,99 @@ const FoundationVisualization: React.FC<FoundationVisualizationProps> = ({
         </div>
       </div>
       
-      {/* This is a hardcoded fixed visual mockup that matches the screenshot EXACTLY */}
-      <div style={{ width: '600px', height: '400px', position: 'relative' }}>
-        {/* Circle foundation base */}
-        <div style={{ 
-          position: 'absolute',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          width: '280px',
-          height: '280px',
-          borderRadius: '50%',
-          border: '2px solid #e2e8f0'
-        }}></div>
-        
-        {/* Center point */}
-        <div style={{ 
-          position: 'absolute',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          width: '4px',
-          height: '4px',
-          borderRadius: '50%',
-          backgroundColor: '#94a3b8'
-        }}></div>
-        
-        {/* HEAD hexagon at the top/center position */}
-        <div style={{ 
-          position: 'absolute',
-          top: '25px',
-          left: '50%',
-          transform: 'translateX(-50%)',
-          zIndex: '10'
-        }}>
-          <div style={{
-            width: '80px',
-            height: '80px',
-            backgroundColor: '#4338ca',
-            clipPath: 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: '5px',
-            color: 'white',
-            textAlign: 'center'
-          }}>
-            <div style={{ fontSize: '12px', fontWeight: 'bold' }}>INSIGHT</div>
-            <div style={{ fontSize: '8px', marginTop: '2px' }}>PERCEPTION · KNOWLEDGE</div>
-            <div style={{ fontSize: '8px', marginTop: '2px' }}>WISDOM</div>
+      {/* Foundation Visualization */}
+      <div className="foundation-container">
+        {/* Foundation Circle */}
+        <div className="foundation-circle">
+          {/* Center point */}
+          <div className="foundation-center"></div>
+          
+          {/* Stone positions */}
+          <div className="stone-position pos-0">
+            {stonesToRender.length > 0 && (
+              <>
+                <div className="stone-line"></div>
+                <div className={`stone-shape ${stonesToRender[0]?.type || 'head'}`}></div>
+              </>
+            )}
           </div>
           
-          {/* Connecting line */}
-          <div style={{
-            position: 'absolute',
-            top: '80px',
-            left: '40px',
-            width: '2px',
-            height: '80px',
-            backgroundColor: 'rgba(148, 163, 184, 0.6)',
-            transformOrigin: 'top center'
-          }}></div>
-        </div>
-        
-        {/* HEART pentagon at the bottom right position */}
-        <div style={{ 
-          position: 'absolute',
-          bottom: '80px',
-          right: '140px',
-          zIndex: '10'
-        }}>
-          <div style={{
-            width: '80px',
-            height: '80px',
-            backgroundColor: '#ec4899',
-            clipPath: 'polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%)',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: '5px',
-            color: 'white',
-            textAlign: 'center'
-          }}>
-            <div style={{ fontSize: '12px', fontWeight: 'bold' }}>HARMONY</div>
-            <div style={{ fontSize: '8px', marginTop: '2px' }}>PEACE · GRACE · EQUALITY</div>
-            <div style={{ fontSize: '8px', marginTop: '2px' }}>CONNECTION</div>
+          <div className="stone-position pos-1">
+            {stonesToRender.length > 1 && (
+              <>
+                <div className="stone-line"></div>
+                <div className={`stone-shape ${stonesToRender[1]?.type || 'heart'}`}></div>
+              </>
+            )}
           </div>
           
-          {/* Connecting line */}
-          <div style={{
-            position: 'absolute',
-            top: '40px',
-            left: '0',
-            width: '2px',
-            height: '100px',
-            backgroundColor: 'rgba(148, 163, 184, 0.6)',
-            transform: 'rotate(-45deg)',
-            transformOrigin: 'top left'
-          }}></div>
-        </div>
-        
-        {/* BODY octagon at the bottom left position */}
-        <div style={{ 
-          position: 'absolute',
-          bottom: '80px',
-          left: '140px',
-          zIndex: '10'
-        }}>
-          <div style={{
-            width: '80px',
-            height: '80px',
-            backgroundColor: '#14b8a6',
-            clipPath: 'polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%)',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: '5px',
-            color: 'white',
-            textAlign: 'center'
-          }}>
-            <div style={{ fontSize: '12px', fontWeight: 'bold' }}>VIGILANCE</div>
-            <div style={{ fontSize: '8px', marginTop: '2px' }}>PERCEPTION · PREPARATION</div>
-            <div style={{ fontSize: '8px', marginTop: '2px' }}>LOYALTY</div>
+          <div className="stone-position pos-2">
+            {stonesToRender.length > 2 && (
+              <>
+                <div className="stone-line"></div>
+                <div className={`stone-shape ${stonesToRender[2]?.type || 'body'}`}></div>
+              </>
+            )}
           </div>
           
-          {/* Connecting line */}
-          <div style={{
-            position: 'absolute',
-            top: '40px',
-            right: '0',
-            width: '2px',
-            height: '100px',
-            backgroundColor: 'rgba(148, 163, 184, 0.6)',
-            transform: 'rotate(45deg)',
-            transformOrigin: 'top right'
-          }}></div>
-        </div>
-        
-        {/* Stone selection options at the sides */}
-        <div style={{
-          position: 'absolute',
-          top: '80px',
-          right: '20px',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '10px'
-        }}>
-          <div style={{
-            width: '100px',
-            height: '50px',
-            backgroundColor: '#8b5cf6',
-            borderRadius: '4px',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: 'white',
-            textAlign: 'center'
-          }}>
-            <div style={{ fontSize: '12px', fontWeight: 'bold' }}>ANALYSIS</div>
-            <div style={{ fontSize: '8px' }}>THINKING · OBSERVING · SOLVING</div>
+          <div className="stone-position pos-3">
+            {stonesToRender.length > 3 && (
+              <>
+                <div className="stone-line"></div>
+                <div className={`stone-shape ${stonesToRender[3]?.type || 'head'}`}></div>
+              </>
+            )}
           </div>
           
-          <div style={{
-            width: '100px',
-            height: '50px',
-            backgroundColor: '#ec4899',
-            borderRadius: '4px',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: 'white',
-            textAlign: 'center'
-          }}>
-            <div style={{ fontSize: '12px', fontWeight: 'bold' }}>COMPASSION</div>
-            <div style={{ fontSize: '8px' }}>EMPATHY · KINDNESS · UNDERSTANDING</div>
-          </div>
-        </div>
-        
-        <div style={{
-          position: 'absolute',
-          top: '80px',
-          left: '20px',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '10px'
-        }}>
-          <div style={{
-            width: '100px',
-            height: '50px',
-            backgroundColor: '#10b981',
-            borderRadius: '4px',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: 'white',
-            textAlign: 'center'
-          }}>
-            <div style={{ fontSize: '12px', fontWeight: 'bold' }}>PASSION</div>
-            <div style={{ fontSize: '8px' }}>ENTHUSIASM · INTEGRITY · DRIVE</div>
+          <div className="stone-position pos-4">
+            {stonesToRender.length > 4 && (
+              <>
+                <div className="stone-line"></div>
+                <div className={`stone-shape ${stonesToRender[4]?.type || 'heart'}`}></div>
+              </>
+            )}
           </div>
           
-          <div style={{
-            width: '100px',
-            height: '50px',
-            backgroundColor: '#3b82f6',
-            borderRadius: '4px',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: 'white',
-            textAlign: 'center'
-          }}>
-            <div style={{ fontSize: '12px', fontWeight: 'bold' }}>LOGIC</div>
-            <div style={{ fontSize: '8px' }}>REASONING · CLARITY · PRECISION</div>
+          <div className="stone-position pos-5">
+            {stonesToRender.length > 5 && (
+              <>
+                <div className="stone-line"></div>
+                <div className={`stone-shape ${stonesToRender[5]?.type || 'body'}`}></div>
+              </>
+            )}
+          </div>
+          
+          <div className="stone-position pos-6">
+            {stonesToRender.length > 6 && (
+              <>
+                <div className="stone-line"></div>
+                <div className={`stone-shape ${stonesToRender[6]?.type || 'head'}`}></div>
+              </>
+            )}
+          </div>
+          
+          <div className="stone-position pos-7">
+            {stonesToRender.length > 7 && (
+              <>
+                <div className="stone-line"></div>
+                <div className={`stone-shape ${stonesToRender[7]?.type || 'heart'}`}></div>
+              </>
+            )}
+          </div>
+          
+          <div className="stone-position pos-8">
+            {stonesToRender.length > 8 && (
+              <>
+                <div className="stone-line"></div>
+                <div className={`stone-shape ${stonesToRender[8]?.type || 'body'}`}></div>
+              </>
+            )}
           </div>
         </div>
       </div>
       
       {/* Additional text */}
-      <div className="text-sm text-gray-500 mt-4 text-center">
+      <div className="text-sm text-gray-500 mt-8 text-center">
         Choose a foundation stone to integrate into your personality tower.
       </div>
     </div>
