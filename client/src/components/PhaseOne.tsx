@@ -26,6 +26,7 @@ const PhaseOne = () => {
   const [transitionState, setTransitionState] = useState<TransitionState>('entering');
   const [isSaving, setIsSaving] = useState(false);
   const [hasInteracted, setHasInteracted] = useState(false);
+  const [lastSelectedId, setLastSelectedId] = useState<number | undefined>();
   const stoneRefs = useRef<(HTMLDivElement | null)[]>([]);
   
   // Time tracking for analytics
@@ -94,7 +95,15 @@ const PhaseOne = () => {
     setHasInteracted(true);
     setTransitionState('exiting');
     
-    // Log the selection
+    // Log the selection for debugging purposes
+    console.log('Stone selected:', {
+      id: stone.id,
+      name: stone.name,
+      category: stone.category,
+      set: foundationSet
+    });
+    
+    // Log the selection for analytics
     logEvent('foundation_stone_selected', { 
       stone_id: stone.id, 
       stone_name: stone.name,
@@ -106,15 +115,18 @@ const PhaseOne = () => {
     setIsSaving(true);
     
     try {
+      // Important: Set the last selected stone ID for visualization animation
+      // This needs to happen before saving to trigger the animation
+      setLastSelectedId(stone.id);
+      
       // Simulate API call to save progress
       // In a real app, this would be an actual API call
-      await new Promise(resolve => setTimeout(resolve, 300));
+      await new Promise(resolve => setTimeout(resolve, 500));
       
-      // Select the stone and move to next set
+      // Select the stone to update the context state
       selectFoundationStone(stone);
       
-      // Set the last selected stone ID for visualization animation
-      setLastSelectedId(stone.id);
+      console.log('Stone added to selected stones, total:', selectedFoundationStones.length + 1);
       
       // Brief delay for animation - longer to allow visualization to complete
       setTimeout(() => {
@@ -221,11 +233,7 @@ const PhaseOne = () => {
             selectedStones={selectedFoundationStones}
             totalStones={9}
             isAnimating={isSaving}
-            lastSelectedStoneId={
-              selectedFoundationStones.length > 0 
-                ? selectedFoundationStones[selectedFoundationStones.length - 1]?.id 
-                : undefined
-            }
+            lastSelectedStoneId={lastSelectedId}
           />
         </div>
         
