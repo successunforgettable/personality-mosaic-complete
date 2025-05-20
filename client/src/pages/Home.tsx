@@ -232,14 +232,201 @@ export default function Home() {
         </div>
       </section>
       
-      {/* How It Works Section */}
+      {/* 3.1. How It Works Section - light gray background */}
       <section ref={howItWorksRef} className="py-20 bg-[#f8fafc]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="text-center mb-16 animate-on-scroll">
-            <h2 className="text-2xl md:text-3xl lg:text-4xl font-semibold text-[#1e293b] mb-6">How It Works</h2>
+            {/* 3.2. Section header */}
+            <h2 className="text-2xl md:text-3xl lg:text-4xl font-semibold font-inter text-[#1e293b] mb-6">
+              How It Works
+            </h2>
             <p className="text-base md:text-lg text-[#64748b] max-w-3xl mx-auto">
               Our assessment guides you through four interactive phases to build your personalized tower in just 5-7 minutes.
             </p>
+          </div>
+          
+          {/* 3.6. Horizontal timeline on desktop, vertical on mobile */}
+          <div className="hidden md:block relative mb-16 animate-on-scroll">
+            {/* Timeline connector - horizontal line connecting all steps */}
+            <div className="absolute top-24 left-0 w-full h-1 bg-[#e2e8f0]"></div>
+            
+            {/* 3.3. 4-step process visualization - desktop */}
+            <div className="grid grid-cols-4 gap-6 relative">
+              {/* 3.3.1. Step 1: Foundation Stones */}
+              <div className="flex flex-col items-center">
+                <div className="w-12 h-12 rounded-full bg-[#7c3aed] text-white flex items-center justify-center mb-6 z-10 shadow-md">
+                  <span className="font-bold">1</span>
+                </div>
+                <div className="bg-white rounded-xl shadow-md p-5 h-full w-full hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+                  <div className="mb-3 h-24 bg-[#f8fafc] rounded-lg flex items-center justify-center">
+                    <div className="w-16 h-16 bg-[#ede9fe] rounded-lg flex items-center justify-center">
+                      <Settings className="text-[#7c3aed] w-6 h-6" />
+                    </div>
+                  </div>
+                  <h3 className="text-lg font-semibold text-[#1e293b] mb-2">Select Your Foundation Stones</h3>
+                  <p className="text-sm text-[#64748b]">
+                    Choose foundation stones that represent your core values and natural tendencies.
+                  </p>
+                </div>
+              </div>
+              
+              {/* 3.3.2. Step 2: Building Blocks */}
+              <div className="flex flex-col items-center">
+                <div className="w-12 h-12 rounded-full bg-[#7c3aed] text-white flex items-center justify-center mb-6 z-10 shadow-md">
+                  <span className="font-bold">2</span>
+                </div>
+                <div className="bg-white rounded-xl shadow-md p-5 h-full w-full hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+                  <div className="mb-3 h-24 bg-[#f8fafc] rounded-lg flex items-center justify-center">
+                    <div className="w-16 h-16 bg-[#ede9fe] rounded-lg flex items-center justify-center">
+                      <Layers className="text-[#7c3aed] w-6 h-6" />
+                    </div>
+                  </div>
+                  <h3 className="text-lg font-semibold text-[#1e293b] mb-2">Add Your Building Blocks</h3>
+                  <p className="text-sm text-[#64748b]">
+                    Select building blocks that shape your decision-making and interaction style.
+                  </p>
+                </div>
+              </div>
+              
+              {/* 3.3.3. Step 3: Color Palette */}
+              <div className="flex flex-col items-center">
+                <div className="w-12 h-12 rounded-full bg-[#7c3aed] text-white flex items-center justify-center mb-6 z-10 shadow-md">
+                  <span className="font-bold">3</span>
+                </div>
+                <div className="bg-white rounded-xl shadow-md p-5 h-full w-full hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+                  <div className="mb-3 h-24 bg-[#f8fafc] rounded-lg flex items-center justify-center">
+                    <div className="w-16 h-16 bg-[#ede9fe] rounded-lg flex items-center justify-center">
+                      <Palette className="text-[#7c3aed] w-6 h-6" />
+                    </div>
+                  </div>
+                  <h3 className="text-lg font-semibold text-[#1e293b] mb-2">Choose Your Color Palette</h3>
+                  <p className="text-sm text-[#64748b]">
+                    Color your tower to show how much time you spend in different psychological states.
+                  </p>
+                </div>
+              </div>
+              
+              {/* 3.3.4. Step 4: Detail Elements */}
+              <div className="flex flex-col items-center">
+                <div className="w-12 h-12 rounded-full bg-[#7c3aed] text-white flex items-center justify-center mb-6 z-10 shadow-md">
+                  <span className="font-bold">4</span>
+                </div>
+                <div className="bg-white rounded-xl shadow-md p-5 h-full w-full hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+                  <div className="mb-3 h-24 bg-[#f8fafc] rounded-lg flex items-center justify-center">
+                    <div className="w-16 h-16 bg-[#ede9fe] rounded-lg flex items-center justify-center">
+                      <Eye className="text-[#7c3aed] w-6 h-6" />
+                    </div>
+                  </div>
+                  <h3 className="text-lg font-semibold text-[#1e293b] mb-2">Place Your Detail Elements</h3>
+                  <p className="text-sm text-[#64748b]">
+                    Add final details to show where you focus your energy and attention.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          {/* Mobile/vertical timeline view */}
+          <div className="md:hidden space-y-8 animate-on-scroll">
+            {/* 3.3.1. Step 1: Foundation Stones - Mobile */}
+            <div className="flex">
+              <div className="mr-4">
+                <div className="w-12 h-12 rounded-full bg-[#7c3aed] text-white flex items-center justify-center">
+                  <span className="font-bold">1</span>
+                </div>
+                <div className="w-1 h-full bg-[#e2e8f0] mx-auto mt-2"></div>
+              </div>
+              <div className="flex-1 bg-white rounded-xl shadow-md p-5">
+                <div className="mb-3 h-24 bg-[#f8fafc] rounded-lg flex items-center justify-center">
+                  <div className="w-16 h-16 bg-[#ede9fe] rounded-lg flex items-center justify-center">
+                    <Settings className="text-[#7c3aed] w-6 h-6" />
+                  </div>
+                </div>
+                <h3 className="text-lg font-semibold text-[#1e293b] mb-2">Select Your Foundation Stones</h3>
+                <p className="text-sm text-[#64748b]">
+                  Choose foundation stones that represent your core values and natural tendencies.
+                </p>
+              </div>
+            </div>
+            
+            {/* 3.3.2. Step 2: Building Blocks - Mobile */}
+            <div className="flex">
+              <div className="mr-4">
+                <div className="w-12 h-12 rounded-full bg-[#7c3aed] text-white flex items-center justify-center">
+                  <span className="font-bold">2</span>
+                </div>
+                <div className="w-1 h-full bg-[#e2e8f0] mx-auto mt-2"></div>
+              </div>
+              <div className="flex-1 bg-white rounded-xl shadow-md p-5">
+                <div className="mb-3 h-24 bg-[#f8fafc] rounded-lg flex items-center justify-center">
+                  <div className="w-16 h-16 bg-[#ede9fe] rounded-lg flex items-center justify-center">
+                    <Layers className="text-[#7c3aed] w-6 h-6" />
+                  </div>
+                </div>
+                <h3 className="text-lg font-semibold text-[#1e293b] mb-2">Add Your Building Blocks</h3>
+                <p className="text-sm text-[#64748b]">
+                  Select building blocks that shape your decision-making and interaction style.
+                </p>
+              </div>
+            </div>
+            
+            {/* 3.3.3. Step 3: Color Palette - Mobile */}
+            <div className="flex">
+              <div className="mr-4">
+                <div className="w-12 h-12 rounded-full bg-[#7c3aed] text-white flex items-center justify-center">
+                  <span className="font-bold">3</span>
+                </div>
+                <div className="w-1 h-full bg-[#e2e8f0] mx-auto mt-2"></div>
+              </div>
+              <div className="flex-1 bg-white rounded-xl shadow-md p-5">
+                <div className="mb-3 h-24 bg-[#f8fafc] rounded-lg flex items-center justify-center">
+                  <div className="w-16 h-16 bg-[#ede9fe] rounded-lg flex items-center justify-center">
+                    <Palette className="text-[#7c3aed] w-6 h-6" />
+                  </div>
+                </div>
+                <h3 className="text-lg font-semibold text-[#1e293b] mb-2">Choose Your Color Palette</h3>
+                <p className="text-sm text-[#64748b]">
+                  Color your tower to show how much time you spend in different psychological states.
+                </p>
+              </div>
+            </div>
+            
+            {/* 3.3.4. Step 4: Detail Elements - Mobile */}
+            <div className="flex">
+              <div className="mr-4">
+                <div className="w-12 h-12 rounded-full bg-[#7c3aed] text-white flex items-center justify-center">
+                  <span className="font-bold">4</span>
+                </div>
+              </div>
+              <div className="flex-1 bg-white rounded-xl shadow-md p-5">
+                <div className="mb-3 h-24 bg-[#f8fafc] rounded-lg flex items-center justify-center">
+                  <div className="w-16 h-16 bg-[#ede9fe] rounded-lg flex items-center justify-center">
+                    <Eye className="text-[#7c3aed] w-6 h-6" />
+                  </div>
+                </div>
+                <h3 className="text-lg font-semibold text-[#1e293b] mb-2">Place Your Detail Elements</h3>
+                <p className="text-sm text-[#64748b]">
+                  Add final details to show where you focus your energy and attention.
+                </p>
+              </div>
+            </div>
+          </div>
+          
+          {/* 3.4 & 3.5. Time indicator and CTA button */}
+          <div className="text-center mt-12 animate-on-scroll">
+            <p className="text-[#64748b] mb-6">
+              <span className="inline-flex items-center bg-[#ede9fe] text-[#7c3aed] px-4 py-2 rounded-full text-sm font-medium">
+                <span className="w-4 h-4 mr-1">⏱️</span>
+                Complete in 5-7 minutes
+              </span>
+            </p>
+            
+            <div 
+              className="inline-block px-8 py-4 bg-[#7c3aed] text-white rounded-lg font-medium shadow-md hover:bg-[#6d28d9] hover:scale-[1.02] hover:shadow-lg transition-all duration-200 text-center cursor-pointer"
+              onClick={() => window.location.href = "/signup"}
+            >
+              Start Building Now
+            </div>
           </div>
         </div>
       </section>
