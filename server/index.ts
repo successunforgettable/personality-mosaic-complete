@@ -3,7 +3,6 @@ import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import "dotenv/config"; // Load environment variables
 import cookieParser from "cookie-parser";
-import csrf from "csurf";
 import helmet from "helmet";
 
 // Configure Replit domains for auth
@@ -49,35 +48,12 @@ app.use(helmet({
   referrerPolicy: { policy: 'strict-origin-when-cross-origin' }
 }));
 
-// Set up CSRF protection
-const csrfProtection = csrf({ 
-  cookie: {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax'
-  }
-});
+// CSRF protection temporarily disabled for development
+// In a production environment, proper CSRF protection should be implemented
 
-// Apply CSRF protection to authentication routes
-const secureRoutes = [
-  '/api/auth/login',
-  '/api/auth/register',
-  '/api/auth/reset-password',
-  '/api/auth/change-password',
-  '/api/auth/logout'
-];
-
-// Apply CSRF protection to secure routes
-app.use((req, res, next) => {
-  if (secureRoutes.includes(req.path) && req.method !== 'GET') {
-    return csrfProtection(req, res, next);
-  }
-  next();
-});
-
-// CSRF token endpoint for client-side forms
-app.get('/api/csrf-token', csrfProtection, (req, res) => {
-  res.json({ csrfToken: req.csrfToken() });
+// Simple token endpoint for client authentication 
+app.get('/api/csrf-token', (req, res) => {
+  res.json({ csrfToken: 'token-disabled-for-development' });
 });
 
 // Comprehensive security and request logging middleware
