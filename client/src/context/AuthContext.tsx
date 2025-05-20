@@ -153,6 +153,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       // Set the user in state
       setUser(userData);
       
+      // Store in localStorage to persist the session
+      localStorage.setItem('auth_user', JSON.stringify(userData));
+      
       return true;
     } catch (error) {
       console.error('Registration failed:', error);

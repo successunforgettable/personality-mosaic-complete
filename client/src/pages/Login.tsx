@@ -64,6 +64,10 @@ const Login = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    // Clear any existing errors
+    setErrors({});
+    
+    // Revalidate the form
     if (!validateForm()) {
       return;
     }
@@ -83,7 +87,11 @@ const Login = () => {
         // Return to the assessment or home page
         const returnPath = sessionStorage.getItem('returnPath') || '/assessment';
         sessionStorage.removeItem('returnPath');
-        setLocation(returnPath);
+        
+        // Delay navigation slightly to ensure the auth state updates
+        setTimeout(() => {
+          setLocation(returnPath);
+        }, 500);
       } else {
         toast({
           title: "Login failed",

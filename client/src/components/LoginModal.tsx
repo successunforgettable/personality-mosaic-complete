@@ -100,8 +100,10 @@ function LoginModal({
           description: "Welcome back!",
         });
         
-        // Redirect to appropriate page
-        navigate("/assessment");
+        // Delay navigation to ensure modal is closed and auth state is updated
+        setTimeout(() => {
+          navigate("/assessment");
+        }, 800);
         return;
       }
       
@@ -117,8 +119,10 @@ function LoginModal({
           description: "Welcome back!",
         });
         
-        // Redirect to appropriate page
-        navigate("/assessment");
+        // Delay navigation to ensure modal is closed and auth state is updated
+        setTimeout(() => {
+          navigate("/assessment");
+        }, 800);
       } else {
         // Set form error
         setLoginError("Invalid email or password. Please try again.");
