@@ -36,6 +36,14 @@ const Header = () => {
             <Brain className="h-6 w-6" />
           </div>
           <h1 className="ml-3 text-xl font-semibold text-[#1e293b]">Personality Mosaic</h1>
+          
+          {/* Show login status */}
+          {(isAuthenticated || isGuest) && (
+            <div className="ml-3 px-3 py-1 bg-green-100 text-green-800 text-xs rounded-full flex items-center">
+              <span className="h-2 w-2 bg-green-500 rounded-full mr-1"></span>
+              {isAuthenticated ? 'Logged In' : 'Guest Mode'}
+            </div>
+          )}
         </div>
         
         {/* Desktop Navigation */}

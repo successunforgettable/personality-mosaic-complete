@@ -368,13 +368,19 @@ function LoginModal({
                     // Directly log in with test credentials
                     setIsSubmitting(true);
                     
-                    // Mock successful login by directly updating auth state
+                    // Store login state in localStorage so it persists
                     const userData = {
                       id: '123456',
                       email: 'test@example.com',
                       firstName: 'Test',
                       lastName: 'User',
                     };
+                    
+                    // Save to localStorage
+                    localStorage.setItem('auth_user', JSON.stringify(userData));
+                    
+                    // Also start a guest session as a fallback
+                    startGuestSession();
                     
                     // Close modal first
                     onOpenChange(false);
