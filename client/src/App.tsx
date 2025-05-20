@@ -10,6 +10,7 @@ import DirectRegisterForm from "@/pages/DirectRegisterForm";
 import DirectLoginForm from "@/pages/DirectLoginForm";
 import UserProfile from "@/pages/UserProfile";
 import ResultsCompare from "@/pages/ResultsCompare";
+import ResetPassword from "@/pages/ResetPassword";
 import SignUp from "@/pages/DirectRegisterForm"; // Alias for backward compatibility
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -48,6 +49,7 @@ function Router() {
               <UserProfile />
             </ProtectedRoute>
           </Route>
+          <Route path="/reset-password" component={ResetPassword} />
           <Route path="/results/compare">
             <ProtectedRoute>
               <ResultsCompare />

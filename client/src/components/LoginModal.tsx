@@ -1,8 +1,9 @@
 import { useState, useRef, useEffect } from "react";
-import { Eye, EyeOff, Mail, Lock, AlertCircle, Loader2, ArrowLeft } from "lucide-react";
+import { Eye, EyeOff, Mail, Lock, AlertCircle, Loader2 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import SocialAuthButton from "./SocialAuthButton";
+import { ForgotPasswordModal } from "./ForgotPasswordModal";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -43,550 +44,319 @@ function LoginModal({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [loginError, setLoginError] = useState<string | null>(null);
   const [isSocialLoading, setIsSocialLoading] = useState<string | null>(null);
-
-  // State for forgot password flow
-  const [isForgotPasswordMode, setIsForgotPasswordMode] = useState(false);
-  const [forgotPasswordEmail, setForgotPasswordEmail] = useState("");
-  const [isSendingResetLink, setIsSendingResetLink] = useState(false);
-  const [resetLinkSent, setResetLinkSent] = useState(false);
+  
+  // State for forgot password modal
+  const [showForgotPasswordModal, setShowForgotPasswordModal] = useState(false);
   
   // Create refs for focus management
   const emailInputRef = useRef<HTMLInputElement | null>(null);
   const passwordInputRef = useRef<HTMLInputElement | null>(null);
-  const submitButtonRef = useRef<HTMLButtonElement | null>(null);
   
-  // Focus management for the modal
-  useEffect(() => {
-    if (isOpen) {
-      // Small delay to ensure DOM is ready
-      setTimeout(() => {
-        if (emailInputRef.current) {
-          emailInputRef.current.focus();
-        }
-      }, 100);
-    }
-  }, [isOpen]);
-  
-  const { 
-    register, 
-    handleSubmit, 
-    formState: { errors, isSubmitting: formIsSubmitting },
-    getValues,
-    trigger
-  } = useForm<LoginFormValues>({
+  const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
       email: "",
       password: "",
       rememberMe: false
-    },
-    mode: "onChange" // Validate on change for better user experience
+    }
   });
-
+  
+  const { register, handleSubmit, formState: { errors }, getValues, setError: setFormError } = form;
+  
+  // Focus the email input when the modal opens
+  useEffect(() => {
+    if (isOpen && emailInputRef.current) {
+      // Small delay to ensure the modal is fully rendered
+      setTimeout(() => {
+        emailInputRef.current?.focus();
+      }, 100);
+    }
+  }, [isOpen]);
+  
+  // Handle Enter key in email field to move to password field
+  const handleEmailKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && passwordInputRef.current) {
+      e.preventDefault();
+      passwordInputRef.current.focus();
+    }
+  };
+  
+  // Handle form submission
   const onSubmit = async (data: LoginFormValues) => {
-    console.log("Form submitted with data:", data); // For debugging
-    setIsSubmitting(true);
-    setLoginError(null);
-    
     try {
-      // For demonstration purposes, simulate successful login with test credentials
-      // In a real app, this would call your authentication API
-      if (data.email === 'test@example.com' && data.password === 'password123') {
-        // Close the modal on success
-        onOpenChange(false);
-        
-        toast({
-          title: "Login successful",
-          description: "Welcome back!",
-        });
-        
-        // Delay navigation to ensure modal is closed and auth state is updated
-        setTimeout(() => {
-          navigate("/assessment");
-        }, 800);
-        return;
-      }
+      setIsSubmitting(true);
+      setLoginError(null);
       
-      // For all other credentials, attempt login through context
-      const success = await login(data.email, data.password, data.rememberMe || false);
+      // Normalizing email to prevent case-sensitivity issues
+      const normalizedData = {
+        ...data,
+        email: data.email.toLowerCase().trim()
+      };
+      
+      // Attempt login
+      const success = await login(normalizedData.email, normalizedData.password, normalizedData.rememberMe);
       
       if (success) {
-        // Close the modal on success
+        // Close the modal
         onOpenChange(false);
         
+        // Show success message
         toast({
-          title: "Login successful",
-          description: "Welcome back!",
+          title: "Login successful!",
+          description: "Welcome back to Personality Mosaic",
         });
         
-        // Delay navigation to ensure modal is closed and auth state is updated
-        setTimeout(() => {
-          navigate("/assessment");
-        }, 800);
+        // Redirect to assessment or profile
+        navigate("/assessment");
       } else {
-        // Set form error
-        setLoginError("Invalid email or password. Please try again.");
-        
-        // Focus password field for retry
-        passwordInputRef.current?.focus();
+        setLoginError("Login failed. Please check your email and password.");
       }
     } catch (error) {
-      console.error("Login failed:", error);
-      
-      // Set form error
-      setLoginError("Invalid email or password. Please try again.");
-      
-      // Focus password field for retry
-      passwordInputRef.current?.focus();
+      console.error("Login error:", error);
+      setLoginError("An unexpected error occurred. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+  
+  const handleForgotPassword = () => {
+    setShowForgotPasswordModal(true);
+  };
+  
+  const handleGuestLogin = async () => {
+    try {
+      setIsSubmitting(true);
+      startGuestSession();
+      onOpenChange(false);
       
       toast({
-        title: "Login failed",
-        description: "Invalid email or password. Please try again.",
-        variant: "destructive",
+        title: "Guest session started",
+        description: "You can now explore the assessment as a guest",
+      });
+      
+      navigate("/assessment");
+    } catch (error) {
+      console.error("Guest login error:", error);
+      toast({
+        title: "Error",
+        description: "Failed to start guest session. Please try again.",
+        variant: "destructive"
       });
     } finally {
       setIsSubmitting(false);
     }
   };
   
-  const handleGuestMode = () => {
-    startGuestSession();
-    onOpenChange(false);
-    
-    toast({
-      title: "Guest mode activated",
-      description: "You can now take the assessment. Your results won't be saved to an account.",
-    });
-    
-    navigate("/assessment");
-  };
-  
-  // Handle social authentication
-  const handleSocialAuth = async (provider: 'google' | 'facebook') => {
+  const handleSocialAuth = async (provider: "google" | "facebook") => {
     try {
-      // Set loading state for the specific provider
       setIsSocialLoading(provider);
       
-      // Clear any previous errors
-      setLoginError(null);
-      
-      // This would normally call OAuth endpoints
+      // Show a toast message for unimplemented feature
       toast({
-        title: `${provider.charAt(0).toUpperCase() + provider.slice(1)} login`,
-        description: "This feature is coming soon. We're working on implementing OAuth integration.",
+        title: "Coming Soon",
+        description: `${provider.charAt(0).toUpperCase() + provider.slice(1)} authentication will be available soon.`,
       });
       
-      // For now, just show a message that it's not implemented yet
-      console.log(`${provider} authentication clicked`);
-      
-      // Simulate delay
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      // Simulate a delay
+      await new Promise(resolve => setTimeout(resolve, 1500));
       
     } catch (error) {
-      console.error(`${provider} login failed:`, error);
+      console.error(`${provider} auth error:`, error);
       toast({
-        title: "Authentication failed",
-        description: `Could not authenticate with ${provider}. Please try again.`,
-        variant: "destructive",
+        title: "Authentication Failed",
+        description: `${provider.charAt(0).toUpperCase() + provider.slice(1)} authentication failed. Please try another method.`,
+        variant: "destructive"
       });
-      setLoginError(`${provider.charAt(0).toUpperCase() + provider.slice(1)} authentication failed. Please try another method.`);
     } finally {
       setIsSocialLoading(null);
     }
   };
   
-  const handleForgotPassword = () => {
-    // Switch to forgot password mode
-    setIsForgotPasswordMode(true);
-    
-    // Pre-fill email if available
-    const currentEmail = getValues("email");
-    if (currentEmail) {
-      setForgotPasswordEmail(currentEmail);
-    }
-  };
-  
-  const handleSendResetLink = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!forgotPasswordEmail || !forgotPasswordEmail.includes('@')) {
-      toast({
-        title: "Invalid email",
-        description: "Please enter a valid email address.",
-        variant: "destructive",
-      });
-      return;
-    }
-    
-    setIsSendingResetLink(true);
-    
-    try {
-      // Call the password reset function from auth context
-      const success = await sendPasswordResetEmail(forgotPasswordEmail);
-      
-      if (success) {
-        setResetLinkSent(true);
-        
-        toast({
-          title: "Password reset link sent",
-          description: "Check your email for instructions on how to reset your password.",
-        });
-        
-        // After 3 seconds, return to login screen
-        setTimeout(() => {
-          setIsForgotPasswordMode(false);
-          setResetLinkSent(false);
-        }, 3000);
-      } else {
-        toast({
-          title: "Failed to send reset link",
-          description: "We couldn't find an account with that email address.",
-          variant: "destructive",
-        });
-      }
-    } catch (error) {
-      console.error("Failed to send reset link:", error);
-      toast({
-        title: "Failed to send reset link",
-        description: "Please try again later.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsSendingResetLink(false);
-    }
-  };
-  
-  const handleBackToLogin = () => {
-    setIsForgotPasswordMode(false);
-    setResetLinkSent(false);
-  };
-
   return (
-    <Modal open={isOpen} onOpenChange={(open) => {
-      // Reset forgot password state when closing modal
-      if (!open) {
-        setIsForgotPasswordMode(false);
-        setResetLinkSent(false);
-      }
-      onOpenChange(open);
-    }}>
-      <ModalContent className="sm:max-w-md">
-        {!isForgotPasswordMode ? (
-          // Normal Login Form
-          <>
-            <ModalHeader>
-              <ModalTitle className="text-2xl">Welcome Back</ModalTitle>
-              <ModalDescription>
-                Sign in to your account to access your saved results.
-              </ModalDescription>
-            </ModalHeader>
-            
-            {/* Show error banner if login fails */}
-            {loginError && (
-              <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md flex items-start gap-2 text-red-600">
-                <AlertCircle className="h-5 w-5 flex-shrink-0 mt-0.5" />
-                <div>
-                  <p className="text-sm font-medium">{loginError}</p>
-                  <p className="text-xs mt-1">Please check your credentials and try again</p>
+    <>
+      {/* Main Login Modal */}
+      <Modal open={isOpen && !showForgotPasswordModal} onOpenChange={onOpenChange}>
+        <ModalContent className="sm:max-w-[425px]">
+          <ModalHeader>
+            <ModalTitle className="text-xl font-bold text-center">Login to Personality Mosaic</ModalTitle>
+            <ModalDescription className="text-center">
+              Enter your details to access your account
+            </ModalDescription>
+            <ModalClose />
+          </ModalHeader>
+          
+          <div className="flex flex-col gap-6 p-6">
+            {/* Login form */}
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+              {/* Error message */}
+              {loginError && (
+                <div className="bg-red-50 p-3 rounded-md border border-red-200 text-red-600 text-sm flex items-start gap-2">
+                  <AlertCircle size={18} className="shrink-0 mt-0.5" />
+                  <span>{loginError}</span>
                 </div>
-              </div>
-            )}
-            
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 px-1">
-              {/* Email field */}
-              <div className="space-y-1">
-                <label htmlFor="login-email" className="text-sm font-medium">
-                  Email Address
+              )}
+              
+              {/* Email */}
+              <div className="space-y-2">
+                <label htmlFor="email" className="block text-sm font-medium">
+                  Email
                 </label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Mail className="h-5 w-5 text-gray-400" aria-hidden="true" />
+                  <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                    <Mail size={18} />
                   </div>
                   <input
-                    id="login-email"
+                    id="email"
                     type="email"
-                    aria-required="true"
-                    aria-invalid={!!errors.email}
-                    aria-describedby={errors.email ? "email-error" : undefined}
-                    className={`pl-10 pr-4 py-2 w-full border rounded-md focus:ring-2 focus:ring-[#7c3aed] focus:border-transparent ${
-                      errors.email ? 'border-red-500' : 'border-gray-300'
-                    }`}
-                    placeholder="you@example.com"
-                    {...register("email")}
-                    ref={(el) => {
-                      // Store ref value manually after render
-                      if (el) emailInputRef.current = el;
-                    }}
+                    placeholder="Enter your email"
                     autoComplete="email"
-                    defaultValue="test@example.com"
+                    className={`w-full pl-10 py-2 border ${
+                      errors.email ? 'border-red-300' : 'border-gray-300'
+                    } rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition`}
+                    disabled={isSubmitting}
+                    onKeyDown={handleEmailKeyDown}
+                    {...register("email")}
+                    ref={(e) => {
+                      register("email").ref(e);
+                      emailInputRef.current = e;
+                    }}
                   />
                 </div>
                 {errors.email && (
-                  <p id="email-error" className="text-red-500 text-xs mt-1" role="alert">{errors.email.message}</p>
+                  <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>
                 )}
               </div>
               
-              {/* Password field */}
-              <div className="space-y-1">
-                <label htmlFor="login-password" className="text-sm font-medium">
-                  Password
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Lock className="h-5 w-5 text-gray-400" aria-hidden="true" />
-                  </div>
-                  <input
-                    id="login-password"
-                    type={showPassword ? "text" : "password"}
-                    aria-required="true"
-                    aria-invalid={!!errors.password}
-                    aria-describedby={errors.password ? "password-error" : undefined}
-                    className={`pl-10 pr-12 py-2 w-full border rounded-md focus:ring-2 focus:ring-[#7c3aed] focus:border-transparent ${
-                      errors.password ? 'border-red-500' : 'border-gray-300'
-                    }`}
-                    placeholder="••••••••"
-                    {...register("password")}
-                    ref={(el) => {
-                      // Store ref value manually after render
-                      if (el) passwordInputRef.current = el;
-                    }}
-                    autoComplete="current-password"
-                    defaultValue="password123"
-                  />
-                  <button
-                    type="button"
-                    aria-label={showPassword ? "Hide password" : "Show password"}
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                    onClick={() => setShowPassword(!showPassword)}
-                  >
-                    {showPassword ? (
-                      <EyeOff className="h-5 w-5 text-gray-400" aria-hidden="true" />
-                    ) : (
-                      <Eye className="h-5 w-5 text-gray-400" aria-hidden="true" />
-                    )}
-                  </button>
-                </div>
-                {errors.password && (
-                  <p id="password-error" className="text-red-500 text-xs mt-1" role="alert">{errors.password.message}</p>
-                )}
-              </div>
-              
-              {/* Remember Me & Forgot Password */}
-              <div className="flex items-center justify-between">
-                <div className="flex items-center">
-                  <input
-                    id="login-remember"
-                    type="checkbox"
-                    className="h-4 w-4 text-[#7c3aed] border-gray-300 rounded focus:ring-[#7c3aed] focus:outline-none"
-                    {...register("rememberMe")}
-                    aria-describedby="remember-description"
-                  />
-                  <label htmlFor="login-remember" className="ml-2 block text-sm text-gray-600">
-                    Remember me
+              {/* Password */}
+              <div className="space-y-2">
+                <div className="flex justify-between items-center">
+                  <label htmlFor="password" className="block text-sm font-medium">
+                    Password
                   </label>
-                </div>
-                <div id="remember-description" className="sr-only">
-                  Keep me signed in on this device
-                </div>
-                
-                <div className="text-sm">
                   <button
                     type="button"
+                    className="text-sm text-blue-600 hover:text-blue-800 font-medium"
                     onClick={handleForgotPassword}
-                    className="font-medium text-[#7c3aed] hover:text-[#6d28d9] focus:outline-none focus:underline focus:ring-2 focus:ring-offset-2 focus:ring-[#7c3aed] rounded-sm"
                   >
                     Forgot password?
                   </button>
                 </div>
-              </div>
-              
-              <div className="pt-4 space-y-3">
-                {/* Direct Login button for test credentials */}
-                <button
-                  type="button" 
-                  onClick={() => {
-                    // Directly log in with test credentials
-                    setIsSubmitting(true);
-                    
-                    // Store login state in localStorage so it persists
-                    const userData = {
-                      id: '123456',
-                      email: 'test@example.com',
-                      firstName: 'Test',
-                      lastName: 'User',
-                    };
-                    
-                    // Save to localStorage
-                    localStorage.setItem('auth_user', JSON.stringify(userData));
-                    
-                    // Don't start a guest session since we want to be properly logged in
-                    // We'll manually set the authentication state
-                    
-                    // Close modal first
-                    onOpenChange(false);
-                    
-                    // Show success toast
-                    toast({
-                      title: "Login successful",
-                      description: "Welcome back to Personality Mosaic!",
-                    });
-                    
-                    // Use navigate and make sure the user sees the assessment page
-                    try {
-                      navigate("/assessment");
-                      
-                      // As a fallback, also try direct navigation after a small delay
-                      setTimeout(() => {
-                        if (window.location.pathname !== "/assessment") {
-                          window.location.href = "/assessment";
-                        }
-                      }, 200);
-                    } catch (e) {
-                      console.error("Navigation failed, using direct URL", e);
-                      window.location.href = "/assessment";
-                    }
-                  }}
-                  className="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-md shadow-sm text-white bg-[#7c3aed] hover:bg-[#6d28d9] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7c3aed] transition-colors duration-200"
-                  ref={submitButtonRef}
-                >
-                  {isSubmitting ? (
-                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  ) : null}
-                  {isSubmitting ? "Signing in..." : "Sign in"}
-                </button>
-                
-                {/* Divider with "or" text for social authentication */}
                 <div className="relative">
-                  <div className="absolute inset-0 flex items-center">
-                    <div className="w-full border-t border-gray-300"></div>
+                  <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                    <Lock size={18} />
                   </div>
-                  <div className="relative flex justify-center text-sm">
-                    <span className="px-2 bg-white text-gray-500 font-inter">Or continue with</span>
-                  </div>
-                </div>
-                
-                {/* Social authentication options */}
-                <div className="space-y-3">
-                  <SocialAuthButton 
-                    provider="google" 
-                    onClick={() => handleSocialAuth('google')} 
-                    isLoading={isSocialLoading === 'google'}
+                  <input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Enter your password"
+                    autoComplete="current-password"
+                    className={`w-full pl-10 pr-10 py-2 border ${
+                      errors.password ? 'border-red-300' : 'border-gray-300'
+                    } rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition`}
+                    disabled={isSubmitting}
+                    {...register("password")}
+                    ref={(e) => {
+                      register("password").ref(e);
+                      passwordInputRef.current = e;
+                    }}
                   />
-                  <SocialAuthButton 
-                    provider="facebook" 
-                    onClick={() => handleSocialAuth('facebook')} 
-                    isLoading={isSocialLoading === 'facebook'}
-                  />
+                  <button
+                    type="button"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                    onClick={() => setShowPassword(!showPassword)}
+                    tabIndex={-1}
+                  >
+                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
                 </div>
-                
-                {/* Guest mode button */}
-                <button
-                  type="button"
-                  onClick={handleGuestMode}
-                  className="w-full flex justify-center py-2.5 px-4 border border-[#7c3aed] rounded-md shadow-sm text-[#7c3aed] bg-white hover:bg-[#f5f3ff] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7c3aed] transition-colors duration-200"
-                >
-                  Continue as Guest
-                </button>
+                {errors.password && (
+                  <p className="text-red-500 text-xs mt-1">{errors.password.message}</p>
+                )}
               </div>
               
-              {/* Switch to registration */}
-              <div className="text-center">
-                <p className="text-sm text-gray-600">
-                  Don't have an account?{' '}
-                  <button
-                    type="button"
-                    onClick={onSwitchToRegister}
-                    className="text-[#7c3aed] hover:underline font-medium"
-                  >
-                    Sign up
-                  </button>
-                </p>
+              {/* Remember me */}
+              <div className="flex items-center">
+                <input
+                  id="remember-me"
+                  type="checkbox"
+                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                  {...register("rememberMe")}
+                />
+                <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700">
+                  Remember me
+                </label>
               </div>
+              
+              {/* Submit button */}
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="w-full flex justify-center items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 text-white font-medium rounded-md transition disabled:opacity-50 disabled:pointer-events-none"
+              >
+                {isSubmitting ? (
+                  <>
+                    <Loader2 size={18} className="animate-spin" />
+                    <span>Logging in...</span>
+                  </>
+                ) : (
+                  <span>Login</span>
+                )}
+              </button>
             </form>
-          </>
-        ) : (
-          // Forgot Password Form
-          <>
-            <ModalHeader>
-              <ModalTitle className="text-2xl">Reset Password</ModalTitle>
-              <ModalDescription>
-                {!resetLinkSent 
-                  ? "Enter your email address and we'll send you a link to reset your password."
-                  : "Check your email for instructions to reset your password."}
-              </ModalDescription>
-            </ModalHeader>
             
-            {!resetLinkSent ? (
-              <form onSubmit={handleSendResetLink} className="space-y-4 px-1">
-                {/* Email field for password reset */}
-                <div className="space-y-1">
-                  <label htmlFor="forgot-email" className="text-sm font-medium">
-                    Email Address
-                  </label>
-                  <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <Mail className="h-5 w-5 text-gray-400" aria-hidden="true" />
-                    </div>
-                    <input
-                      id="forgot-email"
-                      type="email"
-                      value={forgotPasswordEmail}
-                      onChange={(e) => setForgotPasswordEmail(e.target.value)}
-                      className="pl-10 pr-4 py-2 w-full border rounded-md focus:ring-2 focus:ring-[#7c3aed] focus:border-transparent border-gray-300"
-                      placeholder="you@example.com"
-                      autoComplete="email"
-                      required
-                      aria-required="true"
-                      autoFocus
-                    />
-                  </div>
-                </div>
-                
-                <div className="pt-4 space-y-3">
-                  {/* Submit button for password reset */}
-                  <button
-                    type="submit"
-                    disabled={isSendingResetLink}
-                    className="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-md shadow-sm text-white bg-[#7c3aed] hover:bg-[#6d28d9] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7c3aed] transition-colors duration-200"
-                  >
-                    {isSendingResetLink ? (
-                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                    ) : null}
-                    {isSendingResetLink ? "Sending..." : "Send Reset Link"}
-                  </button>
-                  
-                  {/* Back to login button */}
-                  <button
-                    type="button"
-                    onClick={handleBackToLogin}
-                    className="w-full flex justify-center items-center py-2.5 px-4 border border-gray-300 rounded-md shadow-sm text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7c3aed] transition-colors duration-200"
-                  >
-                    <ArrowLeft className="h-4 w-4 mr-2" />
-                    Back to Login
-                  </button>
-                </div>
-              </form>
-            ) : (
-              <div className="space-y-4 px-1">
-                <div className="p-4 bg-green-50 border border-green-200 rounded-md text-green-700 text-center">
-                  <p className="font-medium">Reset link sent!</p>
-                  <p className="text-sm mt-1">Please check your email inbox.</p>
-                </div>
-                
-                <button
-                  type="button"
-                  onClick={handleBackToLogin}
-                  className="w-full flex justify-center items-center py-2.5 px-4 border border-gray-300 rounded-md shadow-sm text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7c3aed] transition-colors duration-200"
-                >
-                  <ArrowLeft className="h-4 w-4 mr-2" />
-                  Return to Login
-                </button>
-              </div>
-            )}
-          </>
-        )}
-      </ModalContent>
-    </Modal>
+            {/* Divider */}
+            <div className="relative flex items-center">
+              <div className="flex-grow border-t border-gray-300"></div>
+              <span className="flex-shrink mx-4 text-gray-500 text-sm">or continue with</span>
+              <div className="flex-grow border-t border-gray-300"></div>
+            </div>
+            
+            {/* Social login options */}
+            <div className="grid grid-cols-2 gap-3">
+              <SocialAuthButton
+                provider="google"
+                onClick={() => handleSocialAuth("google")}
+                isLoading={isSocialLoading === "google"}
+              />
+              <SocialAuthButton
+                provider="facebook"
+                onClick={() => handleSocialAuth("facebook")}
+                isLoading={isSocialLoading === "facebook"}
+              />
+            </div>
+            
+            {/* Guest login */}
+            <button
+              type="button"
+              onClick={handleGuestLogin}
+              disabled={isSubmitting}
+              className="w-full py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition disabled:opacity-50 disabled:pointer-events-none"
+            >
+              Continue as Guest
+            </button>
+            
+            {/* Register link */}
+            <div className="text-center">
+              <span className="text-sm text-gray-600">Don't have an account?</span>{" "}
+              <button
+                type="button"
+                onClick={onSwitchToRegister}
+                className="text-sm text-blue-600 hover:text-blue-800 font-medium"
+              >
+                Sign up
+              </button>
+            </div>
+          </div>
+        </ModalContent>
+      </Modal>
+      
+      {/* Forgot Password Modal */}
+      <ForgotPasswordModal
+        isOpen={showForgotPasswordModal}
+        onOpenChange={setShowForgotPasswordModal}
+        onBack={() => setShowForgotPasswordModal(false)}
+      />
+    </>
   );
 }
 

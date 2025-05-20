@@ -267,6 +267,110 @@ export async function registerRoutes(app: Express): Promise<Server> {
     app._router.handle(req, res);
   });
   
+  // Request password reset endpoint
+  app.post("/api/auth/request-password-reset", async (req, res) => {
+    try {
+      const { email } = req.body;
+      
+      if (!email) {
+        return res.status(400).json({ message: "Email is required" });
+      }
+      
+      // Normalize email
+      const normalizedEmail = email.toLowerCase().trim();
+      
+      // Check if user exists
+      const userResult = await db.query('SELECT * FROM users WHERE LOWER(email) = LOWER($1)', [normalizedEmail]);
+      
+      // For security reasons, always return success even if the email doesn't exist
+      // This prevents attackers from determining which emails are registered
+      
+      // If we found a user, generate a reset token
+      if (userResult.rows.length > 0) {
+        const user = userResult.rows[0];
+        
+        // Generate a unique reset token
+        const resetToken = Math.random().toString(36).substring(2, 15) + 
+                         Math.random().toString(36).substring(2, 15);
+        const tokenExpiry = new Date();
+        tokenExpiry.setHours(tokenExpiry.getHours() + 1); // Token valid for 1 hour
+        
+        // Store reset token in database
+        await db.query(
+          'UPDATE users SET reset_token = $1, reset_token_expires = $2 WHERE id = $3',
+          [resetToken, tokenExpiry, user.id]
+        );
+        
+        // In a real application, send an email with the reset link
+        // For demo purposes, we'll just log it to the console
+        console.log(`Password reset requested for ${email}`);
+        console.log(`Reset link would be: https://${req.hostname}/reset-password?token=${resetToken}`);
+        
+        // In a production environment, you would use SendGrid or another email service:
+        /*
+        const resetLink = `https://${req.hostname}/reset-password?token=${resetToken}`;
+        await sendEmail({
+          to: email,
+          from: 'noreply@personalitymosaic.com',
+          subject: 'Password Reset Request',
+          html: `
+            <p>You have requested to reset your password for your Personality Mosaic account.</p>
+            <p>Please click the link below to reset your password. This link will expire in 1 hour.</p>
+            <p><a href="${resetLink}">${resetLink}</a></p>
+            <p>If you did not request this password reset, please ignore this email.</p>
+          `
+        });
+        */
+      }
+      
+      // Always return success to prevent email enumeration
+      return res.json({ message: "If an account with that email exists, we've sent a password reset link" });
+    } catch (error) {
+      console.error("Password reset request error:", error);
+      return res.status(500).json({ message: "Failed to process password reset. Please try again." });
+    }
+  });
+  
+  // Reset password with token endpoint
+  app.post("/api/auth/reset-password", async (req, res) => {
+    try {
+      const { token, newPassword } = req.body;
+      
+      if (!token || !newPassword) {
+        return res.status(400).json({ message: "Token and new password are required" });
+      }
+      
+      // Validate password
+      if (newPassword.length < 8) {
+        return res.status(400).json({ message: "Password must be at least 8 characters long" });
+      }
+      
+      // Find user with this reset token and check if it's still valid
+      const now = new Date();
+      const userResult = await db.query(
+        'SELECT * FROM users WHERE reset_token = $1 AND reset_token_expires > $2',
+        [token, now]
+      );
+      
+      if (userResult.rows.length === 0) {
+        return res.status(400).json({ message: "Invalid or expired reset token" });
+      }
+      
+      const user = userResult.rows[0];
+      
+      // Update user's password and clear the reset token
+      await db.query(
+        'UPDATE users SET password = $1, reset_token = NULL, reset_token_expires = NULL WHERE id = $2',
+        [newPassword, user.id]
+      );
+      
+      return res.json({ message: "Password has been reset successfully" });
+    } catch (error) {
+      console.error("Password reset error:", error);
+      return res.status(500).json({ message: "Failed to reset password. Please try again." });
+    }
+  });
+  
   // Get current user from JWT token
   app.get("/api/auth/user", jwtAuth, async (req: any, res) => {
     try {
