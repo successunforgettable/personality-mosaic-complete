@@ -7,7 +7,7 @@ import { useAuth } from "@/context/AuthContext";
 const SignUp = () => {
   const [_, setLocation] = useLocation();
   const { toast } = useToast();
-  const { login, isAuthenticated, startGuestSession } = useAuth();
+  const { register, isAuthenticated, startGuestSession } = useAuth();
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
@@ -87,22 +87,33 @@ const SignUp = () => {
     setIsLoading(true);
     
     try {
-      // Using Replit Auth for more secure account creation
-      toast({
-        title: "Redirecting to Replit Auth",
-        description: "You'll be redirected to sign in with your Replit account for enhanced security.",
-        duration: 3000,
-      });
+      // Call the register function with form data
+      const success = await register(
+        formData.email,
+        formData.fullName,
+        formData.password
+      );
       
-      // Small delay to show the toast message before redirecting
-      setTimeout(() => {
-        // This redirects to Replit's authentication system
-        login();
-      }, 1500);
+      if (success) {
+        toast({
+          title: "Registration successful", 
+          description: "Your account has been created successfully!",
+        });
+        
+        // Redirect to the assessment page or wherever is appropriate
+        setLocation("/assessment");
+      } else {
+        toast({
+          title: "Registration failed",
+          description: "This email address may already be in use. Please try another one.",
+          variant: "destructive",
+        });
+        setIsLoading(false);
+      }
     } catch (error) {
       toast({
-        title: "Sign up failed",
-        description: "There was a problem with the authentication process. Please try again.",
+        title: "Registration failed",
+        description: "There was a problem creating your account. Please try again.",
         variant: "destructive",
       });
       setIsLoading(false);
@@ -136,13 +147,12 @@ const SignUp = () => {
             <h2 className="text-2xl font-semibold text-[#1e293b] mt-4">Create your account</h2>
             <p className="text-[#64748b] mt-2">Sign up to begin your personality assessment journey</p>
             
-            {/* Information about Replit Auth */}
+            {/* Registration information */}
             <div className="mt-4 bg-blue-50 border border-blue-200 rounded-md p-3 text-left">
-              <h3 className="text-sm font-medium text-blue-800">Secure Authentication with Replit</h3>
+              <h3 className="text-sm font-medium text-blue-800">Create Your Account</h3>
               <p className="text-xs text-blue-700 mt-1">
-                We use Replit's secure authentication system. When you click "Create Account", 
-                you'll be redirected to sign in with your Replit account. This provides enhanced 
-                security and eliminates the need to create and remember another password.
+                Sign up to save your assessment results and track your progress over time.
+                Your data is securely stored and your privacy is important to us.
               </p>
             </div>
           </div>

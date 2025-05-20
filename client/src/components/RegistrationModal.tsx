@@ -113,29 +113,40 @@ export function RegistrationModal({
     setIsSubmitting(true);
     
     try {
-      // In a real implementation, this would call the registration API
-      // For now, we'll simulate a successful registration
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      // Call the register function from AuthContext
+      const success = await registerUser(
+        data.email,
+        data.name,
+        data.password
+      );
       
-      // Show success state
-      setRegistrationSuccess(true);
-      
-      toast({
-        title: "Registration successful!",
-        description: "Your account has been created successfully.",
-      });
-      
-      // After 2 seconds, redirect to authentication with Replit Auth
-      setTimeout(() => {
-        // Reset the form
-        reset();
+      if (success) {
+        // Show success state
+        setRegistrationSuccess(true);
         
-        // Close the modal
-        onOpenChange(false);
+        toast({
+          title: "Registration successful!",
+          description: "Your account has been created successfully.",
+        });
         
-        // Redirect to login
-        login();
-      }, 2000);
+        // After 2 seconds, close modal and redirect to home/assessment
+        setTimeout(() => {
+          // Reset the form
+          reset();
+          
+          // Close the modal
+          onOpenChange(false);
+          
+          // Navigate to assessment page
+          navigate("/assessment");
+        }, 2000);
+      } else {
+        toast({
+          title: "Registration failed",
+          description: "This email address may already be in use. Please try another one.",
+          variant: "destructive",
+        });
+      }
     } catch (error) {
       console.error("Registration failed:", error);
       toast({

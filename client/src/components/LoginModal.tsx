@@ -35,7 +35,7 @@ function LoginModal({
   onOpenChange,
   onSwitchToRegister
 }: LoginModalProps) {
-  const { login, startGuestSession } = useAuth();
+  const { login, startGuestSession, sendPasswordResetEmail } = useAuth();
   const { toast } = useToast();
   const [_, navigate] = useLocation();
   const [showPassword, setShowPassword] = useState(false);
@@ -159,21 +159,29 @@ function LoginModal({
     setIsSendingResetLink(true);
     
     try {
-      // Simulate sending a password reset email
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      // Call the password reset function from auth context
+      const success = await sendPasswordResetEmail(forgotPasswordEmail);
       
-      setResetLinkSent(true);
-      
-      toast({
-        title: "Password reset link sent",
-        description: "Check your email for instructions on how to reset your password.",
-      });
-      
-      // After 3 seconds, return to login screen
-      setTimeout(() => {
-        setIsForgotPasswordMode(false);
-        setResetLinkSent(false);
-      }, 3000);
+      if (success) {
+        setResetLinkSent(true);
+        
+        toast({
+          title: "Password reset link sent",
+          description: "Check your email for instructions on how to reset your password.",
+        });
+        
+        // After 3 seconds, return to login screen
+        setTimeout(() => {
+          setIsForgotPasswordMode(false);
+          setResetLinkSent(false);
+        }, 3000);
+      } else {
+        toast({
+          title: "Failed to send reset link",
+          description: "We couldn't find an account with that email address.",
+          variant: "destructive",
+        });
+      }
     } catch (error) {
       console.error("Failed to send reset link:", error);
       toast({

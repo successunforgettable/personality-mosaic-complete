@@ -71,21 +71,31 @@ const Login = () => {
     setIsLoading(true);
     
     try {
-      // Using Replit Auth for authentication (OAuth)
-      toast({
-        title: "Redirecting to Replit Auth",
-        description: "You'll be redirected to sign in with your Replit account.",
-      });
+      // Attempt to login with username and password
+      const success = await login(formData.email, formData.password, formData.rememberMe);
       
-      // Small delay to show the toast before redirecting
-      setTimeout(() => {
-        // Redirect to the Replit Auth login endpoint
-        login();
-      }, 1000);
+      if (success) {
+        toast({
+          title: "Login successful",
+          description: "Welcome back to Personality Mosaic!",
+        });
+        
+        // Return to the assessment or home page
+        const returnPath = sessionStorage.getItem('returnPath') || '/assessment';
+        sessionStorage.removeItem('returnPath');
+        setLocation(returnPath);
+      } else {
+        toast({
+          title: "Login failed",
+          description: "Invalid email or password. Please try again.",
+          variant: "destructive",
+        });
+        setIsLoading(false);
+      }
     } catch (error) {
       toast({
-        title: "Login redirect failed",
-        description: "There was a problem redirecting to authentication. Please try again.",
+        title: "Login failed",
+        description: "There was a problem with authentication. Please try again.",
         variant: "destructive",
       });
       setIsLoading(false);
@@ -119,13 +129,11 @@ const Login = () => {
             <h2 className="text-2xl font-semibold text-[#1e293b] mt-4">Sign in to your account</h2>
             <p className="text-[#64748b] mt-2">Welcome back! Sign in to continue building your personality tower</p>
             
-            {/* Information about Replit Auth */}
+            {/* Login information */}
             <div className="mt-4 bg-blue-50 border border-blue-200 rounded-md p-3 text-left">
-              <h3 className="text-sm font-medium text-blue-800">Secure Login with Replit</h3>
+              <h3 className="text-sm font-medium text-blue-800">Test Account Available</h3>
               <p className="text-xs text-blue-700 mt-1">
-                We use Replit's secure authentication system. When you click "Sign in", 
-                you'll be redirected to authenticate with your Replit account. This provides enhanced 
-                security and a seamless login experience.
+                For testing purposes, you can use: email: test@example.com, password: password123
               </p>
             </div>
           </div>
