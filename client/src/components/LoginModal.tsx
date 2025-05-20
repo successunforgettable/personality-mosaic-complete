@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Eye, EyeOff, Mail, Lock } from "lucide-react";
+import { useState, useRef, useEffect } from "react";
+import { Eye, EyeOff, Mail, Lock, AlertCircle } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { z } from "zod";
@@ -12,6 +12,7 @@ import {
   ModalHeader,
   ModalTitle,
   ModalDescription,
+  ModalClose
 } from "@/components/ui/dialog-modal";
 
 // Form validation schema
@@ -39,6 +40,24 @@ export function LoginModal({
   const [_, navigate] = useLocation();
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [loginError, setLoginError] = useState<string | null>(null);
+  
+  // Create refs for focus management
+  const emailInputRef = useRef<HTMLInputElement | null>(null);
+  const passwordInputRef = useRef<HTMLInputElement | null>(null);
+  const submitButtonRef = useRef<HTMLButtonElement | null>(null);
+  
+  // Focus management for the modal
+  useEffect(() => {
+    if (isOpen) {
+      // Small delay to ensure DOM is ready
+      setTimeout(() => {
+        if (emailInputRef.current) {
+          emailInputRef.current.focus();
+        }
+      }, 100);
+    }
+  }, [isOpen]);
   
   const { 
     register, 
@@ -56,10 +75,18 @@ export function LoginModal({
 
   const onSubmit = async (data: LoginFormValues) => {
     setIsSubmitting(true);
+    setLoginError(null);
     
     try {
       // In a real implementation, this would validate against the API
-      // For now, we'll simulate the authentication flow
+      // For now, we'll use Replit Auth
+      
+      // Store "remember me" preference if selected
+      if (data.rememberMe) {
+        localStorage.setItem('rememberLogin', 'true');
+      } else {
+        localStorage.removeItem('rememberLogin');
+      }
       
       // Close the modal
       onOpenChange(false);
@@ -73,6 +100,13 @@ export function LoginModal({
       });
     } catch (error) {
       console.error("Login failed:", error);
+      
+      // Set form error
+      setLoginError("Invalid email or password. Please try again.");
+      
+      // Focus password field for retry
+      passwordInputRef.current?.focus();
+      
       toast({
         title: "Login failed",
         description: "Invalid email or password. Please try again.",
@@ -112,63 +146,93 @@ export function LoginModal({
           </ModalDescription>
         </ModalHeader>
         
+        {/* Show error banner if login fails */}
+        {loginError && (
+          <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md flex items-start gap-2 text-red-600">
+            <AlertCircle className="h-5 w-5 flex-shrink-0 mt-0.5" />
+            <div>
+              <p className="text-sm font-medium">{loginError}</p>
+              <p className="text-xs mt-1">Please check your credentials and try again</p>
+            </div>
+          </div>
+        )}
+        
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 px-1">
           {/* Email field */}
           <div className="space-y-1">
-            <label htmlFor="email" className="text-sm font-medium">
+            <label htmlFor="login-email" className="text-sm font-medium">
               Email Address
             </label>
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Mail className="h-5 w-5 text-gray-400" />
+                <Mail className="h-5 w-5 text-gray-400" aria-hidden="true" />
               </div>
               <input
-                id="email"
+                id="login-email"
                 type="email"
+                aria-required="true"
+                aria-invalid={!!errors.email}
+                aria-describedby={errors.email ? "email-error" : undefined}
                 className={`pl-10 pr-4 py-2 w-full border rounded-md focus:ring-2 focus:ring-[#7c3aed] focus:border-transparent ${
                   errors.email ? 'border-red-500' : 'border-gray-300'
                 }`}
                 placeholder="you@example.com"
-                {...register("email")}
+                {...register("email", { 
+                  setValueAs: (value) => value.trim(),
+                })}
+                ref={(el) => {
+                  // Store ref value manually after render
+                  if (el) emailInputRef.current = el;
+                }}
+                autoComplete="email"
               />
             </div>
             {errors.email && (
-              <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>
+              <p id="email-error" className="text-red-500 text-xs mt-1" role="alert">{errors.email.message}</p>
             )}
           </div>
           
           {/* Password field */}
           <div className="space-y-1">
-            <label htmlFor="password" className="text-sm font-medium">
+            <label htmlFor="login-password" className="text-sm font-medium">
               Password
             </label>
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Lock className="h-5 w-5 text-gray-400" />
+                <Lock className="h-5 w-5 text-gray-400" aria-hidden="true" />
               </div>
               <input
-                id="password"
+                id="login-password"
                 type={showPassword ? "text" : "password"}
+                aria-required="true"
+                aria-invalid={!!errors.password}
+                aria-describedby={errors.password ? "password-error" : undefined}
                 className={`pl-10 pr-12 py-2 w-full border rounded-md focus:ring-2 focus:ring-[#7c3aed] focus:border-transparent ${
                   errors.password ? 'border-red-500' : 'border-gray-300'
                 }`}
                 placeholder="••••••••"
                 {...register("password")}
+                ref={(e) => {
+                  register("password").ref(e);
+                  passwordInputRef.current = e;
+                }}
+                autoComplete="current-password"
               />
               <button
                 type="button"
+                aria-label={showPassword ? "Hide password" : "Show password"}
                 className="absolute inset-y-0 right-0 pr-3 flex items-center"
                 onClick={() => setShowPassword(!showPassword)}
               >
                 {showPassword ? (
-                  <EyeOff className="h-5 w-5 text-gray-400" />
+                  <EyeOff className="h-5 w-5 text-gray-400" aria-hidden="true" />
                 ) : (
-                  <Eye className="h-5 w-5 text-gray-400" />
+                  <Eye className="h-5 w-5 text-gray-400" aria-hidden="true" />
                 )}
               </button>
             </div>
             {errors.password && (
-              <p className="text-red-500 text-xs mt-1">{errors.password.message}</p>
+              <p id="password-error" className="text-red-500 text-xs mt-1" role="alert">{errors.password.message}</p>
             )}
           </div>
           
@@ -176,21 +240,25 @@ export function LoginModal({
           <div className="flex items-center justify-between">
             <div className="flex items-center">
               <input
-                id="rememberMe"
+                id="login-remember"
                 type="checkbox"
-                className="h-4 w-4 text-[#7c3aed] border-gray-300 rounded focus:ring-[#7c3aed]"
+                className="h-4 w-4 text-[#7c3aed] border-gray-300 rounded focus:ring-[#7c3aed] focus:outline-none"
                 {...register("rememberMe")}
+                aria-describedby="remember-description"
               />
-              <label htmlFor="rememberMe" className="ml-2 block text-sm text-gray-600">
+              <label htmlFor="login-remember" className="ml-2 block text-sm text-gray-600">
                 Remember me
               </label>
+            </div>
+            <div id="remember-description" className="sr-only">
+              Keep me signed in on this device
             </div>
             
             <div className="text-sm">
               <button
                 type="button"
                 onClick={handleForgotPassword}
-                className="font-medium text-[#7c3aed] hover:text-[#6d28d9]"
+                className="font-medium text-[#7c3aed] hover:text-[#6d28d9] focus:outline-none focus:underline focus:ring-2 focus:ring-offset-2 focus:ring-[#7c3aed] rounded-sm"
               >
                 Forgot password?
               </button>
