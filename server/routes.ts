@@ -23,6 +23,20 @@ const generateToken = (userId: string | number): string => {
   return jwt.sign({ userId: userIdStr }, secret, { expiresIn: "30d" });
 };
 
+// Helper to set secure HTTP-only cookie with token
+const setAuthCookie = (res: Response, token: string) => {
+  // In production, these would be secure cookies
+  // For development, we set secure:false to allow testing
+  const isProduction = process.env.NODE_ENV === 'production';
+  
+  res.cookie('auth_token', token, {
+    httpOnly: true,            // Prevents JavaScript access to the cookie
+    secure: isProduction,      // Only sent over HTTPS in production
+    sameSite: 'lax',           // Provides CSRF protection
+    maxAge: 30 * 24 * 60 * 60 * 1000 // 30 days in milliseconds
+  });
+};
+
 // JWT-based authentication middleware
 const jwtAuth = async (req: any, res: Response, next: Function) => {
   try {
@@ -241,8 +255,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
       
-      // Validate password (direct comparison for demo - in production, use bcrypt)
-      if (user.password !== password) {
+      // Validate password using secure bcrypt comparison
+      const passwordValid = await bcrypt.compare(password, user.password);
+      if (!passwordValid) {
         // Record failed attempt for the IP and email
         rateLimiter.recordFailedAttempt(ipIdentifier);
         rateLimiter.recordFailedAttempt(emailIdentifier);
@@ -276,15 +291,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log("Registration request received:", req.body);
       
       // Extract fields from request
-      const { email, username, password } = req.body;
+      const { email, username, password, firstName, lastName } = req.body;
       
       // Check required fields
       if (!email || !password) {
         return res.status(400).json({ message: "Email and password are required" });
       }
       
+      // Input validation and sanitization
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        return res.status(400).json({ message: "Please provide a valid email address" });
+      }
+      
+      if (password.length < 8) {
+        return res.status(400).json({ message: "Password must be at least 8 characters long" });
+      }
+      
       // Use username from request or generate one from email
       const usernameToUse = username || email.split('@')[0];
+      
+      // Sanitize inputs to prevent injection attacks
+      const sanitizedEmail = email.trim().toLowerCase();
+      const sanitizedUsername = usernameToUse.trim();
       
       // Check if user with email already exists - case insensitive
       const normalizedEmail = email.toLowerCase().trim();
@@ -317,10 +346,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const tokenExpiry = new Date();
       tokenExpiry.setHours(tokenExpiry.getHours() + 24); // Token valid for 24 hours
       
+      // Hash the password using bcrypt (10 rounds of salting)
+      const saltRounds = 10;
+      const hashedPassword = await bcrypt.hash(password, saltRounds);
+      
+      // Log security event
+      console.log(`[SECURITY] New user registration initiated for ${sanitizedEmail}`);
+      
       // Insert the new user with direct SQL using an integer ID and verification token
       const insertResult = await db.query(
-        'INSERT INTO users (id, username, email, password, created_at, email_verified, verification_token, verification_expires) VALUES ($1, $2, $3, $4, NOW(), $5, $6, $7) RETURNING id, username, email, created_at',
-        [nextId, usernameToUse, normalizedEmail, password, 'false', verificationToken, tokenExpiry]
+        'INSERT INTO users (id, username, email, password, first_name, last_name, created_at, email_verified, verification_token, verification_expires) VALUES ($1, $2, $3, $4, $5, $6, NOW(), $7, $8, $9) RETURNING id, username, email, created_at',
+        [nextId, sanitizedUsername, sanitizedEmail, hashedPassword, firstName || null, lastName || null, 'false', verificationToken, tokenExpiry]
       );
       
       const user = insertResult.rows[0];
