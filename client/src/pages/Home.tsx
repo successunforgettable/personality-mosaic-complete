@@ -405,11 +405,11 @@ export default function Home() {
                 <h3 className="text-xl font-semibold text-[#1e293b] mb-4">Your Personality Insights</h3>
                 <div className="space-y-4">
                   <div className="p-4 bg-[#f8fafc] rounded-lg">
-                    <p className="font-medium text-[#1e293b] mb-1">Type 3 - The Achiever</p>
+                    <p className="font-medium text-[#1e293b] mb-1">The Achiever</p>
                     <p className="text-sm text-[#64748b]">Driven, image-conscious, and adaptive to success standards</p>
                   </div>
                   <div className="p-4 bg-[#f8fafc] rounded-lg">
-                    <p className="font-medium text-[#1e293b] mb-1">Wing 4 Influence</p>
+                    <p className="font-medium text-[#1e293b] mb-1">Influence</p>
                     <p className="text-sm text-[#64748b]">Adds creativity and emotional awareness to your achievement drive</p>
                   </div>
                   <div className="p-4 bg-[#f8fafc] rounded-lg">
@@ -421,16 +421,16 @@ export default function Home() {
               
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                 <div className="bg-[#ede9fe] rounded-lg p-4 text-center">
-                  <p className="text-sm font-medium text-[#7c3aed]">9 Core Personality Types</p>
+                  <p className="text-sm font-medium text-[#7c3aed]">Your Personality Type</p>
                 </div>
                 <div className="bg-[#ede9fe] rounded-lg p-4 text-center">
-                  <p className="text-sm font-medium text-[#7c3aed]">Wing Variations</p>
+                  <p className="text-sm font-medium text-[#7c3aed]">Influence</p>
                 </div>
                 <div className="bg-[#ede9fe] rounded-lg p-4 text-center">
                   <p className="text-sm font-medium text-[#7c3aed]">Operating States</p>
                 </div>
                 <div className="bg-[#ede9fe] rounded-lg p-4 text-center">
-                  <p className="text-sm font-medium text-[#7c3aed]">Instinctual Variants</p>
+                  <p className="text-sm font-medium text-[#7c3aed]">Subtypes</p>
                 </div>
               </div>
             </div>
@@ -465,7 +465,7 @@ export default function Home() {
               </p>
               <div className="flex items-center">
                 <Brain className="text-[#7c3aed] w-4 h-4 mr-1" />
-                <p className="text-xs text-[#7c3aed]">Type 3 Tower with 4 Wing</p>
+                <p className="text-xs text-[#7c3aed]">The Achiever</p>
               </div>
             </div>
             
@@ -485,7 +485,7 @@ export default function Home() {
               </p>
               <div className="flex items-center">
                 <Brain className="text-[#7c3aed] w-4 h-4 mr-1" />
-                <p className="text-xs text-[#7c3aed]">Type 5 Tower with 6 Wing</p>
+                <p className="text-xs text-[#7c3aed]">The Investigator</p>
               </div>
             </div>
             
@@ -505,7 +505,7 @@ export default function Home() {
               </p>
               <div className="flex items-center">
                 <Brain className="text-[#7c3aed] w-4 h-4 mr-1" />
-                <p className="text-xs text-[#7c3aed]">Type 2 Tower with 1 Wing</p>
+                <p className="text-xs text-[#7c3aed]">The Helper</p>
               </div>
             </div>
           </div>
