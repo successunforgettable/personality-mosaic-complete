@@ -248,8 +248,21 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   // Guest mode functions
   const startGuestSession = () => {
+    // Create a guest user with minimal information
+    const guestUser: User = {
+      id: 'guest_' + Math.random().toString(36).substring(2, 9),
+      email: 'guest@example.com'
+    };
+    
+    // Set both guest flag and user data
     setIsGuest(true);
+    setUser(guestUser);
+    
+    // Store in localStorage to maintain session
     localStorage.setItem('guest_session', 'true');
+    localStorage.setItem('guest_user', JSON.stringify(guestUser));
+    
+    console.log('Guest session started successfully');
   };
 
   const endGuestSession = () => {
