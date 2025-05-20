@@ -113,14 +113,17 @@ const PhaseOne = () => {
       // Select the stone and move to next set
       selectFoundationStone(stone);
       
-      // Brief delay for animation
+      // Set the last selected stone ID for visualization animation
+      setLastSelectedId(stone.id);
+      
+      // Brief delay for animation - longer to allow visualization to complete
       setTimeout(() => {
         // If this is the last set, we'll move to phase 2 in the context
         // Otherwise, we'll move to the next set of stones
         nextFoundationSet();
         setTransitionState('entering');
         setIsSaving(false);
-      }, 300);
+      }, 1200);
       
       // If last stone is selected, show a completion message and visual celebration
       if (foundationSet === 3) {
@@ -214,9 +217,15 @@ const PhaseOne = () => {
         {/* Left column: Foundation Visualization */}
         <div className="flex justify-center">
           <FoundationVisualization
+            key="foundation-visualization"
             selectedStones={selectedFoundationStones}
             totalStones={9}
             isAnimating={isSaving}
+            lastSelectedStoneId={
+              selectedFoundationStones.length > 0 
+                ? selectedFoundationStones[selectedFoundationStones.length - 1]?.id 
+                : undefined
+            }
           />
         </div>
         

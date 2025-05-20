@@ -7,6 +7,7 @@ interface FoundationVisualizationProps {
   selectedStones: FoundationStone[];
   totalStones: number;
   isAnimating?: boolean;
+  lastSelectedStoneId?: number;
 }
 
 /**
@@ -16,8 +17,16 @@ interface FoundationVisualizationProps {
 const FoundationVisualization: React.FC<FoundationVisualizationProps> = ({
   selectedStones,
   totalStones,
-  isAnimating = false
+  isAnimating = false,
+  lastSelectedStoneId
 }) => {
+  // Debug props received by the component
+  console.log('FoundationVisualization props:', { 
+    selectedStonesCount: selectedStones.length, 
+    totalStones,
+    isAnimating,
+    lastSelectedStoneId 
+  });
   const isMobile = useIsMobile();
   const [isGrowing, setIsGrowing] = useState(false);
   const [scope, animate] = useAnimate();
@@ -67,28 +76,33 @@ const FoundationVisualization: React.FC<FoundationVisualizationProps> = ({
   // Trigger growth animation when new stones are added (section 17.4)
   useEffect(() => {
     const newStoneAdded = selectedStones.length > prevStoneCountRef.current;
+    
+    // Debug stone addition
+    console.log('Stone tracking:', { 
+      prevCount: prevStoneCountRef.current, 
+      currentCount: selectedStones.length,
+      newStoneAdded: newStoneAdded,
+      stoneRefs: stoneRefs.current.length
+    });
+    
     prevStoneCountRef.current = selectedStones.length;
+    
+    // Force growth animation when the component mounts and stones are already present
+    if ((newStoneAdded || selectedStones.length > 0) && prevStoneCountRef.current === 0) {
+      setIsGrowing(true);
+      console.log('Triggering initial growth animation with existing stones:', selectedStones.length);
+      
+      const timer = setTimeout(() => {
+        setIsGrowing(false);
+      }, 1000);
+      
+      return () => clearTimeout(timer);
+    }
     
     if (newStoneAdded && selectedStones.length > 0) {
       // Trigger foundation growth animation
       setIsGrowing(true);
-      
-      // Animate the last added stone with special highlight
-      if (selectedStones.length > 0 && stoneRefs.current[selectedStones.length - 1]) {
-        const lastStoneRef = stoneRefs.current[selectedStones.length - 1];
-        
-        if (lastStoneRef) {
-          animate(lastStoneRef, 
-            { 
-              boxShadow: [
-                '0 0 15px rgba(255, 255, 255, 0.8)',
-                '0 0 5px rgba(255, 255, 255, 0.3)'
-              ]
-            }, 
-            { duration: 1.5, ease: 'easeOut' }
-          );
-        }
-      }
+      console.log('Growth animation triggered by new stone');
       
       // Reset growing state after animation
       const timer = setTimeout(() => {
@@ -97,7 +111,35 @@ const FoundationVisualization: React.FC<FoundationVisualizationProps> = ({
       
       return () => clearTimeout(timer);
     }
-  }, [selectedStones.length, animate]);
+  }, [selectedStones.length]);
+  
+  // Highlight the last added stone when it changes
+  useEffect(() => {
+    if (lastSelectedStoneId && selectedStones.length > 0) {
+      console.log('New stone detected, highlighting:', lastSelectedStoneId);
+      
+      // Find the stone by ID to highlight it
+      const stoneIndex = selectedStones.findIndex(stone => stone.id === lastSelectedStoneId);
+      
+      if (stoneIndex !== -1 && stoneRefs.current[stoneIndex]) {
+        const stoneRef = stoneRefs.current[stoneIndex];
+        
+        if (stoneRef) {
+          console.log('Highlighting stone at index:', stoneIndex);
+          animate(stoneRef, 
+            { 
+              boxShadow: [
+                '0 0 20px rgba(255, 255, 255, 0.9)',
+                '0 0 5px rgba(255, 255, 255, 0.3)'
+              ],
+              scale: [1.2, 1]
+            }, 
+            { duration: 1.5, ease: 'easeOut' }
+          );
+        }
+      }
+    }
+  }, [lastSelectedStoneId, selectedStones, animate]);
 
   return (
     <div className="flex flex-col items-center" ref={scope}>
@@ -181,6 +223,7 @@ const FoundationVisualization: React.FC<FoundationVisualizationProps> = ({
         {/* Stones positioned around the circle (section 17.2) */}
         <AnimatePresence>
           {selectedStones.map((stone, index) => {
+            // Calculate position based on index in the array - ensures consistent positioning
             const position = calculatePosition(index, Math.max(totalStones, 9));
             const stoneSize = isMobile ? 60 : 70;
             
@@ -192,7 +235,7 @@ const FoundationVisualization: React.FC<FoundationVisualizationProps> = ({
               shapeClass = 'octagon-shape';
             }
             
-            // Get gradient colors
+            // Get gradient colors based on category
             const gradientStart = stone.category === 'Head' 
               ? '#4F46E5' 
               : stone.category === 'Heart' 
@@ -205,12 +248,14 @@ const FoundationVisualization: React.FC<FoundationVisualizationProps> = ({
               ? '#8B5CF6' 
               : '#3B82F6';
             
-            // Create a unique key for each stone
-            const stoneKey = `stone-${stone.id}-${index}`;
+            // Check if this is the most recently added stone
+            const isLastAdded = stone.id === lastSelectedStoneId;
+            
+            console.log(`Rendering stone ${stone.id} (${stone.name}) at position ${index}`, { isLastAdded });
             
             return (
               <motion.div
-                key={stoneKey}
+                key={`stone-${stone.id}`}
                 ref={el => stoneRefs.current[index] = el}
                 className="absolute"
                 style={{
@@ -220,7 +265,7 @@ const FoundationVisualization: React.FC<FoundationVisualizationProps> = ({
                   left: '50%',
                   marginLeft: -stoneSize/2,
                   marginTop: -stoneSize/2,
-                  zIndex: index + 1
+                  zIndex: isLastAdded ? 20 : index + 1
                 }}
                 initial={{ 
                   x: 0, 
@@ -233,9 +278,11 @@ const FoundationVisualization: React.FC<FoundationVisualizationProps> = ({
                   x: position.x, 
                   y: position.y, 
                   opacity: 1, 
-                  scale: 1,
+                  scale: isLastAdded ? [0.8, 1.2, 1] : 1,
                   rotate: index % 2 === 0 ? 0 : 180, // Alternate rotation for visual interest
-                  boxShadow: '0 4px 8px rgba(0,0,0,0.2)'
+                  boxShadow: isLastAdded 
+                    ? ['0 0 15px rgba(255,255,255,0.7)', '0 4px 8px rgba(0,0,0,0.2)'] 
+                    : '0 4px 8px rgba(0,0,0,0.2)'
                 }}
                 exit={{ 
                   opacity: 0, 
@@ -246,7 +293,7 @@ const FoundationVisualization: React.FC<FoundationVisualizationProps> = ({
                   type: "spring",
                   damping: 20,
                   stiffness: 100,
-                  duration: 0.8,
+                  duration: isLastAdded ? 1.2 : 0.8,
                   delay: 0.1 * index
                 }}
               >
@@ -269,12 +316,19 @@ const FoundationVisualization: React.FC<FoundationVisualizationProps> = ({
                     height: Math.sqrt(position.x * position.x + position.y * position.y),
                     transformOrigin: '0 0',
                     transform: `rotate(${Math.atan2(position.y, position.x)}rad)`,
-                    opacity: 0.3,
+                    opacity: isLastAdded ? 0.5 : 0.3,
                     zIndex: -1
                   }}
                   initial={{ opacity: 0, scale: 0 }}
-                  animate={{ opacity: 0.3, scale: 1 }}
-                  transition={{ duration: 0.4, delay: 0.1 * index + 0.3 }}
+                  animate={{ 
+                    opacity: isLastAdded ? [0, 0.8, 0.5] : 0.3, 
+                    scale: 1,
+                    height: Math.sqrt(position.x * position.x + position.y * position.y)
+                  }}
+                  transition={{ 
+                    duration: isLastAdded ? 0.8 : 0.4, 
+                    delay: 0.1 * index + 0.2 
+                  }}
                 />
               </motion.div>
             );
