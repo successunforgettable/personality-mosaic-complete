@@ -6,6 +6,11 @@ export interface FoundationStone {
   image: string;
   category: 'Head' | 'Heart' | 'Body';
   typeScore: Record<string, number>;
+  shapeVariant?: 'hexagon' | 'pentagon' | 'octagon';
+  gradientColors?: {
+    from: string;
+    to: string;
+  };
 }
 
 // Building Blocks
