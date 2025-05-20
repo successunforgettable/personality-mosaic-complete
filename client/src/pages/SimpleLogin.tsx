@@ -1,12 +1,12 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useLocation } from "wouter";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/context/AuthContext";
 
-export default function LoginNew() {
+export default function SimpleLogin() {
   const [location, setLocation] = useLocation();
   const { toast } = useToast();
-  const { login, isAuthenticated, startGuestSession } = useAuth();
+  const { login, startGuestSession } = useAuth();
   
   // Form state
   const [email, setEmail] = useState("");
@@ -19,20 +19,24 @@ export default function LoginNew() {
   const [passwordError, setPasswordError] = useState("");
   const [generalError, setGeneralError] = useState("");
   
-  // Redirect if already authenticated
-  useEffect(() => {
-    if (isAuthenticated) {
-      const returnPath = sessionStorage.getItem('returnPath') || '/assessment';
-      sessionStorage.removeItem('returnPath');
-      setLocation(returnPath);
-    }
-  }, [isAuthenticated, setLocation]);
+  // Clear errors when typing
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEmail(e.target.value);
+    setEmailError("");
+    setGeneralError("");
+  };
+  
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPassword(e.target.value);
+    setPasswordError("");
+    setGeneralError("");
+  };
   
   // Validate form
   const validateForm = () => {
     let isValid = true;
     
-    // Clear previous errors
+    // Reset errors
     setEmailError("");
     setPasswordError("");
     setGeneralError("");
@@ -59,48 +63,39 @@ export default function LoginNew() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Validate form
     if (!validateForm()) {
       return;
     }
     
-    // Set loading state
     setIsLoading(true);
     
     try {
-      // Log out login attempt details
-      console.log("Attempting login with email:", email);
+      console.log("Attempting login with:", email);
+      const success = await login(email, password, rememberMe);
       
-      try {
-        // Attempt login
-        const success = await login(email, password, rememberMe);
-        console.log("Login response:", success);
+      if (success) {
+        toast({
+          title: "Login successful",
+          description: "Welcome back to Personality Mosaic!",
+        });
         
-        if (success) {
-          toast({
-            title: "Login successful",
-            description: "Welcome back to Personality Mosaic!",
-          });
-          
-          // Get return path
-          const returnPath = sessionStorage.getItem('returnPath') || '/assessment';
-          sessionStorage.removeItem('returnPath');
-          
-          console.log("Login successful, redirecting to:", returnPath);
-          
-          // Navigate programmatically using React Router
-          setLocation(returnPath);
-        } else {
-          // Handle login failure
-          setGeneralError("Invalid email or password. Please try again.");
-          
-          toast({
+        const returnPath = sessionStorage.getItem('returnPath') || '/assessment';
+        sessionStorage.removeItem('returnPath');
+        
+        console.log("Login successful, navigating to:", returnPath);
+        setLocation(returnPath);
+      } else {
+        console.log("Login failed");
+        setGeneralError("Invalid email or password. Please try again.");
+        
+        toast({
           title: "Login failed",
           description: "Invalid email or password. Please try again.",
           variant: "destructive",
         });
       }
     } catch (error) {
+      console.error("Login error:", error);
       setGeneralError("An error occurred during login. Please try again.");
       
       toast({
@@ -156,11 +151,7 @@ export default function LoginNew() {
                 id="email"
                 type="email"
                 value={email}
-                onChange={(e) => {
-                  setEmail(e.target.value);
-                  setEmailError("");
-                  setGeneralError("");
-                }}
+                onChange={handleEmailChange}
                 className={`w-full px-3 py-2 border ${emailError ? 'border-red-500' : 'border-gray-300'} rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500`}
                 placeholder="you@example.com"
                 disabled={isLoading}
@@ -186,11 +177,7 @@ export default function LoginNew() {
                 id="password"
                 type="password"
                 value={password}
-                onChange={(e) => {
-                  setPassword(e.target.value);
-                  setPasswordError("");
-                  setGeneralError("");
-                }}
+                onChange={handlePasswordChange}
                 className={`w-full px-3 py-2 border ${passwordError ? 'border-red-500' : 'border-gray-300'} rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500`}
                 placeholder="••••••••"
                 disabled={isLoading}

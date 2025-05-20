@@ -7,7 +7,7 @@ import NotFound from "@/pages/not-found";
 import Home from "@/pages/Home";
 import Assessment from "@/pages/Assessment";
 import SignUp from "@/pages/SignUp";
-import LoginNew from "@/pages/LoginNew";
+import SimpleLogin from "@/pages/SimpleLogin";
 import UserProfile from "@/pages/UserProfile";
 import ResultsCompare from "@/pages/ResultsCompare";
 import Header from "@/components/Header";
@@ -41,7 +41,7 @@ function Router() {
             </ProtectedRoute>
           </Route>
           <Route path="/signup" component={SignUp} />
-          <Route path="/login" component={LoginNew} />
+          <Route path="/login" component={SimpleLogin} />
           <Route path="/profile">
             <ProtectedRoute>
               <UserProfile />
