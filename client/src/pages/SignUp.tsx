@@ -102,14 +102,15 @@ const SignUp = () => {
       <div className="flex-1 flex flex-col items-center justify-center px-4 py-12">
         <div className="w-full max-w-md">
           <div className="text-center mb-8">
-            <Link href="/">
-              <a className="inline-flex items-center mb-5">
-                <div className="h-10 w-10 rounded-lg bg-gradient-to-r from-[#7c3aed] to-[#a78bfa] flex items-center justify-center text-white mr-3">
-                  <User className="h-6 w-6" />
-                </div>
-                <h1 className="text-2xl font-semibold text-[#1e293b]">Personality Mosaic</h1>
-              </a>
-            </Link>
+            <div 
+              className="inline-flex items-center mb-5 cursor-pointer"
+              onClick={() => setLocation("/")}
+            >
+              <div className="h-10 w-10 rounded-lg bg-gradient-to-r from-[#7c3aed] to-[#a78bfa] flex items-center justify-center text-white mr-3">
+                <User className="h-6 w-6" />
+              </div>
+              <h1 className="text-2xl font-semibold text-[#1e293b]">Personality Mosaic</h1>
+            </div>
             <h2 className="text-2xl font-semibold text-[#1e293b] mt-4">Create your account</h2>
             <p className="text-[#64748b] mt-2">Sign up to begin your personality assessment journey</p>
           </div>
@@ -269,11 +270,12 @@ const SignUp = () => {
             <div className="mt-6 text-center">
               <p className="text-sm text-[#64748b]">
                 Already have an account?{' '}
-                <Link href="/login">
-                  <a className="font-medium text-[#7c3aed] hover:text-[#6d28d9]">
-                    Sign in
-                  </a>
-                </Link>
+                <span 
+                  className="font-medium text-[#7c3aed] hover:text-[#6d28d9] cursor-pointer"
+                  onClick={() => setLocation("/login")}
+                >
+                  Sign in
+                </span>
               </p>
             </div>
           </div>
