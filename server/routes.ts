@@ -186,32 +186,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
-  // Registration endpoint
+  // Registration endpoint - Using direct SQL instead of storage
   app.post("/api/auth/register", async (req, res) => {
     try {
-      const { email, firstName, lastName, password } = req.body;
+      const { email, username, password } = req.body;
       
-      if (!email || !password) {
-        return res.status(400).json({ message: "Email and password are required" });
+      if (!email || !username || !password) {
+        return res.status(400).json({ message: "Email, username and password are required" });
       }
       
-      // Check if user already exists
-      const existingUser = await storage.getUserByEmail(email);
+      // Check if user with email already exists
+      const emailCheckResult = await db.query('SELECT * FROM users WHERE email = $1', [email]);
       
-      if (existingUser) {
+      if (emailCheckResult.rows.length > 0) {
         return res.status(409).json({ message: "User with this email already exists" });
       }
       
-      // Create a new user
-      // In a real implementation, we would hash the password
-      const userId = uuidv4();
-      const user = await storage.upsertUser({
-        id: userId,
-        email,
-        firstName,
-        lastName,
-        profileImageUrl: `https://ui-avatars.com/api/?name=${firstName}+${lastName}&background=7c3aed&color=fff`
-      });
+      // Check if username is taken
+      const usernameCheckResult = await db.query('SELECT * FROM users WHERE username = $1', [username]);
+      
+      if (usernameCheckResult.rows.length > 0) {
+        return res.status(409).json({ message: "This username is already taken" });
+      }
+      
+      // Insert the new user with direct SQL
+      // In a real implementation, we would hash the password first
+      const insertResult = await db.query(
+        'INSERT INTO users (username, email, password, created_at) VALUES ($1, $2, $3, NOW()) RETURNING id, username, email, created_at',
+        [username, email, password]
+      );
+      
+      const user = insertResult.rows[0];
       
       // Generate JWT token
       const token = generateToken(user.id);
