@@ -1,0 +1,44 @@
+.foundation-base {
+  position: relative;
+  width: 320px;
+  height: 320px;
+  margin: 0 auto;
+}
+
+.foundation-circle {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border: 2px solid #e2e8f0;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.5);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  overflow: visible;
+}
+
+/* Center dot indicator */
+.foundation-circle::after {
+  content: '';
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background-color: #94a3b8;
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+}
+
+/* Connection lines to center */
+.foundation-circle .stone.placed::before {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 2px;
+  background-color: #94a3b8;
+  top: 50%;
+  z-index: 1;
+  transform-origin: 0 0;
+  /* The actual rotation will be dynamically calculated based on stone position */
+}
