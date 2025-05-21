@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Stone from './Stone';
-import CircleFoundation from './CircleFoundation';
+import PreciseFoundation from './PreciseFoundation';
 import StoneSet from './StoneSet';
 import './FoundationExperience.css';
 import './continue-button.css';
@@ -222,8 +222,8 @@ const FoundationExperience = ({ onComplete }) => {
       
       <div className="foundation-layout">
         <div className="foundation-visualizer">
-          {/* Using the circle foundation with fixed stone positions */}
-          <CircleFoundation selectedStones={placedStones} />
+          {/* Using the precise foundation with exact specs from documentation */}
+          <PreciseFoundation selectedStones={placedStones} />
           <div className="progress-indicator">
             {currentSetIndex + 1} of 9 stone sets selected
           </div>

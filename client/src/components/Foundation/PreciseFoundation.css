@@ -1,0 +1,117 @@
+/* 
+ * PreciseFoundation.css
+ * Implements the exact specifications from technical documentation
+ */
+
+.precise-foundation-container {
+  width: 100%;
+  max-width: 320px;
+  margin: 0 auto;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.precise-foundation-circle {
+  width: 320px; /* Exact 320px diameter as specified in technical requirements */
+  height: 320px;
+  border-radius: 50%;
+  background-color: #f8fafc;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.precise-foundation-center {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.05);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+  font-weight: 600;
+  color: #475569;
+  font-size: 1.1rem;
+  position: absolute;
+}
+
+.precise-stone-position {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  z-index: 5;
+}
+
+.foundation-stone {
+  /* Using exact hexagon shape with clip-path as specified */
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.foundation-stone.normal {
+  width: 160px; /* Exact 160px width as specified */
+  height: 160px; /* Exact 160px height as specified */
+}
+
+.foundation-stone.small {
+  width: 80px; /* Exact 80px width as specified (0.5x scale) */
+  height: 80px; /* Exact 80px height as specified (0.5x scale) */
+}
+
+.stone-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 8px;
+  width: 100%;
+  height: 100%;
+}
+
+.stone-text {
+  margin: 2px 0;
+  font-size: 9px; /* Small size for placed stones */
+  font-weight: 600;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  font-family: 'Inter', sans-serif;
+  color: white;
+}
+
+.foundation-stone.normal .stone-text {
+  font-size: 16px; /* 16px as specified for normal stones */
+}
+
+/* Media query for mobile responsiveness */
+@media (max-width: 480px) {
+  .precise-foundation-circle {
+    width: 280px;
+    height: 280px;
+  }
+  
+  .precise-foundation-center {
+    width: 100px;
+    height: 100px;
+    font-size: 0.9rem;
+  }
+  
+  .foundation-stone.normal {
+    width: 140px;
+    height: 140px;
+  }
+  
+  .foundation-stone.small {
+    width: 70px;
+    height: 70px;
+  }
+}
