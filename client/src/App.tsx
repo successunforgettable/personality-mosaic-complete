@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/not-found";
 import Home from "@/pages/Home";
 import Assessment from "@/pages/Assessment";
+import BasicAssessment from "@/pages/BasicAssessment";
 import DirectRegisterForm from "@/pages/DirectRegisterForm";
 import DirectLoginForm from "@/pages/DirectLoginForm";
 import UserProfile from "@/pages/UserProfile";
@@ -39,6 +40,11 @@ function Router() {
         <Switch>
           <Route path="/" component={Home} />
           <Route path="/assessment">
+            <ProtectedRoute allowGuest={true}>
+              <BasicAssessment />
+            </ProtectedRoute>
+          </Route>
+          <Route path="/old-assessment">
             <ProtectedRoute allowGuest={true}>
               <Assessment />
             </ProtectedRoute>
