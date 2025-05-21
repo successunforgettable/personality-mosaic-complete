@@ -1,0 +1,134 @@
+.circle-foundation-container {
+  width: 100%;
+  max-width: 320px;
+  margin: 0 auto;
+  position: relative;
+}
+
+.circle-base {
+  width: 320px;
+  height: 320px;
+  border-radius: 50%;
+  background-color: #f8fafc;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+.circle-center {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.05);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 5;
+  font-weight: 600;
+  color: #475569;
+  font-size: 1.1rem;
+}
+
+.stone-position {
+  position: absolute;
+  width: 80px;
+  height: 80px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Fixed position for each stone */
+.position-1 {
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.position-2 {
+  top: 22%;
+  right: 18%;
+}
+
+.position-3 {
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+}
+
+.position-4 {
+  bottom: 22%;
+  right: 18%;
+}
+
+.position-5 {
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.position-6 {
+  bottom: 22%;
+  left: 18%;
+}
+
+.position-7 {
+  top: 50%;
+  left: 10px;
+  transform: translateY(-50%);
+}
+
+.position-8 {
+  top: 22%;
+  left: 18%;
+}
+
+.position-9 {
+  top: 35%;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.circle-stone {
+  width: 100%;
+  height: 100%;
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  text-align: center;
+  padding: 5px;
+}
+
+.stone-text {
+  font-size: 8px;
+  font-weight: 500;
+  margin: 1px 0;
+  line-height: 1.2;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+}
+
+/* Media query for mobile responsiveness */
+@media (max-width: 480px) {
+  .circle-base {
+    width: 280px;
+    height: 280px;
+  }
+  
+  .circle-center {
+    width: 100px;
+    height: 100px;
+    font-size: 0.9rem;
+  }
+  
+  .stone-position {
+    width: 70px;
+    height: 70px;
+  }
+}
