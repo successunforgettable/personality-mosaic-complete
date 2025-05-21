@@ -1,96 +1,100 @@
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import ColorPalette from './ColorPalette';
-import { STATE_COLORS, getTypeSpecificDescription } from './ColorPaletteData';
+import React from 'react';
+import { motion } from 'framer-motion';
+import { STATE_COLORS, RECOMMENDED_STATES, getGradientStyle } from './ColorPaletteData';
 import './ColorPaletteSelector.css';
 
 /**
- * ColorPaletteSelector Component - Manages the selection of color palettes
+ * ColorPaletteSelector Component
+ * Displays a grid of selectable color palettes (states)
  */
 const ColorPaletteSelector = ({ 
   selectedStates = [], 
   onSelectState,
-  personalityType,
-  maxSelections = 2
+  personalityType
 }) => {
-  // Local state to track which palettes have tooltip open
-  const [hoveredState, setHoveredState] = useState(null);
-  
-  // Handle selection of a color palette
-  const handleSelectPalette = (stateKey) => {
-    if (onSelectState) {
-      onSelectState(stateKey);
-    }
-  };
-  
-  // Toggle hover state for tooltip
-  const handleHover = (stateKey) => {
-    setHoveredState(stateKey);
-  };
+  // Get the recommended states for this personality type if available
+  const recommendedStateKeys = personalityType && RECOMMENDED_STATES[personalityType] 
+    ? RECOMMENDED_STATES[personalityType] 
+    : null;
   
   return (
     <div className="color-palette-selector">
-      <div className="palettes-container">
+      {/* Optional recommendation message */}
+      {recommendedStateKeys && (
+        <div className="recommendation-message">
+          <p>
+            Based on your personality type, we recommend the{' '}
+            <span className="state-name">{STATE_COLORS[recommendedStateKeys[0]].name}</span> and{' '}
+            <span className="state-name">{STATE_COLORS[recommendedStateKeys[1]].name}</span> palettes.
+          </p>
+        </div>
+      )}
+      
+      {/* Color palettes grid */}
+      <div className="palettes-grid">
         {Object.entries(STATE_COLORS).map(([stateKey, stateData]) => {
-          // Check if this palette is already selected
           const isSelected = selectedStates.includes(stateKey);
-          
-          // If we have a personality type, get specific description
-          const typeSpecificDescription = getTypeSpecificDescription(personalityType, stateKey);
-          if (typeSpecificDescription) {
-            stateData = { ...stateData, description: typeSpecificDescription };
-          }
-          
-          // Determine if selection is allowed
-          const selectionDisabled = !isSelected && selectedStates.length >= maxSelections;
+          const isRecommended = recommendedStateKeys && recommendedStateKeys.includes(stateKey);
           
           return (
-            <div 
+            <motion.div
               key={stateKey}
-              className={`palette-wrapper ${selectionDisabled ? 'disabled' : ''}`}
-              onMouseEnter={() => handleHover(stateKey)}
-              onMouseLeave={() => handleHover(null)}
+              className={`palette-card ${isSelected ? 'selected' : ''} ${isRecommended ? 'recommended' : ''}`}
+              onClick={() => onSelectState(stateKey)}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
             >
-              <ColorPalette
-                stateKey={stateKey}
-                stateData={stateData}
-                isSelected={isSelected}
-                onClick={() => !selectionDisabled && handleSelectPalette(stateKey)}
-                personalityType={personalityType}
-              />
-              {selectedStates.length >= maxSelections && !isSelected && (
-                <div className="selection-limit-overlay">
-                  <div className="limit-message">Limit: {maxSelections}</div>
+              {/* Color palette visualization */}
+              <div 
+                className="palette-visual"
+                style={getGradientStyle(stateKey)}
+              >
+                {/* Color swatches */}
+                <div className="color-swatches">
+                  <div className="color-swatch" style={{ backgroundColor: stateData.light }}></div>
+                  <div className="color-swatch" style={{ backgroundColor: stateData.primary }}></div>
+                  <div className="color-swatch" style={{ backgroundColor: stateData.dark }}></div>
                 </div>
-              )}
-            </div>
+                
+                {/* Palette thumb hole */}
+                <div className="palette-thumb-hole"></div>
+                
+                {/* Selection checkmark */}
+                {isSelected && (
+                  <div className="selection-indicator">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                  </div>
+                )}
+                
+                {/* Recommended badge */}
+                {isRecommended && (
+                  <div className="recommended-badge">
+                    Recommended
+                  </div>
+                )}
+              </div>
+              
+              {/* Palette info */}
+              <div className="palette-info">
+                <h3 className="palette-name">{stateData.name}</h3>
+                <p className="palette-description">{stateData.description}</p>
+              </div>
+            </motion.div>
           );
         })}
       </div>
       
-      {/* Selection counter */}
-      <div className="selection-counter">
-        <span>{selectedStates.length} of {maxSelections} states selected</span>
+      <div className="selection-instructions">
+        <p>
+          {selectedStates.length === 0
+            ? 'Select two states that represent how you typically operate.'
+            : selectedStates.length === 1
+            ? 'Select one more state to continue.'
+            : 'Great! Now you can adjust the distribution between these states.'}
+        </p>
       </div>
-      
-      {/* Selection instructions */}
-      {selectedStates.length === 0 && (
-        <div className="selection-instructions">
-          <p>Select two color palettes that represent your typical states of being.</p>
-        </div>
-      )}
-      
-      {selectedStates.length === 1 && (
-        <div className="selection-instructions">
-          <p>Now select one more palette to complete your selection.</p>
-        </div>
-      )}
-      
-      {selectedStates.length >= 2 && (
-        <div className="selection-instructions">
-          <p>Great! You've selected your typical states. Adjust the distribution below.</p>
-        </div>
-      )}
     </div>
   );
 };
