@@ -76,9 +76,11 @@ const Stone = ({
       {name && <div className="stone-name">{name}</div>}
       
       <div className="stone-content">
-        {content.split('•').map((text, i) => (
-          <div key={i} className="stone-line">{text.trim()}</div>
-        ))}
+        {typeof content === 'string' && 
+          content.split('•').map((text, i) => (
+            <div key={i} className="stone-line">{text.trim()}</div>
+          ))
+        }
       </div>
       
       {selected && !isPlaced && <div className="stone-checkmark">✓</div>}
