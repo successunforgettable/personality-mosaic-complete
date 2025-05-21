@@ -1,86 +1,95 @@
 .stone {
-  width: 160px; /* Exact dimensions from spec 2.2.1 */
+  width: 160px;
   height: 160px;
-  border: none;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
   position: relative;
-  transition: all 0.2s ease;
   cursor: pointer;
-  /* Perfect hexagon shape as specified */
-  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
-  outline: none; /* For accessibility */
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  margin: 8px;
+  filter: drop-shadow(0 4px 3px rgb(0 0 0 / 0.07)) drop-shadow(0 2px 2px rgb(0 0 0 / 0.06));
+  user-select: none;
 }
 
 .stone:hover {
-  transform: scale(1.05); /* Exactly as specified in 2.2.1: Scale to 1.05× */
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+  transform: scale(1.05);
+  filter: drop-shadow(0 10px 8px rgb(0 0 0 / 0.1)) drop-shadow(0 4px 3px rgb(0 0 0 / 0.1));
 }
 
 .stone:focus {
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5);
+  outline: 2px solid #94a3b8;
+  outline-offset: 2px;
 }
 
 .stone.selected {
-  box-shadow: 0 0 20px rgba(139, 92, 246, 0.7); /* Glow effect as specified */
-}
-
-.stone.placed {
-  width: 80px; /* Half size when placed on foundation */
-  height: 80px;
-  cursor: default;
-  pointer-events: none;
+  outline: 3px solid #475569;
+  outline-offset: 2px;
+  transform: scale(1.05);
+  filter: drop-shadow(0 10px 8px rgb(0 0 0 / 0.1)) drop-shadow(0 4px 3px rgb(0 0 0 / 0.1));
 }
 
 .stone-content {
-  color: white;
-  font-family: 'Inter', sans-serif;
-  font-weight: 600; /* SemiBold as specified */
-  font-size: 16px; /* Exactly as specified */
-  text-align: center;
-  padding: 8px;
   width: 100%;
   height: 100%;
   display: flex;
-  flex-direction: column;
-  align-items: center;
   justify-content: center;
-  pointer-events: none; /* Make sure clicks go to the stone, not the text */
+  align-items: center;
+  text-align: center;
+  position: relative;
+  border-radius: 4px;
+  overflow: hidden;
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  box-shadow: inset 0 2px 4px 0 rgb(255 255 255 / 0.25);
 }
 
-.stone.placed .stone-content {
-  font-size: 0; /* Hide text when placed on foundation */
-}
-
-.stone-line {
-  margin: 4px 0;
-  font-size: 14px;
-  line-height: 1.2;
-  width: 100%;
-}
-
-.stone-checkmark {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background-color: #10b981;
-  color: white;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
+.stone-text {
   display: flex;
-  align-items: center;
+  flex-direction: column;
   justify-content: center;
-  font-weight: bold;
+  align-items: center;
+  padding: 1rem;
+  color: white;
+  font-weight: 600;
+  text-shadow: 0 1px 2px rgb(0 0 0 / 0.2);
   z-index: 2;
 }
 
-/* Mobile responsive adjustments */
-@media (max-width: 768px) {
-  .stone {
-    width: 140px !important; /* Slightly smaller on mobile */
-    height: 140px !important;
+.stone-text-item {
+  margin: 2px 0;
+  font-size: 18px;
+  line-height: 1.2;
+}
+
+/* When placed in the foundation, stones are smaller */
+.stone.foundation-stone {
+  width: 80px;
+  height: 80px;
+  transform: scale(0.5);
+  transition: transform 0.3s ease-in-out;
+}
+
+.stone.foundation-stone .stone-text-item {
+  font-size: 14px;
+}
+
+/* Animation for selected stone */
+@keyframes selected-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.4);
   }
+  70% {
+    box-shadow: 0 0 0 6px rgba(255, 255, 255, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
+  }
+}
+
+.stone.selected .stone-content::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 4px;
+  animation: selected-pulse 1.5s infinite;
 }

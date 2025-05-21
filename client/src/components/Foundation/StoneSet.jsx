@@ -1,57 +1,50 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import Stone from './Stone';
-import { getStoneColorBySetIndex, getCenterNameBySetIndex } from './stoneData';
 import './StoneSet.css';
 
 /**
  * StoneSet Component
- * Displays a set of stones for selection in the current phase
- * Updated to use horizontal layout
+ * Displays a set of three foundation stones that the user can select from
  */
-const StoneSet = ({
-  stones = [],
-  onStoneSelect,
-  currentSetIndex = 0,
-  totalSets = 9
-}) => {
-  // Get the current center (Head, Heart, Body)
-  const centerName = getCenterNameBySetIndex(currentSetIndex);
+const StoneSet = ({ stones, onStoneSelect, currentSetIndex, totalSets }) => {
+  // Determine center type (Head, Heart, Body) based on set index
+  const centerType = Math.floor(currentSetIndex / 3);
   
-  // Get the colors for this set
-  const colorSet = getStoneColorBySetIndex(currentSetIndex);
+  // Define color sets for the three centers
+  const colorSets = [
+    { // Head
+      primary: '#3b82f6', // Blue-500
+      light: '#93c5fd',   // Blue-300
+      dark: '#1d4ed8'     // Blue-700
+    },
+    { // Heart
+      primary: '#ef4444', // Red-500
+      light: '#fca5a5',   // Red-300
+      dark: '#b91c1c'     // Red-700
+    },
+    { // Body
+      primary: '#10b981', // Emerald-500
+      light: '#6ee7b7',   // Emerald-300
+      dark: '#047857'     // Emerald-700
+    }
+  ];
   
-  // Get the set number within the current center (1, 2, or 3)
+  // Get color set for current stone set
+  const colorSet = colorSets[centerType] || colorSets[0];
+  
+  // Determine set type name (Head, Heart, Body)
+  const setTypes = ['Head', 'Heart', 'Body'];
+  const setTypeName = setTypes[centerType];
+  
+  // Set number within its center (1-3)
   const setNumber = (currentSetIndex % 3) + 1;
   
   return (
     <div className="stone-set-container">
       <div className="stone-set-header">
-        <h2 className="stone-set-title">
-          <span className="center-name" style={{ 
-            color: centerName === 'Head' ? '#3b82f6' : 
-                  centerName === 'Heart' ? '#ef4444' : 
-                  '#10b981'
-          }}>
-            {centerName} Center
-          </span>
-          <span className="set-number">Set {setNumber} of 3</span>
-        </h2>
-        
-        <div className="stone-set-progress">
-          <span className="progress-text">{currentSetIndex + 1} of {totalSets}</span>
-          <div className="progress-bar">
-            <div 
-              className="progress-fill"
-              style={{ 
-                width: `${((currentSetIndex + 1) / totalSets) * 100}%`,
-                backgroundColor: centerName === 'Head' ? '#3b82f6' : 
-                               centerName === 'Heart' ? '#ef4444' : 
-                               '#10b981'
-              }}
-            ></div>
-          </div>
-        </div>
+        <h3 className="set-title">{setTypeName} Center</h3>
+        <div className="set-subtitle">Set {setNumber} of 3</div>
       </div>
       
       <div className="stone-set-instructions">

@@ -1,65 +1,45 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 import './Stone.css';
 
 /**
- * Stone Component - Designed exactly to technical specs
- * Hexagonal stone with proper coloring based on center type
+ * Stone Component
+ * A hexagonal stone component for the foundation phase
  */
 const Stone = ({ 
   id, 
-  content, 
+  content = [], 
   isSelected = false, 
-  isPlaced = false, 
-  position = null,
-  gradientColors = { from: '#8b5cf6', to: '#6366f1' }, // Default purple gradient
-  onClick = () => {},
-  size = 'normal', // normal or small
+  onClick, 
+  gradientColors = { from: '#93c5fd', to: '#3b82f6' },
   tabIndex
 }) => {
-  // Content should be an array of strings (words/traits)
-  const contentLines = Array.isArray(content) ? content : [content];
-  
-  // Scale for placed stones on foundation is 0.5 (half size)
-  const stoneScale = isPlaced ? 0.5 : 1;
+  // Determine if content is a string or array
+  const contentArray = Array.isArray(content) ? content : [content];
   
   return (
-    <motion.div
-      className={`stone ${isSelected ? 'selected' : ''} ${isPlaced ? 'placed' : ''}`}
+    <div 
+      className={`stone ${isSelected ? 'selected' : ''}`}
       onClick={onClick}
-      tabIndex={tabIndex !== undefined ? tabIndex : 0}
-      style={{
-        background: `linear-gradient(135deg, ${gradientColors.from}, ${gradientColors.to})`,
-        // Stone dimensions - 160px standard, 80px when placed on foundation
-        width: isPlaced ? '80px' : '160px',
-        height: isPlaced ? '80px' : '160px',
-      }}
-      whileHover={!isPlaced ? { scale: 1.05 } : {}}
-      whileTap={!isPlaced ? { scale: 0.95 } : {}}
-      initial={isPlaced ? { scale: 0.1, opacity: 0 } : { scale: 1, opacity: 1 }}
-      animate={isPlaced ? { scale: stoneScale, opacity: 1 } : { scale: 1, opacity: 1 }}
-      transition={{
-        type: 'spring',
-        stiffness: 500,
-        damping: 30
-      }}
+      tabIndex={tabIndex}
       role="button"
       aria-pressed={isSelected}
+      data-stone-id={id}
     >
-      {/* Checkmark for selected stone */}
-      {isSelected && !isPlaced && (
-        <div className="stone-checkmark">✓</div>
-      )}
-      
-      {/* Stone content - words or traits */}
-      <div className="stone-content">
-        {contentLines.map((line, index) => (
-          <div key={index} className="stone-line">
-            {line}
-          </div>
-        ))}
+      <div 
+        className="stone-content"
+        style={{
+          background: `linear-gradient(135deg, ${gradientColors.from}, ${gradientColors.to})`
+        }}
+      >
+        <div className="stone-text">
+          {contentArray.map((text, index) => (
+            <div key={`content-${index}`} className="stone-text-item">
+              {text}
+            </div>
+          ))}
+        </div>
       </div>
-    </motion.div>
+    </div>
   );
 };
 
