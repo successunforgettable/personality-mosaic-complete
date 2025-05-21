@@ -1,3 +1,4 @@
+css/* client/src/components/Foundation/FoundationExperience.css */
 .foundation-experience {
   width: 100%;
   max-width: 1200px;
@@ -85,16 +86,6 @@
 
 .complete-button:hover {
   background-color: #2563eb;
-}
-
-/* Animation helper classes */
-.fade-in {
-  animation: fadeIn 0.5s ease-in;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
 }
 
 @media (min-width: 1024px) {

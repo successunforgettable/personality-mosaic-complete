@@ -1,17 +1,11 @@
+Step 6: Implement Main Foundation Experience Component
+jsx// client/src/components/Foundation/FoundationExperience.js
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import StoneSet from './StoneSet.jsx';
-import FoundationBase from './FoundationBase.jsx';
-import { STONE_SETS } from './stoneData.js';
+import StoneSet from './StoneSet';
+import FoundationBase from './FoundationBase';
+import { STONE_SETS } from './stoneData';
 import './FoundationExperience.css';
 
-/**
- * FoundationExperience - Main component for the Foundation Stone phase (Phase 1)
- * Manages the complete foundation stone selection experience with animations
- * 
- * @param {Object} props
- * @param {Function} props.onComplete - Callback when foundation selection is complete
- */
 const FoundationExperience = ({ onComplete }) => {
   // State for current set index (0-8)
   const [currentSetIndex, setCurrentSetIndex] = useState(0);
@@ -105,43 +99,12 @@ const FoundationExperience = ({ onComplete }) => {
   const isComplete = stoneSelections.length === STONE_SETS.length && 
                      stoneSelections.every(selection => selection !== undefined);
   
-  // Animation variants for page elements
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: { 
-      opacity: 1,
-      transition: { 
-        staggerChildren: 0.1,
-        delayChildren: 0.1
-      }
-    }
-  };
-  
-  const itemVariants = {
-    hidden: { y: 20, opacity: 0 },
-    visible: { 
-      y: 0, 
-      opacity: 1,
-      transition: { type: 'spring', stiffness: 300, damping: 24 }
-    }
-  };
-  
   return (
-    <motion.div 
-      className="foundation-experience"
-      initial="hidden"
-      animate="visible"
-      variants={containerVariants}
-    >
-      <motion.div className="foundation-header" variants={itemVariants}>
-        <h2 className="phase-title">Choose Your Foundation Stones</h2>
-      </motion.div>
+    <div className="foundation-experience">
+      <h2 className="phase-title">Choose Your Foundation Stones</h2>
       
       <div className="foundation-layout">
-        <motion.div 
-          className="foundation-visualizer"
-          variants={itemVariants}
-        >
+        <div className="foundation-visualizer">
           <FoundationBase 
             placedStones={placedStones} 
             stoneContents={STONE_SETS.flat()}
@@ -149,12 +112,9 @@ const FoundationExperience = ({ onComplete }) => {
           <div className="progress-indicator">
             {placedStones.length} of 9 stone sets selected
           </div>
-        </motion.div>
+        </div>
         
-        <motion.div 
-          className="selection-area"
-          variants={itemVariants}
-        >
+        <div className="selection-area">
           <StoneSet
             stones={currentStones}
             onStoneSelect={handleStoneSelect}
@@ -180,28 +140,19 @@ const FoundationExperience = ({ onComplete }) => {
             </button>
           </div>
           
-          <AnimatePresence>
-            {isComplete && (
-              <motion.div 
-                className="completion-controls"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 20 }}
+          {isComplete && (
+            <div className="completion-controls">
+              <button 
+                className="complete-button"
+                onClick={() => onComplete(stoneSelections)}
               >
-                <motion.button 
-                  className="complete-button"
-                  onClick={() => onComplete(stoneSelections)}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  Complete Foundation
-                </motion.button>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </motion.div>
+                Complete Foundation
+              </button>
+            </div>
+          )}
+        </div>
       </div>
-    </motion.div>
+    </div>
   );
 };
 
