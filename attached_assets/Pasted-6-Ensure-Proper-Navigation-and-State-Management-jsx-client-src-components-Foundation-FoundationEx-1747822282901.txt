@@ -1,0 +1,92 @@
+6. Ensure Proper Navigation and State Management
+jsx// client/src/components/Foundation/FoundationExperience.js
+// Add these improved navigation functions
+
+// Add state for visited sets
+const [visitedSets, setVisitedSets] = useState([0]);
+
+// Navigation functions
+const goToNextSet = () => {
+  if (currentSetIndex < STONE_SETS.length - 1) {
+    const nextSetIndex = currentSetIndex + 1;
+    setCurrentSetIndex(nextSetIndex);
+    
+    // Track visited sets for validation
+    if (!visitedSets.includes(nextSetIndex)) {
+      setVisitedSets([...visitedSets, nextSetIndex]);
+    }
+  }
+};
+
+const goToPreviousSet = () => {
+  if (currentSetIndex > 0) {
+    setCurrentSetIndex(currentSetIndex - 1);
+  }
+};
+
+// Update handle stone selection to properly track set index
+const handleStoneSelect = (stoneIndex) => {
+  // Update current stones to show selection
+  const updatedStones = currentStones.map((stone, idx) => ({
+    ...stone,
+    selected: idx === stoneIndex
+  }));
+  setCurrentStones(updatedStones);
+  
+  // Add to selections array (replace if already exists)
+  const newSelections = [...stoneSelections];
+  newSelections[currentSetIndex] = stoneIndex;
+  setStoneSelections(newSelections);
+  
+  // Update placed stones accordingly
+  const newPlacedStones = placedStones.filter(stone => 
+    stone.position !== currentSetIndex
+  );
+  
+  newPlacedStones.push({
+    stoneIndex,
+    position: currentSetIndex,
+    setIndex: currentSetIndex // Critical for proper coloring
+  });
+  
+  setPlacedStones(newPlacedStones);
+  
+  // Automatically proceed to next set after a short delay
+  setTimeout(() => {
+    if (currentSetIndex < STONE_SETS.length - 1) {
+      goToNextSet();
+    } else if (newSelections.length === STONE_SETS.length) {
+      // All sets have been selected, enable completion
+      // Allow manual completion instead of automatic
+    }
+  }, 800);
+};
+
+// Add navigation buttons to UI
+<div className="navigation-controls">
+  <button 
+    className="nav-button"
+    onClick={goToPreviousSet}
+    disabled={currentSetIndex === 0}
+  >
+    Previous Set
+  </button>
+  
+  <button 
+    className="nav-button"
+    onClick={goToNextSet}
+    disabled={currentSetIndex === STONE_SETS.length - 1}
+  >
+    Next Set
+  </button>
+  
+  {/* Only show complete button when all sets have selections */}
+  {stoneSelections.length === STONE_SETS.length && (
+    <button 
+      className="continue-button"
+      onClick={() => onComplete(stoneSelections)}
+    >
+      Complete Foundation
+    </button>
+  )}
+</div>
