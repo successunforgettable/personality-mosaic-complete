@@ -223,7 +223,7 @@ const FoundationExperience = ({ onComplete }) => {
       <div className="foundation-layout">
         <div className="foundation-visualizer">
           {/* Using the exact specification from technical documentation */}
-          <SimpleCircle />
+          <SimpleCircle selectedStones={placedStones} />
           <div className="progress-indicator">
             {currentSetIndex + 1} of 9 stone sets selected
           </div>
