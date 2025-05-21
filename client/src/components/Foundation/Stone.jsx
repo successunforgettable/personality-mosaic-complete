@@ -120,11 +120,10 @@ const Stone = ({
       tabIndex={tabIndex}
       role="button"
       aria-pressed={isSelected}
+      style={gradientStyle}
     >
-      <div className={shapeClass} style={gradientStyle}>
-        <div className="stone-content">
-          {renderContent()}
-        </div>
+      <div className="stone-content">
+        {renderContent()}
       </div>
     </div>
   );

@@ -1,11 +1,19 @@
 .stone {
+  width: 160px;
+  height: 160px;
+  border: 2px solid white;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   position: relative;
-  width: 140px;
-  height: 140px;
-  margin: 0 auto;
-  transition: transform 0.3s ease, filter 0.3s ease;
+  transition: all 0.2s ease;
   cursor: pointer;
+  margin: 0 auto;
   user-select: none;
+  /* This is the crucial part for hexagonal shape */
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
 }
 
 .stone:hover {
@@ -28,7 +36,6 @@
   align-items: center;
   justify-content: center;
   color: white;
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
   transition: box-shadow 0.3s ease;
   position: relative;
   overflow: hidden;
@@ -41,7 +48,7 @@
 
 /* Hexagon shape (HEART stones) */
 .shape-hexagon {
-  clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
 }
 
 /* Octagon shape (BODY stones) */
