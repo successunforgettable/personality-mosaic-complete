@@ -6,7 +6,7 @@ import { FoundationStone } from '@/types/assessment';
 import { foundationStoneSets } from '@/lib/personality';
 import ProgressIndicator from './ProgressIndicator';
 import StoneSet from './StoneSet';
-import FinalFoundationViz from './FinalFoundationViz';
+import FinalVisualization from './FinalVisualization';
 import { toast } from '@/hooks/use-toast';
 import { useIsMobile } from '@/hooks/use-mobile';
 
@@ -228,7 +228,7 @@ const PhaseOne = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
         {/* Left column: Foundation Visualization */}
         <div className="flex justify-center">
-          <FinalFoundationViz 
+          <FinalVisualization 
             selectedStones={selectedFoundationStones}
           />
         </div>
