@@ -1,90 +1,121 @@
 import React from 'react';
+import { motion } from 'framer-motion';
+import { getStoneGradient } from './stoneData';
 import './Stone.css';
 
 /**
  * Stone component - Represents an individual foundation stone
+ * Uses framer-motion for animations
  * 
  * @param {Object} props
- * @param {number} props.id - Unique identifier for the stone
- * @param {string} props.name - Name of the stone
- * @param {Array<string>} props.content - Array of 2-3 words/traits related to the stone
- * @param {string} props.category - Category of the stone (head, heart, body)
- * @param {Object} props.gradientColors - Colors for the stone gradient
- * @param {boolean} props.isSelected - Whether this stone is currently selected
+ * @param {string|number} props.id - Unique identifier for the stone
+ * @param {string} props.content - String content with • separators
+ * @param {boolean} props.selected - Whether this stone is currently selected
  * @param {Function} props.onClick - Click handler function
- * @param {number} [props.tabIndex] - Optional tabIndex for accessibility
+ * @param {number} props.stoneIndex - Index of the stone within its set
+ * @param {Object} props.position - Position when placed on foundation {x, y}
+ * @param {boolean} props.isPlaced - Whether this stone is placed on the foundation
+ * @param {number} props.setIndex - Index of the stone set
+ * @param {string} props.category - Category of the stone (head, heart, body)
  */
 const Stone = ({
   id,
-  name,
   content,
-  category,
-  gradientColors,
-  isSelected,
+  name,
+  selected,
   onClick,
+  stoneIndex,
+  position,
+  isPlaced = false,
+  setIndex = 0,
+  category,
   tabIndex
 }) => {
-  // Prepare styles for the stone
-  const stoneStyle = {
-    background: `linear-gradient(135deg, ${gradientColors.from}, ${gradientColors.to})`,
-    color: 'white'
-  };
+  // Get gradient for this stone
+  const background = getStoneGradient(setIndex, stoneIndex);
   
-  // Prepare class name
-  const className = `stone ${isSelected ? 'selected' : ''}`;
+  // Parse content if it's a string with separators
+  const contentItems = typeof content === 'string' 
+    ? content.split('•').filter(line => line.trim()).map(s => s.trim())
+    : Array.isArray(content) ? content : [];
   
   return (
-    <div
-      className={className}
-      style={stoneStyle}
-      onClick={onClick}
-      tabIndex={tabIndex || 0}
+    <motion.div 
+      className={`stone ${selected ? 'selected' : ''} ${isPlaced ? 'placed' : ''}`}
+      onClick={() => !isPlaced && onClick(stoneIndex)}
+      style={{ 
+        background,
+        ...(isPlaced ? {
+          position: 'absolute',
+          left: `${position.x}%`,
+          top: `${position.y}%`,
+          transform: 'translate(-50%, -50%)'
+        } : {})
+      }}
+      initial={isPlaced ? { scale: 0, opacity: 0 } : { scale: 1 }}
+      animate={isPlaced ? { 
+        scale: 0.5, // Smaller when placed
+        opacity: 1 
+      } : { 
+        scale: selected ? 1.05 : 1,
+      }}
+      transition={{
+        type: 'spring',
+        stiffness: 500,
+        damping: 30,
+        duration: 0.6
+      }}
       role="button"
-      aria-pressed={isSelected}
+      aria-pressed={selected}
+      tabIndex={tabIndex || 0}
       data-id={id}
       data-category={category}
+      data-set-index={setIndex}
+      data-stone-index={stoneIndex}
     >
-      <div className="stone-name">{name}</div>
+      {name && <div className="stone-name">{name}</div>}
+      
       <div className="stone-content">
-        {content.map((trait, idx) => (
-          <span key={idx}>{trait}</span>
+        {contentItems.map((line, index) => (
+          <div key={index} className="stone-line">{line}</div>
         ))}
       </div>
-    </div>
+      
+      {selected && !isPlaced && <div className="stone-checkmark">✓</div>}
+    </motion.div>
   );
 };
 
 /**
  * Foundation Stone component - Used when a stone is placed on the foundation
- * Has smaller dimensions and position on the circle
+ * Implemented as a specialized version of the Stone component
  */
 export const FoundationStone = ({
   id,
   name,
+  content,
   category,
-  gradientColors,
+  setIndex = 0,
+  stoneIndex = 0,
   position,
   isAnimating
 }) => {
-  // Calculate position on the circle
-  const style = {
-    background: `linear-gradient(135deg, ${gradientColors.from}, ${gradientColors.to})`,
-    color: 'white',
-    left: `${position.x}px`,
-    top: `${position.y}px`
-  };
-  
-  const className = `foundation-stone ${isAnimating ? 'animated' : ''}`;
-  
   return (
-    <div
-      className={className}
-      style={style}
-      data-id={id}
-      data-category={category}
-    >
-      <div className="stone-name">{name}</div>
-    </div>
+    <Stone
+      id={id}
+      name={name}
+      content={content}
+      category={category}
+      setIndex={setIndex}
+      stoneIndex={stoneIndex}
+      position={{
+        x: (position.x / 320) * 100, // Convert from px to percentage
+        y: (position.y / 320) * 100
+      }}
+      selected={true}
+      isPlaced={true}
+      onClick={() => {}} // No click handler needed for placed stones
+    />
   );
 };
 

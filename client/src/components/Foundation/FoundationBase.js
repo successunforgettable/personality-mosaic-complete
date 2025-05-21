@@ -8,12 +8,14 @@ import './FoundationBase.css';
  * @param {Object} props
  * @param {Array} props.selectedStones - Array of selected stones to display
  * @param {boolean} props.isAnimating - Whether to show animation for the most recently added stone
- * @param {number} props.lastSelectedStoneId - ID of the most recently selected stone (for animation)
+ * @param {string|number} props.lastSelectedStoneId - ID of the most recently selected stone (for animation)
+ * @param {number} props.setIndex - Current stone set index
  */
 const FoundationBase = ({ 
   selectedStones = [], 
   isAnimating = false, 
-  lastSelectedStoneId 
+  lastSelectedStoneId,
+  setIndex = 0
 }) => {
   // Function to calculate position on the circle
   const calculatePosition = (index, total) => {
@@ -50,10 +52,12 @@ const FoundationBase = ({
           <div className="foundation-stone-container">
             {selectedStones.map((stone, index) => (
               <FoundationStone
-                key={stone.id}
-                id={stone.id}
+                key={stone.id || `stone-${index}`}
+                id={stone.id || `stone-${index}`}
                 name={stone.name}
                 category={stone.category}
+                setIndex={stone.setIndex || setIndex}
+                stoneIndex={stone.stoneIndex !== undefined ? stone.stoneIndex : index}
                 gradientColors={stone.gradientColors}
                 position={calculatePosition(index, selectedStones.length)}
                 isAnimating={isAnimating && stone.id === lastSelectedStoneId}

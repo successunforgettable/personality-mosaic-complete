@@ -1,106 +1,166 @@
+export const STONE_SETS = [
+  // Set 1 (Head vs. Heart vs. Body)
+  [
+    "THINKING • ANALYSIS • LOGIC",
+    "FEELING • EMOTION • CONNECTION",
+    "ACTION • INSTINCT • PHYSICALITY"
+  ],
+  
+  // Set 2 (Fear vs. Shame vs. Anger)
+  [
+    "PREPARATION • CERTAINTY • SECURITY",
+    "AUTHENTICITY • IMAGE • RECOGNITION",
+    "JUSTICE • CONTROL • STRENGTH"
+  ],
+  
+  // Set 3 (Energy Direction)
+  [
+    "REFLECTION • DEPTH • PRIVACY",
+    "ACHIEVEMENT • INFLUENCE • IMPACT",
+    "STRUCTURE • SUPPORT • HARMONY"
+  ],
+  
+  // Set 4 (Social Approach)
+  [
+    "OBJECTIVITY • PERSPECTIVE • SPACE",
+    "CLOSENESS • INTIMACY • BONDING",
+    "INDEPENDENCE • SELF-RELIANCE • FREEDOM"
+  ],
+  
+  // Set 5 (Processing Style)
+  [
+    "SYSTEMS • CONCEPTS • IDEAS",
+    "EXPRESSION • MOOD • FEELING",
+    "RESULTS • EFFICIENCY • UTILITY"
+  ],
+  
+  // Set 6 (Stress Reaction)
+  [
+    "VIGILANCE • ANALYSIS • FORESIGHT",
+    "RECOGNITION • IDENTITY • UNIQUENESS",
+    "AUTHORITY • POWER • DIRECTION"
+  ],
+  
+  // Set 7 (Conflict Style)
+  [
+    "PEACE • MEDIATION • COMPROMISE",
+    "SUPPORT • FLEXIBILITY • ADAPTATION",
+    "DIRECTNESS • CHALLENGE • HONESTY"
+  ],
+  
+  // Set 8 (Success Definition)
+  [
+    "ACCURACY • PRINCIPLES • IMPROVEMENT",
+    "CONNECTION • ACKNOWLEDGMENT • APPRECIATION",
+    "MASTERY • ACHIEVEMENT • CAPABILITY"
+  ],
+  
+  // Set 9 (Relationship Priority)
+  [
+    "AUTONOMY • SELF-SUFFICIENCY • SPACE",
+    "MUTUALITY • SHARING • RECIPROCITY",
+    "LEADERSHIP • MENTORSHIP • DIRECTION"
+  ]
+];
+
+export const STONE_COLORS = {
+  0: { // Set 1 - Head/Heart/Body
+    0: { primary: '#60a5fa', secondary: '#3b82f6' }, // Head - Blue
+    1: { primary: '#f87171', secondary: '#ef4444' }, // Heart - Red
+    2: { primary: '#4ade80', secondary: '#22c55e' }  // Body - Green
+  },
+  1: { // Set 2 - Fear/Shame/Anger
+    0: { primary: '#a78bfa', secondary: '#8b5cf6' }, // Fear - Purple
+    1: { primary: '#fbbf24', secondary: '#f59e0b' }, // Shame - Yellow
+    2: { primary: '#fb7185', secondary: '#e11d48' }  // Anger - Red
+  },
+  2: { // Set 3 - Energy Direction
+    0: { primary: '#0ea5e9', secondary: '#0284c7' }, // Withdrawn - Light Blue
+    1: { primary: '#f43f5e', secondary: '#be123c' }, // Assertive - Pink
+    2: { primary: '#14b8a6', secondary: '#0f766e' }  // Compliant - Teal
+  },
+  3: { // Set 4 - Social Approach
+    0: { primary: '#818cf8', secondary: '#4f46e5' }, // Detached - Indigo
+    1: { primary: '#e879f9', secondary: '#c026d3' }, // Attachment - Fuchsia
+    2: { primary: '#2dd4bf', secondary: '#0d9488' }  // Autonomy - Teal
+  },
+  4: { // Set 5 - Processing Style
+    0: { primary: '#6366f1', secondary: '#4338ca' }, // Conceptual - Indigo
+    1: { primary: '#ec4899', secondary: '#db2777' }, // Emotional - Pink
+    2: { primary: '#10b981', secondary: '#059669' }  // Practical - Emerald
+  },
+  5: { // Set 6 - Stress Reaction
+    0: { primary: '#8b5cf6', secondary: '#7c3aed' }, // Overthinking - Violet
+    1: { primary: '#f472b6', secondary: '#db2777' }, // Image-focus - Pink
+    2: { primary: '#f97316', secondary: '#ea580c' }  // Control-seeking - Orange
+  },
+  6: { // Set 7 - Conflict Style
+    0: { primary: '#06b6d4', secondary: '#0891b2' }, // Avoiding - Cyan
+    1: { primary: '#64748b', secondary: '#475569' }, // Accommodating - Slate
+    2: { primary: '#ef4444', secondary: '#dc2626' }  // Confronting - Red
+  },
+  7: { // Set 8 - Success Definition
+    0: { primary: '#3b82f6', secondary: '#2563eb' }, // Correctness - Blue
+    1: { primary: '#f472b6', secondary: '#db2777' }, // Approval - Pink
+    2: { primary: '#f97316', secondary: '#ea580c' }  // Autonomy - Orange
+  },
+  8: { // Set 9 - Relationship Priority
+    0: { primary: '#8b5cf6', secondary: '#7c3aed' }, // Independence - Violet
+    1: { primary: '#84cc16', secondary: '#65a30d' }, // Interdependence - Lime
+    2: { primary: '#f59e0b', secondary: '#d97706' }  // Guidance - Amber
+  }
+};
+
+export const getStoneGradient = (setIndex, stoneIndex) => {
+  // Ensure the indices are numbers
+  const setIdx = Number(setIndex);
+  const stoneIdx = Number(stoneIndex);
+  
+  // Get colors with fallbacks
+  const setColors = STONE_COLORS[setIdx] || STONE_COLORS[0];
+  const colors = setColors[stoneIdx] || { primary: '#94a3b8', secondary: '#64748b' };
+  
+  return `linear-gradient(135deg, ${colors.secondary} 0%, ${colors.primary} 100%)`;
+};
+
+// For backward compatibility with existing components
 export const STONE_DATA = {
   head: [
     {
       id: 1,
-      name: 'Analytical',
+      name: 'Thinking',
       category: 'head',
-      content: ['Logical', 'Rational', 'Detail-oriented'],
+      content: STONE_SETS[0][0].split('•').map(s => s.trim()),
       shapeVariant: 'hexagon',
       gradientColors: {
-        from: '#3b82f6',
-        to: '#1e40af'
-      }
-    },
-    {
-      id: 2,
-      name: 'Thoughtful',
-      category: 'head',
-      content: ['Contemplative', 'Reflective', 'Introspective'],
-      shapeVariant: 'hexagon',
-      gradientColors: {
-        from: '#60a5fa',
-        to: '#2563eb'
-      }
-    },
-    {
-      id: 3,
-      name: 'Strategic',
-      category: 'head',
-      content: ['Planful', 'Visionary', 'Forward-thinking'],
-      shapeVariant: 'hexagon',
-      gradientColors: {
-        from: '#93c5fd',
-        to: '#3b82f6'
+        from: STONE_COLORS[0][0].primary,
+        to: STONE_COLORS[0][0].secondary
       }
     }
   ],
   heart: [
     {
-      id: 4,
-      name: 'Empathetic',
+      id: 2,
+      name: 'Feeling',
       category: 'heart',
-      content: ['Compassionate', 'Understanding', 'Sensitive'],
+      content: STONE_SETS[0][1].split('•').map(s => s.trim()),
       shapeVariant: 'hexagon',
       gradientColors: {
-        from: '#ef4444',
-        to: '#b91c1c'
-      }
-    },
-    {
-      id: 5,
-      name: 'Passionate',
-      category: 'heart',
-      content: ['Enthusiastic', 'Expressive', 'Emotional'],
-      shapeVariant: 'hexagon',
-      gradientColors: {
-        from: '#f87171',
-        to: '#dc2626'
-      }
-    },
-    {
-      id: 6,
-      name: 'Supportive',
-      category: 'heart',
-      content: ['Encouraging', 'Nurturing', 'Caring'],
-      shapeVariant: 'hexagon',
-      gradientColors: {
-        from: '#fca5a5',
-        to: '#ef4444'
+        from: STONE_COLORS[0][1].primary,
+        to: STONE_COLORS[0][1].secondary
       }
     }
   ],
   body: [
     {
-      id: 7,
-      name: 'Action-oriented',
+      id: 3,
+      name: 'Action',
       category: 'body',
-      content: ['Decisive', 'Proactive', 'Energetic'],
+      content: STONE_SETS[0][2].split('•').map(s => s.trim()),
       shapeVariant: 'hexagon',
       gradientColors: {
-        from: '#10b981',
-        to: '#047857'
-      }
-    },
-    {
-      id: 8,
-      name: 'Grounded',
-      category: 'body',
-      content: ['Practical', 'Stable', 'Reliable'],
-      shapeVariant: 'hexagon',
-      gradientColors: {
-        from: '#34d399',
-        to: '#059669'
-      }
-    },
-    {
-      id: 9,
-      name: 'Adaptable',
-      category: 'body',
-      content: ['Flexible', 'Resilient', 'Responsive'],
-      shapeVariant: 'hexagon',
-      gradientColors: {
-        from: '#6ee7b7',
-        to: '#10b981'
+        from: STONE_COLORS[0][2].primary,
+        to: STONE_COLORS[0][2].secondary
       }
     }
   ]

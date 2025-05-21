@@ -10,8 +10,13 @@ import './FoundationExperience.css';
  * @param {Object} props
  * @param {Function} props.onComplete - Callback when foundation selection is complete
  * @param {Array} props.initialSelections - Optional initial selections (for resuming)
+ * @param {number} props.setIndex - Stone set index to use (default: 0)
  */
-const FoundationExperience = ({ onComplete, initialSelections = [] }) => {
+const FoundationExperience = ({ 
+  onComplete, 
+  initialSelections = [],
+  setIndex = 0 
+}) => {
   // State for selected stones and animation
   const [selectedStones, setSelectedStones] = useState(initialSelections);
   const [isAnimating, setIsAnimating] = useState(false);
@@ -39,11 +44,11 @@ const FoundationExperience = ({ onComplete, initialSelections = [] }) => {
     }
   };
   
-  // Check if selection is complete (one stone from each category)
+  // Check if selection is complete (all stone positions filled)
   const isSelectionComplete = () => {
-    const categories = ['head', 'heart', 'body'];
-    return categories.every(category => 
-      selectedStones.some(stone => stone.category === category)
+    // For the new data structure, we need one stone from each category (0, 1, 2)
+    return [0, 1, 2].every(stoneIndex => 
+      selectedStones.some(stone => stone.stoneIndex === stoneIndex)
     );
   };
   
@@ -69,6 +74,7 @@ const FoundationExperience = ({ onComplete, initialSelections = [] }) => {
           <StoneSet 
             selectedStones={selectedStones}
             onStoneSelect={handleStoneSelect}
+            setIndex={setIndex}
           />
         </div>
         
@@ -78,6 +84,7 @@ const FoundationExperience = ({ onComplete, initialSelections = [] }) => {
             selectedStones={selectedStones}
             isAnimating={isAnimating}
             lastSelectedStoneId={lastSelectedStoneId}
+            setIndex={setIndex}
           />
         </div>
       </div>

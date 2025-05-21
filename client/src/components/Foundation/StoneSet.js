@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Stone from './Stone';
-import { STONE_DATA } from './stoneData';
+import { STONE_SETS } from './stoneData';
 import './StoneSet.css';
 
 /**
@@ -10,51 +10,76 @@ import './StoneSet.css';
  * @param {Object} props
  * @param {Array} props.selectedStones - Array of currently selected stones
  * @param {Function} props.onStoneSelect - Callback when a stone is selected
+ * @param {number} props.setIndex - Index of the stone set to display (default: 0 for head/heart/body)
  */
-const StoneSet = ({ selectedStones = [], onStoneSelect }) => {
-  // Current active category
-  const [activeCategory, setActiveCategory] = useState('head');
+const StoneSet = ({ 
+  selectedStones = [], 
+  onStoneSelect,
+  setIndex = 0 
+}) => {
+  // Current active category index (0 = head, 1 = heart, 2 = body)
+  const [activeCategoryIndex, setActiveCategoryIndex] = useState(0);
   
-  // All available categories
-  const categories = ['head', 'heart', 'body'];
-  
-  // Get stones for the active category
-  const stones = STONE_DATA[activeCategory] || [];
+  // Category names/centers
+  const categories = [
+    { index: 0, name: 'head', label: 'Head Center' },
+    { index: 1, name: 'heart', label: 'Heart Center' },
+    { index: 2, name: 'body', label: 'Body Center' }
+  ];
   
   // Check if a stone is selected
-  const isStoneSelected = (stoneId) => {
-    return selectedStones.some(stone => stone.id === stoneId);
+  const isStoneSelected = (setIdx, stoneIdx) => {
+    return selectedStones.some(stone => 
+      stone.setIndex === setIdx && stone.stoneIndex === stoneIdx
+    );
   };
   
   // Handle stone click
-  const handleStoneClick = (stone) => {
-    // Check if this stone is already selected
-    const isAlreadySelected = isStoneSelected(stone.id);
+  const handleStoneClick = (stoneIdx) => {
+    // Create stone object with content from STONE_SETS
+    const stoneContent = STONE_SETS[setIndex]?.[stoneIdx];
+    if (!stoneContent) return;
     
-    // If already selected, deselect it
+    const newStone = {
+      id: `${setIndex}-${stoneIdx}`,
+      setIndex: setIndex,
+      stoneIndex: stoneIdx,
+      name: stoneContent.split('•')[0].trim(),
+      content: stoneContent,
+      category: categories.find(c => c.index === stoneIdx)?.name || 'unknown'
+    };
+    
+    // Check if this stone is already selected
+    const isAlreadySelected = isStoneSelected(setIndex, stoneIdx);
+    
     if (isAlreadySelected) {
-      onStoneSelect(selectedStones.filter(s => s.id !== stone.id));
+      // Deselect the stone
+      onStoneSelect(selectedStones.filter(stone => 
+        !(stone.setIndex === setIndex && stone.stoneIndex === stoneIdx)
+      ));
       return;
     }
     
-    // Check if another stone from the same category is already selected
-    const existingStoneFromCategory = selectedStones.find(s => s.category === stone.category);
+    // Check if another stone from the same position is already selected
+    const existingStoneAtSamePosition = selectedStones.find(stone => 
+      stone.stoneIndex === stoneIdx
+    );
     
-    if (existingStoneFromCategory) {
-      // Replace the existing stone from this category
+    if (existingStoneAtSamePosition) {
+      // Replace the existing stone in this position
       onStoneSelect([
-        ...selectedStones.filter(s => s.category !== stone.category),
-        stone
+        ...selectedStones.filter(stone => stone.stoneIndex !== stoneIdx),
+        newStone
       ]);
     } else {
       // Add this stone to selections
-      onStoneSelect([...selectedStones, stone]);
+      onStoneSelect([...selectedStones, newStone]);
     }
   };
   
   // Calculate selection count and total required
   const selectionCount = selectedStones.length;
-  const totalRequired = 3; // One from each category
+  const totalRequired = 3; // One stone for each center
   
   return (
     <div className="stone-set">
@@ -66,29 +91,30 @@ const StoneSet = ({ selectedStones = [], onStoneSelect }) => {
       <div className="stone-set-header">
         {categories.map(category => (
           <button
-            key={category}
-            className={`category-tab ${category} ${activeCategory === category ? 'active' : ''}`}
-            onClick={() => setActiveCategory(category)}
+            key={category.index}
+            className={`category-tab ${category.name} ${activeCategoryIndex === category.index ? 'active' : ''}`}
+            onClick={() => setActiveCategoryIndex(category.index)}
           >
-            {category.charAt(0).toUpperCase() + category.slice(1)} Center
+            {category.label}
           </button>
         ))}
       </div>
       
       {/* Stone container */}
       <div className="stone-container">
-        {stones.map(stone => (
+        {STONE_SETS[setIndex] && STONE_SETS[setIndex][activeCategoryIndex] && (
           <Stone
-            key={stone.id}
-            id={stone.id}
-            name={stone.name}
-            content={stone.content}
-            category={stone.category}
-            gradientColors={stone.gradientColors}
-            isSelected={isStoneSelected(stone.id)}
-            onClick={() => handleStoneClick(stone)}
+            key={`${setIndex}-${activeCategoryIndex}`}
+            id={`${setIndex}-${activeCategoryIndex}`}
+            content={STONE_SETS[setIndex][activeCategoryIndex]}
+            name={STONE_SETS[setIndex][activeCategoryIndex].split('•')[0].trim()}
+            category={categories.find(c => c.index === activeCategoryIndex)?.name}
+            stoneIndex={activeCategoryIndex}
+            setIndex={setIndex}
+            selected={isStoneSelected(setIndex, activeCategoryIndex)}
+            onClick={() => handleStoneClick(activeCategoryIndex)}
           />
-        ))}
+        )}
       </div>
     </div>
   );
