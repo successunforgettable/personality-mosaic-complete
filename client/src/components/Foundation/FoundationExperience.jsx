@@ -61,21 +61,9 @@ const FoundationExperience = ({ onComplete }) => {
     // Update the placed stones state
     setPlacedStones(newPlacedStones);
     
-    // Automatically proceed to next set after a short delay
-    setTimeout(() => {
-      if (currentSetIndex < STONE_SETS.length - 1) {
-        // Go to next set
-        const nextSetIndex = currentSetIndex + 1;
-        setCurrentSetIndex(nextSetIndex);
-        
-        // Track visited sets for validation
-        if (!visitedSets.includes(nextSetIndex)) {
-          setVisitedSets([...visitedSets, nextSetIndex]);
-        }
-      } 
-      // Note: We're no longer auto-completing when reaching the last set
-      // This allows users to review their choices before finalizing
-    }, 800);
+    // Update UI to show selection immediately
+    // Note: We're not automatically advancing to next set anymore
+    // This allows users to review their choices and continue at their own pace
   };
   
   // Update current stones when set changes and check for existing selections
