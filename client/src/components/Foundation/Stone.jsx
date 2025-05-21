@@ -15,7 +15,8 @@ const Stone = ({
   gradientColors = { from: '#8b5cf6', to: '#6366f1' }, // Default purple gradient
   onClick = () => {},
   size = 'normal', // normal or small
-  tabIndex 
+  tabIndex,
+  name
 }) => {
   // Generate a unique ID for SVG gradient
   const gradientId = `stone-gradient-${id}`;
@@ -44,6 +45,7 @@ const Stone = ({
       }}
       role="button"
       aria-pressed={isSelected}
+      data-testid={`stone-${id}`}
     >
       {/* Checkmark for selected stone */}
       {isSelected && !isPlaced && (
