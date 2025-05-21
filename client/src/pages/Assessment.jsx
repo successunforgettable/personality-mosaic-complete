@@ -1,59 +1,16 @@
 import React, { useState } from 'react';
+import { useAssessment } from '@/context/AssessmentContext';
 
 /**
- * Basic Assessment Component - Simple implementation of the assessment phases
+ * Standalone Assessment Component - Direct implementation of Task #19
+ * 
+ * This is a complete implementation of the Foundation Phase
+ * following the exact specifications in tech_spec_v2.md and content_spec.md
  */
-const BasicAssessment = () => {
-  // Current phase (1-4)
-  const [phase, setPhase] = useState(1);
+const Assessment = () => {
+  const { setPhase } = useAssessment();
   
-  // Render current phase
-  const renderPhase = () => {
-    switch (phase) {
-      case 1:
-        return <FoundationPhase onComplete={() => setPhase(2)} />;
-      case 2:
-        return <div className="phase">
-          <h2>Building Blocks Phase</h2>
-          <p>This phase is under development.</p>
-          <button onClick={() => setPhase(3)}>Continue to Next Phase</button>
-        </div>;
-      case 3:
-        return <div className="phase">
-          <h2>Color Palette Phase</h2>
-          <p>This phase is under development.</p>
-          <button onClick={() => setPhase(4)}>Continue to Next Phase</button>
-        </div>;
-      case 4:
-        return <div className="phase">
-          <h2>Results</h2>
-          <p>Assessment complete!</p>
-          <button onClick={() => setPhase(1)}>Start Over</button>
-        </div>;
-      default:
-        return <div>Invalid phase</div>;
-    }
-  };
-  
-  return (
-    <div className="assessment-container">
-      <h1>Personality Mosaic Assessment</h1>
-      <div className="phase-indicator">
-        <div className={`phase-dot ${phase >= 1 ? 'active' : ''}`}>1</div>
-        <div className={`phase-dot ${phase >= 2 ? 'active' : ''}`}>2</div>
-        <div className={`phase-dot ${phase >= 3 ? 'active' : ''}`}>3</div>
-        <div className={`phase-dot ${phase >= 4 ? 'active' : ''}`}>4</div>
-      </div>
-      {renderPhase()}
-    </div>
-  );
-};
-
-/**
- * Foundation Phase - First phase of the assessment
- */
-const FoundationPhase = ({ onComplete }) => {
-  // Stone data arranged by centers
+  // Stone sets organized by centers
   const stoneData = {
     head: [
       ["Analytical", "Observant", "Investigative"],
@@ -130,6 +87,11 @@ const FoundationPhase = ({ onComplete }) => {
     }
   };
   
+  // Complete foundation phase
+  const completeFoundation = () => {
+    setPhase(2);
+  };
+  
   // Check if all stones are selected
   const isComplete = () => totalSelected() === 9;
   
@@ -165,9 +127,9 @@ const FoundationPhase = ({ onComplete }) => {
   };
   
   // Get positions for stones on the foundation circle
-  const getStonePosition = (centerIndex, setIndex) => {
+  const getStonePosition = (centerIdx, setIdx) => {
     // Position index (0-8)
-    const posIndex = centerIndex * 3 + setIndex;
+    const posIndex = centerIdx * 3 + setIdx;
     // Calculate angle (start from top)
     const angle = (posIndex / 9) * 2 * Math.PI - Math.PI/2;
     // Calculate position (center at 50%, 50%, radius 42%)
@@ -177,125 +139,96 @@ const FoundationPhase = ({ onComplete }) => {
     return { x, y };
   };
   
-  // Stone components for current set
-  const stoneElements = currentStoneSet.map((stoneName, idx) => {
-    const isSelected = selectedStones[currentCenter][setIndex] === stoneName;
-    const colors = getCenterColor(currentCenter);
-    
-    return (
-      <div 
-        key={idx}
-        className="stone"
-        style={{
-          width: "160px",
-          height: "160px",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          cursor: "pointer",
-          backgroundColor: isSelected ? colors.dark : colors.light,
-          color: isSelected ? "white" : colors.text,
-          fontWeight: "bold",
-          borderRadius: "8px",
-          margin: "10px",
-          transition: "all 0.2s ease",
-          transform: isSelected ? "scale(1.05)" : "scale(1)",
-          boxShadow: isSelected ? "0 4px 6px rgba(0, 0, 0, 0.1)" : "none",
-          clipPath: "polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%)"
-        }}
-        onClick={() => selectStone(stoneName)}
-      >
-        {stoneName}
-      </div>
-    );
-  });
-  
-  // Foundation visualization with placed stones
-  const foundationVisualization = (
-    <div 
-      className="foundation-circle"
-      style={{
-        width: "300px",
-        height: "300px",
-        borderRadius: "50%",
-        backgroundColor: "#f8fafc",
-        border: "2px solid #e2e8f0",
-        position: "relative",
-        margin: "0 auto 30px"
-      }}
-    >
-      <div
-        style={{
-          position: "absolute",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
-          fontSize: "16px",
-          fontWeight: "bold",
-          color: "#64748b"
-        }}
-      >
-        Foundation
-      </div>
-      
-      {/* Render selected stones */}
-      {centers.map((center, centerIdx) => 
-        selectedStones[center].map((stoneName, setIdx) => {
-          if (!stoneName) return null;
-          
-          const { x, y } = getStonePosition(centerIdx, setIdx);
-          const colors = getCenterColor(center);
-          
-          return (
-            <div
-              key={`${center}-${setIdx}`}
-              style={{
-                position: "absolute",
-                left: `${x}%`,
-                top: `${y}%`,
-                transform: "translate(-50%, -50%)",
-                width: "60px",
-                height: "60px",
-                backgroundColor: colors.dark,
-                color: "white",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                fontSize: "9px",
-                textAlign: "center",
-                fontWeight: "bold",
-                borderRadius: "4px",
-                clipPath: "polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%)"
-              }}
-            >
-              {stoneName}
-            </div>
-          );
-        })
-      )}
-    </div>
-  );
-  
   return (
     <div style={{ maxWidth: "800px", margin: "0 auto", padding: "20px" }}>
-      <h2 style={{ textAlign: "center", marginBottom: "20px" }}>
+      <h1 style={{ textAlign: "center", marginBottom: "10px", color: "#1e293b" }}>
+        Personality Mosaic Assessment
+      </h1>
+      
+      <h2 style={{ textAlign: "center", marginBottom: "20px", color: "#334155" }}>
         Choose Your Foundation Stones
       </h2>
       
       {/* Center info and progress */}
-      <div style={{ textAlign: "center", marginBottom: "15px" }}>
-        <h3 style={{ color: getCenterColor(currentCenter).text }}>
+      <div style={{ textAlign: "center", marginBottom: "15px", background: "#f8fafc", padding: "10px", borderRadius: "8px" }}>
+        <h3 style={{ color: getCenterColor(currentCenter).text, margin: "0 0 5px 0" }}>
           {getCenterDisplayName(currentCenter)} Center
         </h3>
-        <p>Set {setIndex + 1} of 3</p>
-        <p>{totalSelected()} of 9 stones selected</p>
+        <p style={{ margin: "0 0 5px 0" }}>Set {setIndex + 1} of 3</p>
+        <p style={{ margin: "0", fontWeight: "500" }}>{totalSelected()} of 9 stones selected</p>
       </div>
       
       {/* Foundation visualization */}
-      {foundationVisualization}
+      <div 
+        style={{
+          width: "300px",
+          height: "300px",
+          borderRadius: "50%",
+          backgroundColor: "#f8fafc",
+          border: "2px solid #e2e8f0",
+          position: "relative",
+          margin: "0 auto 30px"
+        }}
+      >
+        <div
+          style={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            fontSize: "16px",
+            fontWeight: "bold",
+            color: "#64748b"
+          }}
+        >
+          Foundation
+        </div>
+        
+        {/* Render selected stones */}
+        {centers.map((center, centerIdx) => 
+          selectedStones[center].map((stoneName, setIdx) => {
+            if (!stoneName) return null;
+            
+            const { x, y } = getStonePosition(centerIdx, setIdx);
+            const colors = getCenterColor(center);
+            
+            return (
+              <div
+                key={`${center}-${setIdx}`}
+                style={{
+                  position: "absolute",
+                  left: `${x}%`,
+                  top: `${y}%`,
+                  transform: "translate(-50%, -50%)",
+                  width: "60px",
+                  height: "60px",
+                  backgroundColor: colors.dark,
+                  color: "white",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  fontSize: "9px",
+                  textAlign: "center",
+                  padding: "4px",
+                  fontWeight: "bold",
+                  clipPath: "polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%)"
+                }}
+              >
+                {stoneName}
+              </div>
+            );
+          })
+        )}
+      </div>
       
       {/* Stone selection area */}
-      <div style={{ marginBottom: "30px" }}>
+      <div style={{ 
+        marginBottom: "30px",
+        background: "white",
+        padding: "20px",
+        borderRadius: "8px",
+        boxShadow: "0 1px 3px rgba(0,0,0,0.1)"
+      }}>
         <div 
           style={{ 
             display: "flex", 
@@ -304,7 +237,35 @@ const FoundationPhase = ({ onComplete }) => {
             flexWrap: "wrap"
           }}
         >
-          {stoneElements}
+          {currentStoneSet.map((stoneName, idx) => {
+            const isSelected = selectedStones[currentCenter][setIndex] === stoneName;
+            const colors = getCenterColor(currentCenter);
+            
+            return (
+              <div 
+                key={idx}
+                onClick={() => selectStone(stoneName)}
+                style={{
+                  width: "160px",
+                  height: "160px",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  cursor: "pointer",
+                  backgroundColor: isSelected ? colors.dark : colors.light,
+                  color: isSelected ? "white" : colors.text,
+                  fontWeight: "bold",
+                  margin: "10px",
+                  transition: "all 0.2s ease",
+                  transform: isSelected ? "scale(1.05)" : "scale(1)",
+                  boxShadow: isSelected ? "0 4px 6px rgba(0, 0, 0, 0.1)" : "none",
+                  clipPath: "polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%)"
+                }}
+              >
+                {stoneName}
+              </div>
+            );
+          })}
         </div>
       </div>
       
@@ -342,7 +303,7 @@ const FoundationPhase = ({ onComplete }) => {
         
         {isComplete() && (
           <button
-            onClick={onComplete}
+            onClick={completeFoundation}
             style={{
               padding: "10px 20px",
               backgroundColor: "#3b82f6",
@@ -361,4 +322,4 @@ const FoundationPhase = ({ onComplete }) => {
   );
 };
 
-export default BasicAssessment;
+export default Assessment;

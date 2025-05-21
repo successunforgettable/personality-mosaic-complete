@@ -41,12 +41,12 @@ function Router() {
           <Route path="/" component={Home} />
           <Route path="/assessment">
             <ProtectedRoute allowGuest={true}>
-              <BasicAssessment />
+              <Assessment />
             </ProtectedRoute>
           </Route>
-          <Route path="/old-assessment">
+          <Route path="/basic-assessment">
             <ProtectedRoute allowGuest={true}>
-              <Assessment />
+              <BasicAssessment />
             </ProtectedRoute>
           </Route>
           <Route path="/signup" component={DirectRegisterForm} />
