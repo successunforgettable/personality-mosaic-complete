@@ -4,10 +4,6 @@ import './FoundationBase.css';
 
 /**
  * FoundationBase Component - Displays the circular foundation with positioned stones
- * 
- * @param {Object} props
- * @param {Array} props.placedStones - Array of stone positions on the foundation
- * @param {Array} props.stoneContents - Array of all stone content data
  */
 const FoundationBase = ({ placedStones = [], stoneContents = [] }) => {
   // Calculate position for each stone based on its index
@@ -54,34 +50,16 @@ const FoundationBase = ({ placedStones = [], stoneContents = [] }) => {
           const position = getStonePosition(stone.position);
           const stoneContent = stoneContents[(stone.position * 3) + stone.stoneIndex];
           
-          // Determine category based on stoneIndex (0=head, 1=heart, 2=body)
-          let category;
-          if (stone.stoneIndex === 0) {
-            category = 'head';
-          } else if (stone.stoneIndex === 1) {
-            category = 'heart';
-          } else {
-            category = 'body';
-          }
-          
-          // Get appropriate shape based on category
-          const shapeVariant = category === 'head' ? 'pentagon' : category === 'heart' ? 'hexagon' : 'octagon';
-          
-          const stoneStyle = {
-            left: `${position.x}%`,
-            top: `${position.y}%`,
-            transform: 'translate(-50%, -50%)',
-          };
-          
           return (
-            <div key={index} className="positioned-stone" style={stoneStyle}>
+            <div key={index}>
               <Stone
-                id={index}
                 content={stoneContent}
-                category={category}
-                shapeVariant={shapeVariant}
-                isSelected={true}
+                selected={true}
                 onClick={() => {}} // No action for placed stones
+                stoneIndex={stone.stoneIndex}
+                setIndex={stone.position}
+                isPlaced={true}
+                position={position}
               />
             </div>
           );
