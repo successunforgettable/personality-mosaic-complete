@@ -35,10 +35,14 @@ const FoundationExperience = ({ onComplete }) => {
       // Add to selections array
       setStoneSelections([...stoneSelections, stoneIndex]);
       
-      // Add to placed stones (showing on foundation)
+      // Add to placed stones (showing on foundation) - include setIndex!
       setPlacedStones([
         ...placedStones, 
-        { stoneIndex, position: currentSetIndex }
+        { 
+          stoneIndex, 
+          position: currentSetIndex,
+          setIndex: currentSetIndex // Store the set index for correct coloring
+        }
       ]);
       
       // If not the last set, move to next set
