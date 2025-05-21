@@ -1,167 +1,155 @@
+/**
+ * Stone Data Module for the Foundation Phase
+ * Contains stone definitions, colors, and helper functions
+ */
+
+// Stone set definitions with center-specific content for each stone
 export const STONE_SETS = [
-  // Set 1 (Head vs. Heart vs. Body)
+  // Set 0: Primary stone set (Head, Heart, Body)
   [
-    "THINKING • ANALYSIS • LOGIC",
-    "FEELING • EMOTION • CONNECTION",
-    "ACTION • INSTINCT • PHYSICALITY"
+    // 0: Head center stone
+    'Thinking Center•Analysis & Logic•Strategic Planning',
+    // 1: Heart center stone
+    'Feeling Center•Empathy & Connection•Emotional Intelligence',
+    // 2: Body center stone
+    'Instinctual Center•Action & Energy•Physical Awareness'
   ],
-  
-  // Set 2 (Fear vs. Shame vs. Anger)
+  // Set 1: Alternative stone set (can be used for different user groups)
   [
-    "PREPARATION • CERTAINTY • SECURITY",
-    "AUTHENTICITY • IMAGE • RECOGNITION",
-    "JUSTICE • CONTROL • STRENGTH"
+    // 0: Head center stone
+    'Intellectual Center•Reasoning & Problem Solving•Mental Processing',
+    // 1: Heart center stone
+    'Emotional Center•Relationships & Compassion•Social Awareness',
+    // 2: Body center stone
+    'Physical Center•Momentum & Vitality•Gut Reactions'
   ],
-  
-  // Set 3 (Energy Direction)
+  // Set 2: Advanced stone set (more nuanced descriptions)
   [
-    "REFLECTION • DEPTH • PRIVACY",
-    "ACHIEVEMENT • INFLUENCE • IMPACT",
-    "STRUCTURE • SUPPORT • HARMONY"
-  ],
-  
-  // Set 4 (Social Approach)
-  [
-    "OBJECTIVITY • PERSPECTIVE • SPACE",
-    "CLOSENESS • INTIMACY • BONDING",
-    "INDEPENDENCE • SELF-RELIANCE • FREEDOM"
-  ],
-  
-  // Set 5 (Processing Style)
-  [
-    "SYSTEMS • CONCEPTS • IDEAS",
-    "EXPRESSION • MOOD • FEELING",
-    "RESULTS • EFFICIENCY • UTILITY"
-  ],
-  
-  // Set 6 (Stress Reaction)
-  [
-    "VIGILANCE • ANALYSIS • FORESIGHT",
-    "RECOGNITION • IDENTITY • UNIQUENESS",
-    "AUTHORITY • POWER • DIRECTION"
-  ],
-  
-  // Set 7 (Conflict Style)
-  [
-    "PEACE • MEDIATION • COMPROMISE",
-    "SUPPORT • FLEXIBILITY • ADAPTATION",
-    "DIRECTNESS • CHALLENGE • HONESTY"
-  ],
-  
-  // Set 8 (Success Definition)
-  [
-    "ACCURACY • PRINCIPLES • IMPROVEMENT",
-    "CONNECTION • ACKNOWLEDGMENT • APPRECIATION",
-    "MASTERY • ACHIEVEMENT • CAPABILITY"
-  ],
-  
-  // Set 9 (Relationship Priority)
-  [
-    "AUTONOMY • SELF-SUFFICIENCY • SPACE",
-    "MUTUALITY • SHARING • RECIPROCITY",
-    "LEADERSHIP • MENTORSHIP • DIRECTION"
+    // 0: Head center stone
+    'Mind Center•Analytical Processing•Conceptual Understanding•Strategic Thinking',
+    // 1: Heart center stone
+    'Heart Center•Emotional Intelligence•Relational Connection•Interpersonal Harmony',
+    // 2: Body center stone 
+    'Body Center•Action Intelligence•Physical Awareness•Instinctive Response'
   ]
 ];
 
+// Color definitions for the three centers with gradient variations
 export const STONE_COLORS = {
-  0: { // Set 1 - Head/Heart/Body
-    0: { primary: '#60a5fa', secondary: '#3b82f6' }, // Head - Blue
-    1: { primary: '#f87171', secondary: '#ef4444' }, // Heart - Red
-    2: { primary: '#4ade80', secondary: '#22c55e' }  // Body - Green
+  head: {
+    primary: '#3b82f6',    // Blue base
+    secondary: '#60a5fa',  // Lighter blue
+    gradients: [
+      'linear-gradient(135deg, #3b82f6, #60a5fa)',  // Standard blue gradient
+      'linear-gradient(135deg, #2563eb, #3b82f6)',  // Deeper blue gradient
+      'linear-gradient(135deg, #1d4ed8, #3b82f6)'   // Rich blue gradient
+    ]
   },
-  1: { // Set 2 - Fear/Shame/Anger
-    0: { primary: '#a78bfa', secondary: '#8b5cf6' }, // Fear - Purple
-    1: { primary: '#fbbf24', secondary: '#f59e0b' }, // Shame - Yellow
-    2: { primary: '#fb7185', secondary: '#e11d48' }  // Anger - Red
+  heart: {
+    primary: '#ef4444',    // Red base
+    secondary: '#f87171',  // Lighter red
+    gradients: [
+      'linear-gradient(135deg, #ef4444, #f87171)',  // Standard red gradient
+      'linear-gradient(135deg, #dc2626, #ef4444)',  // Deeper red gradient
+      'linear-gradient(135deg, #b91c1c, #ef4444)'   // Rich red gradient
+    ]
   },
-  2: { // Set 3 - Energy Direction
-    0: { primary: '#0ea5e9', secondary: '#0284c7' }, // Withdrawn - Light Blue
-    1: { primary: '#f43f5e', secondary: '#be123c' }, // Assertive - Pink
-    2: { primary: '#14b8a6', secondary: '#0f766e' }  // Compliant - Teal
-  },
-  3: { // Set 4 - Social Approach
-    0: { primary: '#818cf8', secondary: '#4f46e5' }, // Detached - Indigo
-    1: { primary: '#e879f9', secondary: '#c026d3' }, // Attachment - Fuchsia
-    2: { primary: '#2dd4bf', secondary: '#0d9488' }  // Autonomy - Teal
-  },
-  4: { // Set 5 - Processing Style
-    0: { primary: '#6366f1', secondary: '#4338ca' }, // Conceptual - Indigo
-    1: { primary: '#ec4899', secondary: '#db2777' }, // Emotional - Pink
-    2: { primary: '#10b981', secondary: '#059669' }  // Practical - Emerald
-  },
-  5: { // Set 6 - Stress Reaction
-    0: { primary: '#8b5cf6', secondary: '#7c3aed' }, // Overthinking - Violet
-    1: { primary: '#f472b6', secondary: '#db2777' }, // Image-focus - Pink
-    2: { primary: '#f97316', secondary: '#ea580c' }  // Control-seeking - Orange
-  },
-  6: { // Set 7 - Conflict Style
-    0: { primary: '#06b6d4', secondary: '#0891b2' }, // Avoiding - Cyan
-    1: { primary: '#64748b', secondary: '#475569' }, // Accommodating - Slate
-    2: { primary: '#ef4444', secondary: '#dc2626' }  // Confronting - Red
-  },
-  7: { // Set 8 - Success Definition
-    0: { primary: '#3b82f6', secondary: '#2563eb' }, // Correctness - Blue
-    1: { primary: '#f472b6', secondary: '#db2777' }, // Approval - Pink
-    2: { primary: '#f97316', secondary: '#ea580c' }  // Autonomy - Orange
-  },
-  8: { // Set 9 - Relationship Priority
-    0: { primary: '#8b5cf6', secondary: '#7c3aed' }, // Independence - Violet
-    1: { primary: '#84cc16', secondary: '#65a30d' }, // Interdependence - Lime
-    2: { primary: '#f59e0b', secondary: '#d97706' }  // Guidance - Amber
+  body: {
+    primary: '#10b981',    // Green base
+    secondary: '#34d399',  // Lighter green
+    gradients: [
+      'linear-gradient(135deg, #10b981, #34d399)',  // Standard green gradient
+      'linear-gradient(135deg, #059669, #10b981)',  // Deeper green gradient
+      'linear-gradient(135deg, #047857, #10b981)'   // Rich green gradient
+    ]
   }
 };
 
-export const getStoneGradient = (setIndex, stoneIndex) => {
-  // Ensure the indices are numbers
-  const setIdx = Number(setIndex);
-  const stoneIdx = Number(stoneIndex);
+/**
+ * Get gradient style for a stone based on its set and position
+ * @param {number} setIndex - Stone set index (0-2)
+ * @param {number} stoneIndex - Stone index within the set (0-2)
+ * @returns {string} CSS gradient string
+ */
+export const getStoneGradient = (setIndex = 0, stoneIndex = 0) => {
+  // Map stone index to category
+  const categoryMap = {
+    0: 'head',
+    1: 'heart',
+    2: 'body'
+  };
   
-  // Get colors with fallbacks
-  const setColors = STONE_COLORS[setIdx] || STONE_COLORS[0];
-  const colors = setColors[stoneIdx] || { primary: '#94a3b8', secondary: '#64748b' };
+  const category = categoryMap[stoneIndex] || 'head';
+  const colors = STONE_COLORS[category];
   
-  return `linear-gradient(135deg, ${colors.secondary} 0%, ${colors.primary} 100%)`;
+  // Select the gradient based on set index (with fallback)
+  const gradientIndex = Math.min(setIndex, colors.gradients.length - 1);
+  return colors.gradients[gradientIndex] || colors.gradients[0];
 };
 
-// For backward compatibility with existing components
-export const STONE_DATA = {
-  head: [
-    {
-      id: 1,
-      name: 'Thinking',
-      category: 'head',
-      content: STONE_SETS[0][0].split('•').map(s => s.trim()),
-      shapeVariant: 'hexagon',
-      gradientColors: {
-        from: STONE_COLORS[0][0].primary,
-        to: STONE_COLORS[0][0].secondary
-      }
+/**
+ * Get category information including color and display name
+ * @param {string} categoryId - Category identifier ('head', 'heart', 'body')
+ * @returns {Object} Category information with colors and display name
+ */
+export const getCategoryInfo = (categoryId) => {
+  const categories = {
+    head: {
+      id: 'head',
+      name: 'Head Center',
+      description: 'Thinking, analysis, and planning',
+      colors: STONE_COLORS.head,
+      icon: '🧠'
+    },
+    heart: {
+      id: 'heart',
+      name: 'Heart Center',
+      description: 'Emotion, connection, and relationships',
+      colors: STONE_COLORS.heart,
+      icon: '❤️'
+    },
+    body: {
+      id: 'body',
+      name: 'Body Center',
+      description: 'Action, instinct, and physical awareness',
+      colors: STONE_COLORS.body,
+      icon: '👤'
     }
+  };
+  
+  return categories[categoryId] || categories.head;
+};
+
+// Center-specific trait descriptions
+export const CENTER_TRAITS = {
+  head: [
+    'Analytical thinking',
+    'Strategic planning',
+    'Intellectual curiosity',
+    'Rational decision-making',
+    'Problem-solving ability',
+    'Information processing',
+    'Mental focus',
+    'Conceptual understanding'
   ],
   heart: [
-    {
-      id: 2,
-      name: 'Feeling',
-      category: 'heart',
-      content: STONE_SETS[0][1].split('•').map(s => s.trim()),
-      shapeVariant: 'hexagon',
-      gradientColors: {
-        from: STONE_COLORS[0][1].primary,
-        to: STONE_COLORS[0][1].secondary
-      }
-    }
+    'Emotional awareness',
+    'Empathetic connection',
+    'Interpersonal skills',
+    'Authentic expression',
+    'Compassionate perspective',
+    'Relationship building',
+    'Social intelligence',
+    'Emotional resilience'
   ],
   body: [
-    {
-      id: 3,
-      name: 'Action',
-      category: 'body',
-      content: STONE_SETS[0][2].split('•').map(s => s.trim()),
-      shapeVariant: 'hexagon',
-      gradientColors: {
-        from: STONE_COLORS[0][2].primary,
-        to: STONE_COLORS[0][2].secondary
-      }
-    }
+    'Physical awareness',
+    'Instinctual responses',
+    'Action orientation',
+    'Practical implementation',
+    'Kinesthetic intelligence',
+    'Energetic presence',
+    'Sensory perception',
+    'Rhythmic movement'
   ]
 };

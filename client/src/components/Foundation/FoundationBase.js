@@ -1,5 +1,5 @@
 import React from 'react';
-import { FoundationStone } from './Stone';
+import Stone from './Stone';
 import './FoundationBase.css';
 
 /**
@@ -19,20 +19,24 @@ const FoundationBase = ({
 }) => {
   // Function to calculate position on the circle
   const calculatePosition = (index, total) => {
-    // Calculate angle step based on total positions
-    const angleStep = (2 * Math.PI) / Math.max(total, 3);
+    // Always use 3 positions (for head, heart, body) regardless of actual count
+    // This ensures consistent positioning
+    const totalPositions = 3;
+    
+    // Calculate angle step - distribute stones evenly
+    const angleStep = (2 * Math.PI) / totalPositions;
     
     // Calculate angle (start from top, -π/2)
-    const angle = index * angleStep - Math.PI / 2;
+    // Each stone goes to its position based on stoneIndex (0, 1, or 2)
+    // Not the order they were added
+    const stoneIndex = selectedStones[index]?.stoneIndex || index;
+    const angle = stoneIndex * angleStep - Math.PI / 2;
     
-    // Base radius and center coordinates
-    const radius = 120; // Pixels from center
-    const centerX = 160;
-    const centerY = 160;
-    
-    // Calculate x and y coordinates
-    const x = centerX + radius * Math.cos(angle);
-    const y = centerY + radius * Math.sin(angle);
+    // Calculate x and y coordinates as percentages
+    // This allows the foundation to be responsive
+    const radius = 45; // % from center
+    const x = 50 + radius * Math.cos(angle);
+    const y = 50 + radius * Math.sin(angle);
     
     return { x, y };
   };
@@ -51,16 +55,18 @@ const FoundationBase = ({
           <div className="foundation-label">Foundation</div>
           <div className="foundation-stone-container">
             {selectedStones.map((stone, index) => (
-              <FoundationStone
+              <Stone
                 key={stone.id || `stone-${index}`}
                 id={stone.id || `stone-${index}`}
+                content={stone.content}
                 name={stone.name}
                 category={stone.category}
                 setIndex={stone.setIndex || setIndex}
                 stoneIndex={stone.stoneIndex !== undefined ? stone.stoneIndex : index}
-                gradientColors={stone.gradientColors}
                 position={calculatePosition(index, selectedStones.length)}
-                isAnimating={isAnimating && stone.id === lastSelectedStoneId}
+                isPlaced={true}
+                selected={true}
+                onClick={() => {}} // No action when clicking on placed stones
               />
             ))}
           </div>

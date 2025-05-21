@@ -4,13 +4,20 @@
   height: 320px;
   border-radius: 50%;
   background-color: #f8fafc;
+  background-image: radial-gradient(circle, #f1f5f9 0%, #e2e8f0 100%);
   border: 2px solid #e2e8f0;
   margin: 40px auto;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.07),
+              inset 0 1px 3px rgba(255, 255, 255, 0.6);
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: visible;
+  /* Subtle grid pattern for foundation base */
+  background-size: 20px 20px;
+  background-image: 
+    linear-gradient(to right, rgba(226, 232, 240, 0.3) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(226, 232, 240, 0.3) 1px, transparent 1px);
 }
 
 .foundation-label {
@@ -24,6 +31,9 @@
   pointer-events: none;
   text-align: center;
   width: 100%;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.8);
 }
 
 .foundation-stone-container {
@@ -43,23 +53,72 @@
   color: #94a3b8;
   text-align: center;
   padding: 20px;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 0.7;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.7;
+  }
 }
 
 .foundation-placeholder-text {
   font-size: 0.9rem;
   margin-top: 10px;
   max-width: 200px;
-  line-height: 1.4;
+  line-height: 1.5;
+}
+
+/* Responsible for the connecting lines between stones */
+.foundation-base::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 60%;
+  height: 60%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  border: 1px dashed rgba(148, 163, 184, 0.5);
+  pointer-events: none;
+}
+
+/* Circle in the middle of the foundation */
+.foundation-base::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 30%;
+  height: 30%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.4);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+  pointer-events: none;
 }
 
 /* Responsive design */
 @media (max-width: 768px) {
   .foundation-base {
-    width: 260px;
-    height: 260px;
+    width: 280px;
+    height: 280px;
   }
   
   .foundation-label {
     font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .foundation-base {
+    width: 240px;
+    height: 240px;
   }
 }

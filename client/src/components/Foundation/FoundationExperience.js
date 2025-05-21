@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import StoneSet from './StoneSet';
 import FoundationBase from './FoundationBase';
 import './FoundationExperience.css';
 
 /**
  * FoundationExperience - Main component for the Foundation Stone phase (Phase 1)
- * Manages the complete foundation stone selection experience
+ * Manages the complete foundation stone selection experience with animations
  * 
  * @param {Object} props
  * @param {Function} props.onComplete - Callback when foundation selection is complete
@@ -59,47 +60,91 @@ const FoundationExperience = ({
     }
   };
   
+  // Animation variants for page elements
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: { 
+      opacity: 1,
+      transition: { 
+        staggerChildren: 0.1,
+        delayChildren: 0.1
+      }
+    }
+  };
+  
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: { 
+      y: 0, 
+      opacity: 1,
+      transition: { type: 'spring', stiffness: 300, damping: 24 }
+    }
+  };
+  
   return (
-    <div className="foundation-experience">
-      <div className="foundation-header">
+    <motion.div 
+      className="foundation-experience"
+      initial="hidden"
+      animate="visible"
+      variants={containerVariants}
+    >
+      <motion.div className="foundation-header" variants={itemVariants}>
         <h1 className="foundation-title">Foundation Stones</h1>
         <p className="foundation-subtitle">
           Select one stone from each center to establish the foundation of your personality profile
         </p>
-      </div>
+      </motion.div>
       
       <div className="foundation-layout">
         {/* Stone selection area */}
-        <div className="foundation-selection-area">
+        <motion.div 
+          className="foundation-selection-area"
+          variants={itemVariants}
+        >
           <StoneSet 
             selectedStones={selectedStones}
             onStoneSelect={handleStoneSelect}
             setIndex={setIndex}
           />
-        </div>
+        </motion.div>
         
         {/* Foundation visualization area */}
-        <div className="foundation-visualization-area">
+        <motion.div 
+          className="foundation-visualization-area"
+          variants={itemVariants}
+        >
           <FoundationBase 
             selectedStones={selectedStones}
             isAnimating={isAnimating}
             lastSelectedStoneId={lastSelectedStoneId}
             setIndex={setIndex}
           />
-        </div>
+        </motion.div>
       </div>
       
       {/* Action buttons */}
-      <div className="foundation-actions">
-        <button 
-          className="btn btn-primary"
-          disabled={!isSelectionComplete()}
-          onClick={handleComplete}
-        >
-          Complete Foundation
-        </button>
-      </div>
-    </div>
+      <motion.div 
+        className="foundation-actions"
+        variants={itemVariants}
+      >
+        <AnimatePresence>
+          {isSelectionComplete() && (
+            <motion.button 
+              className="btn btn-primary"
+              onClick={handleComplete}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 20 }}
+              transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              Complete Foundation
+            </motion.button>
+          )}
+        </AnimatePresence>
+      </motion.div>
+    </motion.div>
   );
 };
 

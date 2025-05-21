@@ -1,53 +1,98 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import FoundationExperience from '../components/Foundation/FoundationExperience';
-import { useLocation } from 'wouter';
+import { useCustomAlert } from '../components/CustomAlert';
 
 /**
  * FoundationExperiencePage - Page wrapper for the Foundation Experience
  * Handles navigation and data persistence
  */
 const FoundationExperiencePage = () => {
-  const [_, setLocation] = useLocation();
-  const [currentSetIndex, setCurrentSetIndex] = useState(0);
+  // State for selected foundation stones
+  const [foundationStones, setFoundationStones] = useState([]);
+  
+  // State for completion status
+  const [isComplete, setIsComplete] = useState(false);
+  
+  // Alert hook for notifications
+  const { showAlert } = useCustomAlert();
+  
+  // Check for existing data on load
+  useEffect(() => {
+    const savedData = localStorage.getItem('personality_foundation_stones');
+    if (savedData) {
+      try {
+        const parsedData = JSON.parse(savedData);
+        setFoundationStones(parsedData);
+      } catch (error) {
+        console.error('Error loading saved foundation data:', error);
+      }
+    }
+  }, []);
   
   // Handle completion of foundation selection
-  const handleComplete = (selectedStones) => {
-    // For demo purposes, we'll save the selections to localStorage
-    try {
-      localStorage.setItem('foundationStones', JSON.stringify(selectedStones));
-      
-      // Log the completion event
-      console.log('Foundation phase completed with selections:', selectedStones);
-      
-      // Show completion message
-      alert('Foundation stones selected successfully! Ready for next phase.');
-      
-      // In a real implementation, we would navigate to the next phase
-      // setLocation('/building-blocks');
-    } catch (error) {
-      console.error('Error saving selections:', error);
-    }
+  const handleFoundationComplete = (selectedStones) => {
+    // Save selected stones
+    setFoundationStones(selectedStones);
+    localStorage.setItem('personality_foundation_stones', JSON.stringify(selectedStones));
+    
+    // Update completion status
+    setIsComplete(true);
+    
+    // Show confirmation
+    showAlert('Foundation phase complete! Your selections have been saved.', 'success');
+    
+    // Here you would typically navigate to the next phase
+    // For now we'll just log the completion
+    console.log('Foundation phase completed with stones:', selectedStones);
   };
   
-  // Try to get previously selected stones from localStorage
-  const getInitialSelections = () => {
-    try {
-      const savedSelections = localStorage.getItem('foundationStones');
-      return savedSelections ? JSON.parse(savedSelections) : [];
-    } catch (error) {
-      console.error('Error loading saved selections:', error);
-      return [];
-    }
+  // Handle navigation to next phase
+  const handleContinue = () => {
+    // In a full implementation, this would navigate to the next assessment phase
+    // For example: navigate('/building-blocks');
+    showAlert('Ready to proceed to the next phase!', 'info');
+  };
+  
+  // Animation variants
+  const pageVariants = {
+    initial: { opacity: 0 },
+    animate: { 
+      opacity: 1,
+      transition: { duration: 0.5 }
+    },
+    exit: { opacity: 0 }
   };
   
   return (
-    <div className="page-container">
+    <motion.div
+      className="foundation-page"
+      initial="initial"
+      animate="animate"
+      exit="exit"
+      variants={pageVariants}
+    >
       <FoundationExperience
-        onComplete={handleComplete}
-        initialSelections={getInitialSelections()}
-        setIndex={currentSetIndex}
+        onComplete={handleFoundationComplete}
+        initialSelections={foundationStones}
       />
-    </div>
+      
+      {isComplete && (
+        <motion.div 
+          className="next-phase-actions"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5 }}
+        >
+          <button 
+            className="btn btn-primary"
+            onClick={handleContinue}
+          >
+            Continue to Next Phase
+          </button>
+        </motion.div>
+      )}
+    </motion.div>
   );
 };
 

@@ -15,6 +15,7 @@ import ResultsCompare from "@/pages/ResultsCompare";
 import ResetPassword from "@/pages/ResetPassword";
 import VerifyEmail from "@/pages/VerifyEmail";
 import SignUp from "@/pages/DirectRegisterForm"; // Alias for backward compatibility
+import FoundationExperiencePage from "./pages/FoundationExperiencePage";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { AssessmentProvider } from "./context/AssessmentContext";
