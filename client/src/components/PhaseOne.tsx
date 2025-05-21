@@ -5,10 +5,9 @@ import { useAssessment } from '@/context/AssessmentContext';
 import { FoundationStone } from '@/types/assessment';
 import { foundationStoneSets } from '@/lib/personality';
 import ProgressIndicator from './ProgressIndicator';
-import StoneSet from './StoneSet';
-import SimpleVisualization from './SimpleVisualization';
 import { toast } from '@/hooks/use-toast';
 import { useIsMobile } from '@/hooks/use-mobile';
+import FoundationExperience from './Foundation/FoundationExperience';
 
 type TransitionState = 'entering' | 'active' | 'exiting';
 
@@ -180,16 +179,35 @@ const PhaseOne = () => {
     "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%2310b981' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")",
   ];
   
+  // Handle completion of the Foundation phase
+  const handleFoundationComplete = (selections: number[]) => {
+    console.log('Foundation selections completed:', selections);
+    
+    // Track completion time and log analytics
+    const timeSpent = Date.now() - phaseStartTime.current;
+    logEvent('foundation_phase_completed', { time_spent: timeSpent });
+    
+    // Show toast notification
+    toast({
+      title: "Foundation Complete!",
+      description: "You've successfully completed the Foundation phase of your personality tower!",
+      variant: "default",
+      duration: 6000 // Show for longer
+    });
+    
+    // After a delay, transition to phase 2
+    setTimeout(() => {
+      // Move to the next phase
+      nextFoundationSet(); 
+    }, 2000);
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       className="flex flex-col min-h-[80vh] w-full max-w-5xl mx-auto px-4 sm:px-6 relative"
-      style={{ 
-        backgroundImage: backgroundPatterns[foundationSet - 1], 
-        backgroundRepeat: 'repeat',
-      }}
     >
       {/* Progress Indicator */}
       <div className="w-full max-w-md mx-auto mb-6">
@@ -224,43 +242,12 @@ const PhaseOne = () => {
           These selections will form the foundation of your personality tower.
         </p>
       </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
-        {/* Left column: Foundation Visualization */}
-        <div className="flex justify-center">
-          <SimpleVisualization 
-            selectedStones={selectedFoundationStones}
-          />
-        </div>
-        
-        {/* Right column: Stone Selection */}
-        <div>
-          <AnimatePresence mode="wait">
-            <motion.div 
-              key={`stone-set-${foundationSet}`}
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              transition={{ duration: 0.5 }}
-              className="mb-10"
-            >
-              {/* Using the enhanced StoneSet component for a better user experience */}
-              <StoneSet
-                stones={currentSet}
-                selectedStone={selectedFoundationStones.find(s => 
-                  currentSet.some(cs => cs.id === s.id)
-                )}
-                onSelectStone={(stone) => !isSaving && handleStoneSelection(stone)}
-                setId={foundationSet}
-                isLoading={isSaving}
-              />
-            </motion.div>
-          </AnimatePresence>
-        </div>
-      </div>
-
+      
+      {/* Integrate the new Foundation Experience Component */}
+      <FoundationExperience onComplete={handleFoundationComplete} />
+      
       {/* Foundation Set Indicators */}
-      <div className="text-center mb-8">
+      <div className="text-center mb-8 mt-8">
         <div className="flex justify-center space-x-3">
           <motion.span 
             className={`h-3 w-3 rounded-full ${foundationSet === 1 ? 'bg-indigo-500' : 'bg-gray-300'}`}
