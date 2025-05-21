@@ -1,93 +1,88 @@
-/* Stone Component Styles */
-
 .stone {
+  position: relative;
   width: 160px;
   height: 160px;
-  cursor: pointer;
-  position: relative;
-  user-select: none;
-}
-
-.stone-inner {
-  width: 100%;
-  height: 100%;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  border-radius: 0.5rem;
-  overflow: hidden;
-  transition: all 0.2s ease;
-  /* Hexagon shape using clip-path */
+  padding: 15px;
+  margin: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  transform-origin: center center;
   clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
 }
 
-.stone.selected .stone-inner {
+.stone:hover {
+  transform: scale(1.05);
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
 }
 
-.stone-content {
-  padding: 1rem;
-  text-align: center;
-  width: 100%;
+.stone.selected {
+  transform: scale(1.05);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
 }
 
 .stone-name {
-  font-size: 1.125rem;
-  font-weight: 600;
-  margin-bottom: 0.5rem;
+  font-weight: bold;
+  font-size: 1.1rem;
+  margin-bottom: 10px;
+  text-align: center;
 }
 
-.stone-description {
-  font-size: 0.875rem;
-  opacity: 0.9;
+.stone-content {
+  font-size: 0.85rem;
+  text-align: center;
   line-height: 1.4;
 }
 
-/* Category-specific styles for head stones (blue theme) */
-.stone.head .stone-inner {
-  background: linear-gradient(135deg, #dbeafe, #3b82f6);
+.stone-content span {
+  display: inline-block;
+  margin: 0 3px;
 }
 
-.stone.head.selected .stone-inner {
-  background: linear-gradient(135deg, #60a5fa, #2563eb);
+.stone-content span:not(:last-child)::after {
+  content: "•";
+  margin-left: 6px;
 }
 
-/* Category-specific styles for heart stones (red theme) */
-.stone.heart .stone-inner {
-  background: linear-gradient(135deg, #fee2e2, #ef4444);
-}
-
-.stone.heart.selected .stone-inner {
-  background: linear-gradient(135deg, #f87171, #dc2626);
-}
-
-/* Category-specific styles for body stones (green theme) */
-.stone.body .stone-inner {
-  background: linear-gradient(135deg, #d1fae5, #10b981);
-}
-
-.stone.body.selected .stone-inner {
-  background: linear-gradient(135deg, #34d399, #059669);
-}
-
-/* Hover effects */
-.stone:hover .stone-inner:not(.selected) {
-  transform: scale(1.05);
+/* Stone on foundation styling */
+.foundation-stone {
+  position: absolute;
+  width: 80px; 
+  height: 80px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  font-size: 0.7rem;
+  transition: all 0.5s ease;
+  transform-origin: center center;
+  clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
-/* Responsive design for mobile */
-@media (max-width: 768px) {
-  .stone {
-    width: 140px;
-    height: 140px;
+.foundation-stone .stone-name {
+  font-size: 0.8rem;
+  margin-bottom: 2px;
+}
+
+/* Animation when stone is placed */
+@keyframes placeStone {
+  0% {
+    opacity: 0;
+    transform: scale(0.3) translateY(-20px);
   }
-  
-  .stone-name {
-    font-size: 1rem;
+  50% {
+    opacity: 1;
   }
-  
-  .stone-description {
-    font-size: 0.75rem;
+  100% {
+    transform: scale(1) translateY(0);
   }
+}
+
+.foundation-stone.animated {
+  animation: placeStone 0.5s ease forwards;
 }
