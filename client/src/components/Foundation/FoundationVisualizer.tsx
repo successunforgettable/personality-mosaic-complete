@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FoundationStone } from '@/types/assessment';
+import './FoundationVisualizer.css';
 
 interface FoundationVisualizerProps {
   selectedStones: FoundationStone[];
@@ -39,34 +40,48 @@ const FoundationVisualizer: React.FC<FoundationVisualizerProps> = ({
   }, [lastSelectedStoneId]);
   
   // Calculate stone position based on index and total stones
-  const calculateStonePosition = (index: number, totalStones: number) => {
+  const calculateStonePosition = (index: number) => {
     // Start at top (12 o'clock position)
     const angleOffset = -Math.PI / 2;
-    // Calculate the angle for this stone
-    const angleStep = (2 * Math.PI) / totalStones;
+    // Calculate the angle for this stone - exactly 9 positions for the full circle
+    const angleStep = (2 * Math.PI) / 9;
     const angle = angleOffset + (index * angleStep);
     
     // Calculate x and y coordinates (center of circle is at 50%, 50%)
-    // Radius is 45% of the container
+    // Radius is 45% of the container as specified in the technical requirements
     const x = 50 + 45 * Math.cos(angle);
     const y = 50 + 45 * Math.sin(angle);
     
     return { x, y };
   };
   
-  // Get color based on category
-  const getStoneColor = (category: string) => {
-    switch (category) {
-      case 'head':
-        return 'from-blue-300 to-blue-500';
-      case 'heart':
-        return 'from-red-300 to-red-500';
-      case 'body':
-        return 'from-green-300 to-green-500';
-      default:
-        return 'from-gray-300 to-gray-500';
-    }
+  // Arrange selected stones by category and index
+  const arrangeStonesByPosition = () => {
+    const positions = Array(9).fill(null);
+    
+    // Sort stones by their center type to ensure consistent positioning
+    selectedStones.forEach(stone => {
+      // Determine position based on category and relative position within that category
+      let basePosition = 0;
+      if (stone.category === 'head') basePosition = 0;
+      else if (stone.category === 'heart') basePosition = 3;
+      else if (stone.category === 'body') basePosition = 6;
+      
+      // Find remaining empty position within the center's range
+      for (let i = 0; i < 3; i++) {
+        const posIndex = basePosition + i;
+        if (positions[posIndex] === null) {
+          positions[posIndex] = stone;
+          break;
+        }
+      }
+    });
+    
+    return positions.filter(p => p !== null) as FoundationStone[];
   };
+  
+  // Get arranged stones for visualization
+  const arrangedStones = arrangeStonesByPosition();
   
   return (
     <div className="foundation-visualizer">
@@ -77,13 +92,18 @@ const FoundationVisualizer: React.FC<FoundationVisualizerProps> = ({
         {/* Placed stones */}
         <AnimatePresence>
           {selectedStones.map((stone, index) => {
-            const { x, y } = calculateStonePosition(index, 9);
+            // Calculate stone index based on category
+            let positionIndex = index;
+            if (stone.category === 'heart') positionIndex = index + 3;
+            else if (stone.category === 'body') positionIndex = index + 6;
+            
+            const { x, y } = calculateStonePosition(positionIndex % 9);
             const isAnimatingThis = animatingStoneId === stone.id;
             
             return (
               <motion.div
                 key={stone.id}
-                className={`foundation-stone ${stone.category}`}
+                className={`foundation-stone ${stone.category} ${isAnimatingThis ? 'animating' : ''}`}
                 style={{
                   left: `${x}%`,
                   top: `${y}%`,
@@ -104,7 +124,7 @@ const FoundationVisualizer: React.FC<FoundationVisualizerProps> = ({
                   damping: 20
                 }}
               >
-                <div className={`stone-content bg-gradient-to-br ${getStoneColor(stone.category)}`}>
+                <div className="stone-content">
                   {stone.name}
                 </div>
               </motion.div>

@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { FoundationStone } from '@/types/assessment';
 import Stone from './Stone';
+import './StoneSet.css';
 
 interface StoneSetProps {
   stones: FoundationStone[];

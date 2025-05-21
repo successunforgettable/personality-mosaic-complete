@@ -4,6 +4,7 @@ import { useAssessment } from '@/context/AssessmentContext';
 import { FoundationStone } from '@/types/assessment';
 import StoneSet from './StoneSet';
 import FoundationVisualizer from './FoundationVisualizer';
+import './FoundationPhase.css';
 
 /**
  * Foundation Phase Component
@@ -104,10 +105,14 @@ const FoundationPhase: React.FC = () => {
   
   // Handle stone selection
   const handleStoneSelect = (stone: FoundationStone) => {
-    // Play selection sound
-    const selectionSound = new Audio('/assets/sounds/stone-select.mp3');
-    selectionSound.volume = 0.3;
-    selectionSound.play().catch(err => console.log('Audio play failed:', err));
+    // Play selection sound (optional, will fail gracefully if sound files aren't available)
+    try {
+      const selectionSound = new Audio('/assets/sounds/stone-select.mp3');
+      selectionSound.volume = 0.3;
+      selectionSound.play().catch(err => console.log('Audio play failed:', err));
+    } catch (error) {
+      console.log('Audio not available:', error);
+    }
     
     // Update selected stones
     setSelectedStones(prev => ({
@@ -168,10 +173,14 @@ const FoundationPhase: React.FC = () => {
   
   // Complete foundation phase and move to next phase
   const completeFoundationPhase = () => {
-    // Play completion sound
-    const completionSound = new Audio('/assets/sounds/phase-complete.mp3');
-    completionSound.volume = 0.4;
-    completionSound.play().catch(err => console.log('Audio play failed:', err));
+    // Play completion sound (optional)
+    try {
+      const completionSound = new Audio('/assets/sounds/phase-complete.mp3');
+      completionSound.volume = 0.4;
+      completionSound.play().catch(err => console.log('Audio play failed:', err));
+    } catch (error) {
+      console.log('Audio not available:', error);
+    }
     
     // Animate transition out
     setTimeout(() => {
