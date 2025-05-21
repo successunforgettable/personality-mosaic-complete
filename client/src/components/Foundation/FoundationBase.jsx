@@ -2,36 +2,31 @@ import React from 'react';
 import Stone from './Stone';
 import './FoundationBase.css';
 
-/**
- * FoundationBase Component - Displays the circular foundation with positioned stones
- */
 const FoundationBase = ({ placedStones = [], stoneContents = [] }) => {
-  // Calculate position for each stone based on its index
-  const getStonePosition = (index) => {
-    const totalStones = 9; // Total possible stones on the foundation
-    
-    // Calculate angle (in radians)
-    // Start from top (-π/2) and go clockwise
+  // Calculate positions around the circle for each stone
+  const calculateStonePosition = (index, totalStones = 9) => {
+    // Always place exactly on the perimeter of the circle
     const angleStep = (2 * Math.PI) / totalStones;
-    const angle = -Math.PI / 2 + (index * angleStep);
+    const angle = index * angleStep - Math.PI / 2; // Start from top (-90 degrees)
     
-    // Calculate position (center of the container is 50%, 50%)
-    // Radius is 45% of the container
-    const x = 50 + 45 * Math.cos(angle);
-    const y = 50 + 45 * Math.sin(angle);
+    // Position exactly on the circle edge 
+    const radius = 50; // 50% of container width
+    const x = 50 + radius * Math.cos(angle);
+    const y = 50 + radius * Math.sin(angle);
     
     return { x, y };
   };
   
   return (
     <div className="foundation-base">
+      {/* Clear visible foundation circle */}
       <div className="foundation-circle">
         <div className="foundation-inner-circle"></div>
         
         {/* Render connecting lines from center to stones */}
         <svg className="foundation-connections" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-          {placedStones.map((stone, index) => {
-            const position = getStonePosition(stone.position);
+          {placedStones.map((stoneData, index) => {
+            const position = calculateStonePosition(stoneData.position);
             return (
               <line
                 key={index}
@@ -45,23 +40,22 @@ const FoundationBase = ({ placedStones = [], stoneContents = [] }) => {
           })}
         </svg>
         
-        {/* Render positioned stones */}
-        {placedStones.map((stone, index) => {
-          const position = getStonePosition(stone.position);
-          const stoneContent = stoneContents[(stone.position * 3) + stone.stoneIndex];
+        {/* Place stones precisely on the circle */}
+        {placedStones.map((stoneData, index) => {
+          const position = calculateStonePosition(stoneData.position);
+          const stoneContent = stoneContents[(stoneData.position * 3) + stoneData.stoneIndex];
           
           return (
-            <div key={index}>
-              <Stone
-                content={stoneContent}
-                selected={true}
-                onClick={() => {}} // No action for placed stones
-                stoneIndex={stone.stoneIndex}
-                setIndex={stone.position}
-                isPlaced={true}
-                position={position}
-              />
-            </div>
+            <Stone
+              key={`placed-stone-${stoneData.position}`}
+              content={stoneContent}
+              selected={true}
+              onClick={() => {}} // No action for placed stones
+              stoneIndex={stoneData.stoneIndex}
+              setIndex={stoneData.position} // Important! Pass the set index
+              position={position}
+              isPlaced={true}
+            />
           );
         })}
       </div>

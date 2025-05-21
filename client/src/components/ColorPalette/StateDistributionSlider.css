@@ -1,0 +1,135 @@
+.state-distribution-slider {
+  max-width: 800px;
+  margin: 0 auto 30px;
+  padding: 20px;
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.slider-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.slider-header h3 {
+  margin: 0 0 8px;
+  font-size: 18px;
+  color: #1e293b;
+}
+
+.slider-header p {
+  margin: 0;
+  font-size: 14px;
+  color: #64748b;
+}
+
+.distribution-container {
+  margin-bottom: 20px;
+}
+
+.state-label {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  justify-content: space-between;
+}
+
+.state-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-right: 8px;
+}
+
+.state-name {
+  flex-grow: 1;
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.state-percentage {
+  font-size: 14px;
+  font-weight: 600;
+  width: 40px;
+  text-align: right;
+}
+
+.slider-track {
+  position: relative;
+  height: 8px;
+  border-radius: 4px;
+  margin: 15px 0;
+}
+
+.distribution-slider {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 8px;
+  border-radius: 4px;
+  background: transparent;
+  outline: none;
+  position: relative;
+  z-index: 10;
+}
+
+.distribution-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: white;
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.distribution-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: white;
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.slider-thumb {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: white;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  pointer-events: none;
+  z-index: 5;
+}
+
+.distribution-visualization {
+  height: 24px;
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  margin-top: 20px;
+}
+
+.distribution-bar {
+  height: 100%;
+  transition: width 0.3s ease;
+}
+
+.distribution-placeholder {
+  text-align: center;
+  padding: 30px;
+  background-color: #f8fafc;
+  border-radius: 10px;
+  margin-bottom: 30px;
+}
+
+.distribution-placeholder p {
+  margin: 0;
+  color: #64748b;
+  font-size: 15px;
+}
