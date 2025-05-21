@@ -55,20 +55,22 @@ const FoundationExperience = ({ onComplete }) => {
     // Update selections array (replace if already exists)
     const newSelections = [...stoneSelections];
     newSelections[currentSetIndex] = stoneIndex;
-    setStoneSelections(newSelections);
     
-    // Update placed stones
+    // Update placed stones array for visualization
     const newPlacedStones = placedStones.filter(stone => 
       stone.position !== currentSetIndex
     );
     
+    // Add the new stone with ALL necessary data
     newPlacedStones.push({
       stoneIndex,
       position: currentSetIndex,
-      setIndex: currentSetIndex
+      setIndex: currentSetIndex, // CRITICAL for proper coloring
+      content: STONE_SETS[currentSetIndex][stoneIndex]
     });
     
     setPlacedStones(newPlacedStones);
+    setStoneSelections(newSelections);
     
     // After a brief delay, go to next set
     setTimeout(() => {
