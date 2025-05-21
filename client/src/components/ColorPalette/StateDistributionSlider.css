@@ -1,135 +1,192 @@
 .state-distribution-slider {
   max-width: 800px;
-  margin: 0 auto 30px;
-  padding: 20px;
+  margin: 0 auto;
+  padding: 24px;
   background-color: white;
-  border-radius: 10px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
-.slider-header {
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-.slider-header h3 {
-  margin: 0 0 8px;
-  font-size: 18px;
+.slider-title {
+  font-size: 20px;
+  font-weight: 600;
   color: #1e293b;
+  text-align: center;
+  margin-bottom: 8px;
 }
 
-.slider-header p {
-  margin: 0;
+.slider-description {
   font-size: 14px;
   color: #64748b;
+  text-align: center;
+  margin-bottom: 24px;
 }
 
 .distribution-container {
-  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.state-labels {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 8px;
 }
 
 .state-label {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  margin-bottom: 10px;
-  justify-content: space-between;
-}
-
-.state-dot {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  margin-right: 8px;
 }
 
 .state-name {
-  flex-grow: 1;
-  font-size: 15px;
-  font-weight: 500;
+  font-weight: 600;
+  font-size: 16px;
+  margin-bottom: 4px;
 }
 
 .state-percentage {
   font-size: 14px;
-  font-weight: 600;
-  width: 40px;
-  text-align: right;
+  color: #64748b;
 }
 
-.slider-track {
+.mixing-visualization {
   position: relative;
-  height: 8px;
-  border-radius: 4px;
-  margin: 15px 0;
+  margin: 16px 0;
 }
 
-.distribution-slider {
-  -webkit-appearance: none;
-  width: 100%;
-  height: 8px;
-  border-radius: 4px;
-  background: transparent;
-  outline: none;
+/* Paint mixing bowl */
+.mixing-bowl {
+  height: 80px;
+  border-radius: 8px;
+  overflow: hidden;
   position: relative;
-  z-index: 10;
+  margin-bottom: 16px;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
-.distribution-slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: white;
-  cursor: pointer;
-  border: none;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+/* Paint drips coming from top */
+.paint-drip {
+  position: absolute;
+  top: 0;
+  width: 3px;
+  height: 15px;
+  border-radius: 0 0 3px 3px;
 }
 
-.distribution-slider::-moz-range-thumb {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: white;
-  cursor: pointer;
-  border: none;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+.drip-left {
+  left: 25%;
 }
 
-.slider-thumb {
+.drip-right {
+  right: 25%;
+}
+
+/* Mixing swirl effect */
+.mixing-swirl {
   position: absolute;
   top: 50%;
   transform: translate(-50%, -50%);
-  width: 20px;
-  height: 20px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
-  background: white;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-  pointer-events: none;
+  mix-blend-mode: overlay;
+}
+
+/* Slider control container */
+.slider-control-container {
+  position: relative;
+  height: 40px;
+  margin: 0 12px;
+}
+
+/* The actual range input */
+.slider-control {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+  z-index: 10;
+  margin: 0;
+  padding: 0;
+}
+
+/* Custom track */
+.slider-track {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+  width: 100%;
+  height: 10px;
+  border-radius: 5px;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* Custom handle */
+.slider-handle {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 24px;
+  height: 24px;
+  background-color: white;
+  border: 2px solid #3b82f6;
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   z-index: 5;
 }
 
-.distribution-visualization {
-  height: 24px;
-  border-radius: 12px;
-  overflow: hidden;
-  display: flex;
-  margin-top: 20px;
+.slider-handle::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 8px;
+  height: 8px;
+  background-color: #3b82f6;
+  border-radius: 50%;
 }
 
-.distribution-bar {
-  height: 100%;
-  transition: width 0.3s ease;
-}
-
-.distribution-placeholder {
+.state-balance-description {
   text-align: center;
-  padding: 30px;
+  padding: 12px;
   background-color: #f8fafc;
-  border-radius: 10px;
-  margin-bottom: 30px;
+  border-radius: 6px;
 }
 
-.distribution-placeholder p {
-  margin: 0;
-  color: #64748b;
-  font-size: 15px;
+.state-balance-description p {
+  font-size: 14px;
+  color: #334155;
+  line-height: 1.4;
+}
+
+.state-balance-description strong {
+  font-weight: 600;
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .state-distribution-slider {
+    padding: 16px;
+  }
+  
+  .slider-title {
+    font-size: 18px;
+  }
+  
+  .state-name {
+    font-size: 14px;
+  }
+  
+  .mixing-bowl {
+    height: 60px;
+  }
 }
