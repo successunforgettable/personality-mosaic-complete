@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Stone from './Stone';
-import PreciseFoundation from './PreciseFoundation';
+import ExactFoundation from './ExactFoundation';
 import StoneSet from './StoneSet';
 import './FoundationExperience.css';
 import './continue-button.css';
@@ -222,8 +222,8 @@ const FoundationExperience = ({ onComplete }) => {
       
       <div className="foundation-layout">
         <div className="foundation-visualizer">
-          {/* Using the precise foundation with exact specs from documentation */}
-          <PreciseFoundation selectedStones={placedStones} />
+          {/* Using the exact foundation implementation that follows spec precisely */}
+          <ExactFoundation selectedStones={placedStones} />
           <div className="progress-indicator">
             {currentSetIndex + 1} of 9 stone sets selected
           </div>
