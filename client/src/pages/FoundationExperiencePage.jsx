@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import FoundationExperience from '../components/Foundation/FoundationExperience.jsx';
 import { useCustomAlert } from '../components/CustomAlert';
@@ -8,50 +8,29 @@ import { useCustomAlert } from '../components/CustomAlert';
  * Handles navigation and data persistence
  */
 const FoundationExperiencePage = () => {
-  // State for selected foundation stones
-  const [foundationStones, setFoundationStones] = useState([]);
-  
-  // State for completion status
-  const [isComplete, setIsComplete] = useState(false);
+  // State management
+  const [currentPhase, setCurrentPhase] = useState('foundation');
+  const [foundationSelections, setFoundationSelections] = useState([]);
   
   // Alert hook for notifications
   const { showAlert } = useCustomAlert();
   
-  // Check for existing data on load
-  useEffect(() => {
-    const savedData = localStorage.getItem('personality_foundation_stones');
-    if (savedData) {
-      try {
-        const parsedData = JSON.parse(savedData);
-        setFoundationStones(parsedData);
-      } catch (error) {
-        console.error('Error loading saved foundation data:', error);
-      }
-    }
-  }, []);
-  
   // Handle completion of foundation selection
-  const handleFoundationComplete = (selectedStones) => {
+  const handleFoundationComplete = (selections) => {
     // Save selected stones
-    setFoundationStones(selectedStones);
-    localStorage.setItem('personality_foundation_stones', JSON.stringify(selectedStones));
+    setFoundationSelections(selections);
     
-    // Update completion status
-    setIsComplete(true);
+    // Save to localStorage for persistence
+    localStorage.setItem('personality_foundation_selections', JSON.stringify(selections));
+    
+    // Move to next phase
+    setCurrentPhase('building');
     
     // Show confirmation
-    showAlert('Foundation phase complete! Your selections have been saved.', 'success');
+    showAlert('Foundation phase complete! Moving to the next phase.', 'success');
     
-    // Here you would typically navigate to the next phase
-    // For now we'll just log the completion
-    console.log('Foundation phase completed with stones:', selectedStones);
-  };
-  
-  // Handle navigation to next phase
-  const handleContinue = () => {
-    // In a full implementation, this would navigate to the next assessment phase
-    // For example: navigate('/building-blocks');
-    showAlert('Ready to proceed to the next phase!', 'info');
+    // Log for debugging
+    console.log('Foundation selections:', selections);
   };
   
   // Animation variants
@@ -66,32 +45,40 @@ const FoundationExperiencePage = () => {
   
   return (
     <motion.div
-      className="foundation-page"
+      className="app"
       initial="initial"
       animate="animate"
       exit="exit"
       variants={pageVariants}
     >
-      <FoundationExperience
-        onComplete={handleFoundationComplete}
-        initialSelections={foundationStones}
-      />
+      <header className="app-header">
+        <h1>Personality Mosaic Assessment</h1>
+      </header>
       
-      {isComplete && (
-        <motion.div 
-          className="next-phase-actions"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5 }}
-        >
-          <button 
-            className="btn btn-primary"
-            onClick={handleContinue}
+      <main className="app-content">
+        {currentPhase === 'foundation' && (
+          <FoundationExperience onComplete={handleFoundationComplete} />
+        )}
+        
+        {currentPhase === 'building' && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
           >
-            Continue to Next Phase
-          </button>
-        </motion.div>
-      )}
+            <h2>Building Blocks Phase - Coming Soon</h2>
+            <p>You've completed the Foundation phase! The next phase is in development.</p>
+            <div className="selections-summary">
+              <h3>Your Foundation Selections:</h3>
+              <ul>
+                {foundationSelections.map((selection, index) => (
+                  <li key={index}>Set {index + 1}: Stone {selection + 1}</li>
+                ))}
+              </ul>
+            </div>
+          </motion.div>
+        )}
+      </main>
     </motion.div>
   );
 };
