@@ -39,18 +39,25 @@ const FoundationExperience = ({ onComplete }) => {
     
     // Add a slight delay before animation
     setTimeout(() => {
-      // Add to selections array
-      setStoneSelections([...stoneSelections, stoneIndex]);
+      // Create a copy of the selections array to modify
+      const updatedSelections = [...stoneSelections];
       
-      // Add to placed stones (showing on foundation) - include setIndex!
-      setPlacedStones([
-        ...placedStones, 
-        { 
-          stoneIndex, 
-          position: currentSetIndex,
-          setIndex: currentSetIndex // Store the set index for correct coloring
-        }
-      ]);
+      // Store this selection (replacing any previous selection for this set)
+      updatedSelections[currentSetIndex] = stoneIndex;
+      setStoneSelections(updatedSelections);
+      
+      // Update placed stones - remove any existing stone for this position first
+      const updatedPlacedStones = placedStones.filter(stone => stone.position !== currentSetIndex);
+      
+      // Add the new stone for this position
+      updatedPlacedStones.push({
+        stoneIndex,
+        position: currentSetIndex,
+        setIndex: currentSetIndex
+      });
+      
+      // Update the placed stones state
+      setPlacedStones(updatedPlacedStones);
       
       // If not the last set, move to next set
       if (currentSetIndex < STONE_SETS.length - 1) {
@@ -60,7 +67,7 @@ const FoundationExperience = ({ onComplete }) => {
       } else {
         // If last set, complete the phase
         setTimeout(() => {
-          onComplete(stoneSelections);
+          onComplete(updatedSelections);
         }, 1000);
       }
     }, 300);
@@ -136,6 +143,31 @@ const FoundationExperience = ({ onComplete }) => {
   // All stone data for the foundation base
   const allStoneData = getStoneData();
   
+  // Function to go back to previous set
+  const handlePreviousSet = () => {
+    if (currentSetIndex > 0) {
+      setCurrentSetIndex(currentSetIndex - 1);
+    }
+  };
+
+  // Function to go forward to next set
+  const handleNextSet = () => {
+    if (currentSetIndex < STONE_SETS.length - 1 && stoneSelections[currentSetIndex] !== undefined) {
+      setCurrentSetIndex(currentSetIndex + 1);
+    }
+  };
+
+  // Function to complete the phase
+  const handleComplete = () => {
+    // Make sure all sets have a selection
+    const hasAllSelections = stoneSelections.length === STONE_SETS.length && 
+                            stoneSelections.every(selection => selection !== undefined);
+    
+    if (hasAllSelections) {
+      onComplete(stoneSelections);
+    }
+  };
+  
   return (
     <div className="foundation-experience">
       <h2 className="phase-title">Choose Your Foundation Stones</h2>
@@ -161,6 +193,35 @@ const FoundationExperience = ({ onComplete }) => {
             currentSetIndex={currentSetIndex}
             totalSets={STONE_SETS.length}
           />
+          
+          {/* Navigation buttons */}
+          <div className="navigation-buttons">
+            <button 
+              className="nav-button back-button" 
+              onClick={handlePreviousSet}
+              disabled={currentSetIndex === 0}
+            >
+              Previous Set
+            </button>
+            
+            {currentSetIndex < STONE_SETS.length - 1 ? (
+              <button 
+                className="nav-button next-button" 
+                onClick={handleNextSet}
+                disabled={stoneSelections[currentSetIndex] === undefined}
+              >
+                Next Set
+              </button>
+            ) : (
+              <button 
+                className="nav-button complete-button"
+                onClick={handleComplete}
+                disabled={!stoneSelections.every((selection, index) => index < STONE_SETS.length ? selection !== undefined : true)}
+              >
+                Complete Selection
+              </button>
+            )}
+          </div>
         </div>
       </div>
     </div>

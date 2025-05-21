@@ -99,6 +99,59 @@
   max-width: 500px;
 }
 
+/* Navigation buttons */
+.navigation-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 30px;
+  gap: 16px;
+}
+
+.nav-button {
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  outline: none;
+  border: none;
+}
+
+.back-button {
+  background-color: #f1f5f9;
+  color: #64748b;
+  border: 1px solid #e2e8f0;
+}
+
+.back-button:hover:not(:disabled) {
+  background-color: #e2e8f0;
+}
+
+.next-button {
+  background-color: #3b82f6;
+  color: white;
+  box-shadow: 0 2px 4px rgba(59, 130, 246, 0.2);
+}
+
+.next-button:hover:not(:disabled) {
+  background-color: #2563eb;
+}
+
+.complete-button {
+  background-color: #10b981;
+  color: white;
+  box-shadow: 0 2px 4px rgba(16, 185, 129, 0.2);
+}
+
+.complete-button:hover:not(:disabled) {
+  background-color: #059669;
+}
+
+.nav-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 /* Positioned stone styles */
 .positioned-stone {
   position: absolute;
