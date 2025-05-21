@@ -35,15 +35,12 @@ const StoneSet = ({
   
   // Determine stone category based on index
   const getCategoryForIndex = (index) => {
-    // First set represents Head (0), Heart (1), Body (2)
-    if (currentSetIndex === 0) {
-      if (index === 0) return 'head';
-      if (index === 1) return 'heart';
-      if (index === 2) return 'body';
-    }
+    // Every set follows the pattern: Head (0), Heart (1), Body (2)
+    if (index === 0) return 'head';
+    if (index === 1) return 'heart';
+    if (index === 2) return 'body';
     
-    // For subsequent sets, we'll follow the same pattern but could be customized
-    return index === 0 ? 'head' : index === 1 ? 'heart' : 'body';
+    return 'head'; // Default fallback
   };
   
   // Get appropriate shape variant based on category

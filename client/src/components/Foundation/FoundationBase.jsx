@@ -53,7 +53,18 @@ const FoundationBase = ({ placedStones = [], stoneContents = [] }) => {
         {placedStones.map((stone, index) => {
           const position = getStonePosition(stone.position);
           const stoneContent = stoneContents[(stone.position * 3) + stone.stoneIndex];
-          const category = stone.stoneIndex === 0 ? 'head' : stone.stoneIndex === 1 ? 'heart' : 'body';
+          
+          // Determine category based on stoneIndex (0=head, 1=heart, 2=body)
+          let category;
+          if (stone.stoneIndex === 0) {
+            category = 'head';
+          } else if (stone.stoneIndex === 1) {
+            category = 'heart';
+          } else {
+            category = 'body';
+          }
+          
+          // Get appropriate shape based on category
           const shapeVariant = category === 'head' ? 'pentagon' : category === 'heart' ? 'hexagon' : 'octagon';
           
           const stoneStyle = {

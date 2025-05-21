@@ -60,9 +60,31 @@ const Stone = ({
     }
   }
   
-  // Create gradient style
+  // Create gradient style based on category
+  let defaultColors = {
+    from: gradientColors.from,
+    to: gradientColors.to
+  };
+  
+  // If not explicitly provided, set default colors based on category
+  if (!gradientColors.from || !gradientColors.to) {
+    switch (category.toLowerCase()) {
+      case 'head':
+        defaultColors = { from: '#60a5fa', to: '#3b82f6' }; // Blue
+        break;
+      case 'heart':
+        defaultColors = { from: '#f87171', to: '#ef4444' }; // Red
+        break;
+      case 'body':
+        defaultColors = { from: '#4ade80', to: '#22c55e' }; // Green
+        break;
+      default:
+        defaultColors = { from: '#94a3b8', to: '#64748b' }; // Gray
+    }
+  }
+  
   const gradientStyle = {
-    background: `linear-gradient(135deg, ${gradientColors.from} 0%, ${gradientColors.to} 100%)`,
+    background: `linear-gradient(135deg, ${defaultColors.from} 0%, ${defaultColors.to} 100%)`,
   };
   
   // Function to render content items
