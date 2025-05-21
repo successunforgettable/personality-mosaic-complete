@@ -1,67 +1,63 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import './Stone.css';
-import { getStoneGradient } from './stoneData';
 
 /**
- * Stone Component - Represents a foundation stone in the personality assessment
+ * Stone Component
+ * Represents an individual foundation stone in the Personality Mosaic Assessment
  */
 const Stone = ({ 
+  id, 
   content, 
-  selected, 
-  onClick, 
-  stoneIndex,
-  position,
-  isPlaced = false,
-  setIndex = 0
+  isSelected = false, 
+  isPlaced = false, 
+  position = null,
+  gradientColors = { from: '#8b5cf6', to: '#6366f1' }, // Default purple gradient
+  onClick = () => {},
+  size = 'normal', // normal or small
+  tabIndex 
 }) => {
-  // Get the appropriate gradient for this stone based on set and stone index
-  const background = getStoneGradient(setIndex, stoneIndex);
+  // Generate a unique ID for SVG gradient
+  const gradientId = `stone-gradient-${id}`;
   
-  // Scale factor for placed stones
-  const scaleFactor = isPlaced ? 0.5 : 1; // Smaller when placed on foundation
+  // Content should be an array of strings (words/traits)
+  const contentLines = Array.isArray(content) ? content : [content];
   
   return (
-    <motion.div 
-      className={`stone ${selected ? 'selected' : ''} ${isPlaced ? 'placed' : ''}`}
-      onClick={() => !isPlaced && onClick(stoneIndex)}
-      style={{ 
-        background,
-        ...(isPlaced ? {
-          position: 'absolute',
-          left: `${position?.x}%`,
-          top: `${position?.y}%`,
-          transform: 'translate(-50%, -50%) scale(0.5)', // Center properly and scale down
-          zIndex: 5, // Ensure it's visible over the circle
-        } : {})
+    <motion.div
+      className={`stone ${isSelected ? 'selected' : ''} ${isPlaced ? 'placed' : ''}`}
+      onClick={onClick}
+      tabIndex={tabIndex !== undefined ? tabIndex : 0}
+      style={{
+        background: `linear-gradient(135deg, ${gradientColors.from}, ${gradientColors.to})`,
+        width: isPlaced ? '80px' : (size === 'small' ? '120px' : '160px'),
+        height: isPlaced ? '80px' : (size === 'small' ? '120px' : '160px'),
       }}
-      initial={isPlaced ? { scale: 0, opacity: 0 } : { scale: 1 }}
-      animate={isPlaced ? { 
-        scale: scaleFactor, 
-        opacity: 1 
-      } : { 
-        scale: selected ? 1.05 : 1,
-      }}
+      whileHover={!isPlaced ? { scale: 1.05 } : {}}
+      whileTap={!isPlaced ? { scale: 0.95 } : {}}
+      initial={isPlaced ? { scale: 0.1, opacity: 0 } : { scale: 1, opacity: 1 }}
+      animate={isPlaced ? { scale: 1, opacity: 1 } : { scale: 1, opacity: 1 }}
       transition={{
         type: 'spring',
         stiffness: 500,
         damping: 30
       }}
-      whileHover={{ 
-        y: isPlaced ? 0 : -5,
-        transition: { duration: 0.2 }
-      }}
-      whileTap={{ 
-        scale: isPlaced ? 1 : 0.98,
-        transition: { duration: 0.1 }
-      }}
+      role="button"
+      aria-pressed={isSelected}
     >
+      {/* Checkmark for selected stone */}
+      {isSelected && !isPlaced && (
+        <div className="stone-checkmark">✓</div>
+      )}
+      
+      {/* Stone content - words or traits */}
       <div className="stone-content">
-        {content?.split('•').filter(line => line.trim()).map((line, index) => (
-          <div key={index} className="stone-line">{line.trim()}</div>
+        {contentLines.map((line, index) => (
+          <div key={index} className="stone-line">
+            {line}
+          </div>
         ))}
       </div>
-      {selected && !isPlaced && <div className="stone-checkmark">✓</div>}
     </motion.div>
   );
 };

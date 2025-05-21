@@ -10,106 +10,61 @@
   position: relative;
   transition: all 0.2s ease;
   cursor: pointer;
-  margin: 0 auto;
-  user-select: none;
-  /* This is the crucial part for hexagonal shape */
-  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  /* Create precise hexagon shape */
+  clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
 }
 
 .stone:hover {
-  transform: translateY(-5px);
-  filter: brightness(1.1);
+  transform: scale(1.05);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
 }
 
-.stone-selected {
-  transform: translateY(-8px);
+.stone.selected {
+  box-shadow: 0 0 20px rgba(139, 92, 246, 0.7);
 }
 
-.stone-selected .stone-shape {
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+.stone.placed {
+  /* These properties will be overridden by inline styles */
+  width: 80px;
+  height: 80px;
+  cursor: default;
 }
 
-.stone-shape {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  transition: box-shadow 0.3s ease;
-  position: relative;
-  overflow: hidden;
-}
-
-/* Pentagon shape (HEAD stones) */
-.shape-pentagon {
-  clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
-}
-
-/* Hexagon shape (HEART stones) */
-.shape-hexagon {
-  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
-}
-
-/* Octagon shape (BODY stones) */
-.shape-octagon {
-  clip-path: polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%);
+.stone.placed:hover {
+  transform: none;
 }
 
 .stone-content {
-  padding: 15px;
+  color: white;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: 16px;
   text-align: center;
-  width: 90%;
-  height: 90%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  padding: 12px;
+  max-width: 90%;
+}
+
+.stone.placed .stone-content {
+  font-size: 8px; /* Much smaller text when placed */
+  padding: 4px;
 }
 
 .stone-line {
-  font-weight: 600;
-  font-size: 14px;
-  margin-bottom: 5px;
-  color: white;
-}
-
-.stone-line:first-child {
-  font-size: 16px;
-  font-weight: 700;
-  margin-bottom: 8px;
+  margin: 4px 0;
 }
 
 .stone-checkmark {
   position: absolute;
-  top: -8px;
-  right: -8px;
-  width: 25px;
-  height: 25px;
-  border-radius: 50%;
-  background-color: #22c55e;
+  top: 10px;
+  right: 10px;
+  background-color: #10b981;
   color: white;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 14px;
   font-weight: bold;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   z-index: 10;
-}
-
-/* Responsive styles */
-@media (max-width: 640px) {
-  .stone {
-    width: 120px;
-    height: 120px;
-  }
-  
-  .stone-title {
-    font-size: 12px;
-  }
-  
-  .stone-trait {
-    font-size: 10px;
-  }
 }

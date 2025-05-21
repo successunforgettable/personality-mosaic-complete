@@ -1,51 +1,130 @@
 .foundation-experience {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 20px 0;
+}
+
+.foundation-header {
+  text-align: center;
+  margin-bottom: 30px;
 }
 
 .phase-title {
-  font-family: 'Inter', sans-serif;
   font-size: 28px;
   font-weight: 600;
-  text-align: center;
-  margin-bottom: 32px;
   color: #1e293b;
+  margin-bottom: 16px;
 }
 
-.foundation-layout {
+.phase-progress {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.progress-bar {
+  height: 8px;
+  background-color: #e2e8f0;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.progress-fill {
+  height: 100%;
+  background-color: #3b82f6;
+  border-radius: 4px;
+  transition: width 0.5s ease;
+}
+
+.progress-label {
   display: flex;
-  flex-direction: column;
-  gap: 40px;
-}
-
-.foundation-visualizer {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.progress-indicator {
-  margin-top: 16px;
+  justify-content: space-between;
   font-size: 14px;
+}
+
+.current-set {
   color: #64748b;
 }
 
-.selection-area {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+.set-type {
+  font-weight: 600;
 }
 
-@media (min-width: 1024px) {
-  .foundation-layout {
-    flex-direction: row;
-    align-items: flex-start;
-    justify-content: space-between;
+.foundation-content {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 40px;
+}
+
+.stone-selection {
+  flex: 1;
+}
+
+.selection-title {
+  font-size: 18px;
+  font-weight: 500;
+  color: #334155;
+  margin-bottom: 20px;
+}
+
+.stone-options {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 500px;
+}
+
+.foundation-visualization {
+  flex: 1;
+  position: sticky;
+  top: 30px;
+}
+
+.visualization-title {
+  font-size: 18px;
+  font-weight: 500;
+  color: #334155;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+/* Positioned stone styles */
+.positioned-stone {
+  position: absolute;
+  transform-origin: center center;
+  z-index: 5;
+  transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+  .foundation-content {
+    flex-direction: column-reverse;
+    gap: 30px;
   }
   
-  .foundation-visualizer,
-  .selection-area {
-    flex: 1;
+  .foundation-visualization {
+    position: relative;
+    top: 0;
+    width: 100%;
+  }
+  
+  .stone-options {
+    max-width: 100%;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 640px) {
+  .phase-title {
+    font-size: 24px;
+  }
+  
+  .stone-options {
+    flex-direction: column;
+    align-items: center;
   }
 }

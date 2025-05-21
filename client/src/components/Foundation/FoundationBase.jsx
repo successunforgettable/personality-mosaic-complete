@@ -1,61 +1,75 @@
 import React from 'react';
+import { motion } from 'framer-motion';
 import Stone from './Stone';
 import './FoundationBase.css';
 
-const FoundationBase = ({ placedStones = [], stoneContents = [] }) => {
-  // Calculate positions around the circle for each stone
-  const calculateStonePosition = (index, totalStones = 9) => {
-    // Always place exactly on the perimeter of the circle
+/**
+ * FoundationBase Component
+ * Displays the circular foundation with stones positioned around it
+ */
+const FoundationBase = ({ 
+  placedStones = [], 
+  stoneData = []
+}) => {
+  // Calculate positions for each stone
+  const calculatePosition = (index, totalStones) => {
+    const radius = 110; // Distance from center (slightly smaller than circle radius)
     const angleStep = (2 * Math.PI) / totalStones;
-    const angle = index * angleStep - Math.PI / 2; // Start from top (-90 degrees)
+    const angle = angleStep * index - Math.PI / 2; // Start from top (subtract 90 degrees)
     
-    // Position exactly on the circle edge 
-    const radius = 50; // 50% of container width
-    const x = 50 + radius * Math.cos(angle);
-    const y = 50 + radius * Math.sin(angle);
+    // Calculate coordinates (adjusted to center the stones)
+    const x = radius * Math.cos(angle);
+    const y = radius * Math.sin(angle);
     
-    return { x, y };
+    return {
+      left: `calc(50% + ${x}px - 40px)`, // 40px is half of the stone width when placed
+      top: `calc(50% + ${y}px - 40px)`,  // 40px is half of the stone height when placed
+    };
   };
   
   return (
     <div className="foundation-base">
-      {/* Clear visible foundation circle */}
       <div className="foundation-circle">
+        {/* Inner dashed circle */}
         <div className="foundation-inner-circle"></div>
         
-        {/* Render connecting lines from center to stones */}
-        <svg className="foundation-connections" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-          {placedStones.map((stoneData, index) => {
-            const position = calculateStonePosition(stoneData.position);
-            return (
-              <line
-                key={`line-${stoneData.position}-${index}`}
-                x1="50"
-                y1="50"
-                x2={position.x}
-                y2={position.y}
-                className="foundation-connection-line"
-              />
-            );
-          })}
+        {/* Connection lines can be added here if needed */}
+        <svg className="foundation-connections" width="100%" height="100%" viewBox="0 0 320 320">
+          {/* Connections would go here */}
         </svg>
         
-        {/* Place stones precisely on the circle */}
-        {placedStones.map((stoneData, index) => {
-          const position = calculateStonePosition(stoneData.position);
-          const stoneContent = stoneContents[(stoneData.position * 3) + stoneData.stoneIndex];
+        {/* Placed stones */}
+        {placedStones.map((stone, index) => {
+          // Calculate position based on stone.position (0-indexed)
+          const position = calculatePosition(stone.position, 9); // 9 positions for Enneagram
+          
+          // Get stone data from stoneData array
+          const stoneInfo = stoneData[stone.stoneIndex];
+          
+          // Generate a unique key for each stone
+          const stoneKey = `placed-stone-${stone.position}-${stone.stoneIndex}-${index}`;
           
           return (
-            <Stone
-              key={`placed-stone-${stoneData.position}-${index}`}
-              content={stoneContent}
-              selected={true}
-              onClick={() => {}} // No action for placed stones
-              stoneIndex={stoneData.stoneIndex}
-              setIndex={stoneData.position} // Important! Pass the set index
-              position={position}
-              isPlaced={true}
-            />
+            <motion.div
+              key={stoneKey}
+              className="positioned-stone"
+              style={position}
+              initial={{ opacity: 0, scale: 0 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{
+                type: 'spring',
+                stiffness: 500,
+                damping: 30,
+                delay: index * 0.1
+              }}
+            >
+              <Stone
+                id={stone.stoneIndex}
+                content={stoneInfo ? stoneInfo.content : ['Stone']}
+                isPlaced={true}
+                gradientColors={stoneInfo ? stoneInfo.gradientColors : undefined}
+              />
+            </motion.div>
           );
         })}
       </div>

@@ -1,121 +1,117 @@
+/**
+ * Stone data for the Personality Mosaic Assessment System
+ */
+
+// Stone content organized by sets
+// 9 sets total (3 for each center: Head, Heart, Body)
 export const STONE_SETS = [
-  // Set 1 (Head vs. Heart vs. Body)
+  // Head Center - Set 1
   [
-    "THINKING • ANALYSIS • LOGIC",
-    "FEELING • EMOTION • CONNECTION",
-    "ACTION • INSTINCT • PHYSICALITY"
+    ['Analytical', 'Observant', 'Investigative'],
+    ['Thoughtful', 'Insightful', 'Perceptive'],
+    ['Strategic', 'Focused', 'Detail-oriented']
+  ],
+  // Head Center - Set 2
+  [
+    ['Intellectual', 'Questioning', 'Curious'],
+    ['Logical', 'Rational', 'Objective'],
+    ['Contemplative', 'Reflective', 'Deep-thinking']
+  ],
+  // Head Center - Set 3
+  [
+    ['Imaginative', 'Innovative', 'Creative'],
+    ['Problem-solver', 'Comprehensive', 'Methodical'],
+    ['Skeptical', 'Cautious', 'Vigilant']
   ],
   
-  // Set 2 (Fear vs. Shame vs. Anger)
+  // Heart Center - Set 1
   [
-    "PREPARATION • CERTAINTY • SECURITY",
-    "AUTHENTICITY • IMAGE • RECOGNITION",
-    "JUSTICE • CONTROL • STRENGTH"
+    ['Empathetic', 'Compassionate', 'Understanding'],
+    ['Supportive', 'Nurturing', 'Caring'],
+    ['Authentic', 'Genuine', 'Sincere']
+  ],
+  // Heart Center - Set 2
+  [
+    ['Passionate', 'Expressive', 'Emotive'],
+    ['Relational', 'Connected', 'Interpersonal'],
+    ['Generous', 'Giving', 'Altruistic']
+  ],
+  // Heart Center - Set 3
+  [
+    ['Harmonious', 'Diplomatic', 'Peacemaking'],
+    ['Intuitive', 'Sensitive', 'Perceptive'],
+    ['Loyal', 'Trustworthy', 'Devoted']
   ],
   
-  // Set 3 (Energy Direction)
+  // Body Center - Set 1
   [
-    "REFLECTION • DEPTH • PRIVACY",
-    "ACHIEVEMENT • INFLUENCE • IMPACT",
-    "STRUCTURE • SUPPORT • HARMONY"
+    ['Decisive', 'Action-oriented', 'Proactive'],
+    ['Grounded', 'Stable', 'Reliable'],
+    ['Resilient', 'Enduring', 'Persistent']
   ],
-  
-  // Set 4 (Social Approach)
+  // Body Center - Set 2
   [
-    "OBJECTIVITY • PERSPECTIVE • SPACE",
-    "CLOSENESS • INTIMACY • BONDING",
-    "INDEPENDENCE • SELF-RELIANCE • FREEDOM"
+    ['Assertive', 'Confident', 'Self-assured'],
+    ['Practical', 'Sensible', 'Realistic'],
+    ['Protective', 'Dependable', 'Steadfast']
   ],
-  
-  // Set 5 (Processing Style)
+  // Body Center - Set 3
   [
-    "SYSTEMS • CONCEPTS • IDEAS",
-    "EXPRESSION • MOOD • FEELING",
-    "RESULTS • EFFICIENCY • UTILITY"
-  ],
-  
-  // Set 6 (Stress Reaction)
-  [
-    "VIGILANCE • ANALYSIS • FORESIGHT",
-    "RECOGNITION • IDENTITY • UNIQUENESS",
-    "AUTHORITY • POWER • DIRECTION"
-  ],
-  
-  // Set 7 (Conflict Style)
-  [
-    "PEACE • MEDIATION • COMPROMISE",
-    "SUPPORT • FLEXIBILITY • ADAPTATION",
-    "DIRECTNESS • CHALLENGE • HONESTY"
-  ],
-  
-  // Set 8 (Success Definition)
-  [
-    "ACCURACY • PRINCIPLES • IMPROVEMENT",
-    "CONNECTION • ACKNOWLEDGMENT • APPRECIATION",
-    "MASTERY • ACHIEVEMENT • CAPABILITY"
-  ],
-  
-  // Set 9 (Relationship Priority)
-  [
-    "AUTONOMY • SELF-SUFFICIENCY • SPACE",
-    "MUTUALITY • SHARING • RECIPROCITY",
-    "LEADERSHIP • MENTORSHIP • DIRECTION"
+    ['Energetic', 'Vital', 'Dynamic'],
+    ['Disciplined', 'Structured', 'Organized'],
+    ['Adaptable', 'Flexible', 'Responsive']
   ]
 ];
 
-// Stone color variations - map set indices to colors
-export const STONE_COLORS = {
-  0: { // Set 1 - Head/Heart/Body
-    0: { primary: '#60a5fa', secondary: '#3b82f6' }, // Head - Blue
-    1: { primary: '#f87171', secondary: '#ef4444' }, // Heart - Red
-    2: { primary: '#4ade80', secondary: '#22c55e' }  // Body - Green
+// Color schemes for the three centers
+export const STONE_COLORS = [
+  // Head Center (Blues)
+  {
+    primary: '#3b82f6', // Blue-500
+    light: '#93c5fd',   // Blue-300
+    dark: '#1d4ed8'     // Blue-700
   },
-  1: { // Set 2 - Fear/Shame/Anger
-    0: { primary: '#a78bfa', secondary: '#8b5cf6' }, // Fear - Purple
-    1: { primary: '#fbbf24', secondary: '#f59e0b' }, // Shame - Yellow
-    2: { primary: '#fb7185', secondary: '#e11d48' }  // Anger - Red
+  // Heart Center (Reds)
+  {
+    primary: '#ef4444', // Red-500
+    light: '#fca5a5',   // Red-300
+    dark: '#b91c1c'     // Red-700
   },
-  2: { // Set 3 - Energy Direction
-    0: { primary: '#818cf8', secondary: '#6366f1' }, // Reflection - Indigo
-    1: { primary: '#f472b6', secondary: '#db2777' }, // Achievement - Pink
-    2: { primary: '#34d399', secondary: '#10b981' }  // Structure - Emerald
-  },
-  3: { // Set 4 - Social Approach
-    0: { primary: '#93c5fd', secondary: '#60a5fa' }, // Objectivity - Light Blue
-    1: { primary: '#fdba74', secondary: '#f97316' }, // Closeness - Orange
-    2: { primary: '#a3e635', secondary: '#84cc16' }  // Independence - Lime
-  },
-  4: { // Set 5 - Processing Style
-    0: { primary: '#38bdf8', secondary: '#0ea5e9' }, // Systems - Sky
-    1: { primary: '#e879f9', secondary: '#d946ef' }, // Expression - Fuchsia
-    2: { primary: '#2dd4bf', secondary: '#14b8a6' }  // Results - Teal
-  },
-  5: { // Set 6 - Stress Reaction 
-    0: { primary: '#c4b5fd', secondary: '#a78bfa' }, // Vigilance - Lavender
-    1: { primary: '#fb923c', secondary: '#ea580c' }, // Recognition - Deep Orange
-    2: { primary: '#fb7185', secondary: '#e11d48' }  // Authority - Rose
-  },
-  6: { // Set 7 - Conflict Style
-    0: { primary: '#86efac', secondary: '#4ade80' }, // Peace - Light Green
-    1: { primary: '#fcd34d', secondary: '#f59e0b' }, // Support - Amber
-    2: { primary: '#f43f5e', secondary: '#be123c' }  // Directness - Deep Rose
-  },
-  7: { // Set 8 - Success Definition
-    0: { primary: '#60a5fa', secondary: '#3b82f6' }, // Accuracy - Blue
-    1: { primary: '#f87171', secondary: '#ef4444' }, // Connection - Red
-    2: { primary: '#4ade80', secondary: '#22c55e' }  // Mastery - Green
-  },
-  8: { // Set 9 - Relationship Priority
-    0: { primary: '#a78bfa', secondary: '#8b5cf6' }, // Autonomy - Purple
-    1: { primary: '#f472b6', secondary: '#db2777' }, // Mutuality - Pink
-    2: { primary: '#38bdf8', secondary: '#0ea5e9' }  // Leadership - Sky
+  // Body Center (Greens)
+  {
+    primary: '#10b981', // Emerald-500
+    light: '#6ee7b7',   // Emerald-300
+    dark: '#047857'     // Emerald-700
   }
+];
+
+// Helper function to get stone color based on set index
+export const getStoneColorBySetIndex = (setIndex) => {
+  const centerIndex = Math.floor(setIndex / 3); // 0: Head, 1: Heart, 2: Body
+  return STONE_COLORS[centerIndex];
 };
 
-// Function to get gradient for a stone based on set and selection
-export const getStoneGradient = (setIndex, stoneIndex) => {
-  const setColors = STONE_COLORS[setIndex] || STONE_COLORS[0]; // Fallback to Set 1 colors
-  const colors = setColors[stoneIndex] || { primary: '#94a3b8', secondary: '#64748b' }; // Default gray
+// Helper function to get center name from set index
+export const getCenterNameBySetIndex = (setIndex) => {
+  const centers = ['Head', 'Heart', 'Body'];
+  return centers[Math.floor(setIndex / 3)];
+};
+
+// Get a flat array of all stone content
+export const getAllStoneContent = () => {
+  const allStones = [];
   
-  return `linear-gradient(135deg, ${colors.secondary} 0%, ${colors.primary} 100%)`;
+  STONE_SETS.forEach((set, setIndex) => {
+    set.forEach((stoneContent, stoneIndex) => {
+      allStones.push({
+        id: `${setIndex}-${stoneIndex}`,
+        content: stoneContent,
+        setIndex,
+        stoneIndex,
+        center: getCenterNameBySetIndex(setIndex)
+      });
+    });
+  });
+  
+  return allStones;
 };
