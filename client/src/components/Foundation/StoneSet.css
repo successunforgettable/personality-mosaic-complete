@@ -1,4 +1,6 @@
 .stone-set-container {
+  max-width: 800px;
+  margin: 20px auto;
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -59,23 +61,37 @@
 }
 
 .stone-set-instructions {
-  font-size: 1rem;
-  color: #334155;
-  margin-bottom: 1rem;
+  font-family: 'Inter', sans-serif;
+  font-size: 18px;
+  font-weight: 400;
   text-align: center;
+  margin-bottom: 24px;
+  color: #1e293b;
 }
 
-/* Horizontal layout for stones */
+/* Horizontal layout for stones with exact 24px gap */
 .stone-set {
   display: flex;
-  flex-direction: row;
   justify-content: center;
-  flex-wrap: wrap;
-  gap: 1.5rem;
+  gap: 24px; /* Exactly as specified: 24px between stones */
   margin: 0 auto;
 }
 
 .stone-wrapper {
   display: flex;
   justify-content: center;
+}
+
+/* Critical mobile responsiveness */
+@media (max-width: 768px) {
+  .stone-set {
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+  }
+  
+  .stone {
+    width: 140px !important; /* Slightly smaller on mobile */
+    height: 140px !important;
+  }
 }

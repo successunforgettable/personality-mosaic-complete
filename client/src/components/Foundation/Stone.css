@@ -1,70 +1,96 @@
 .stone {
-  width: 160px;
-  height: 160px;
-  border: 2px solid white;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  position: relative;
-  transition: all 0.2s ease;
+  width: 160px;
+  height: 160px;
+  color: white;
+  font-weight: 600;
   cursor: pointer;
-  /* Create precise hexagon shape */
-  clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+  transition: all 0.2s ease;
+  text-align: center;
+  
+  /* Hexagonal shape using clip-path */
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  
+  /* Proper shadows */
+  filter: drop-shadow(0px 4px 8px rgba(0, 0, 0, 0.15));
+  
+  /* User can tab to stones for accessibility */
+  outline: none;
 }
 
-.stone:hover {
-  transform: scale(1.05);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+.stone:focus {
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5);
 }
 
 .stone.selected {
-  box-shadow: 0 0 20px rgba(139, 92, 246, 0.7);
+  filter: drop-shadow(0px 5px 10px rgba(0, 0, 0, 0.2));
 }
 
 .stone.placed {
-  /* These properties will be overridden by inline styles */
+  /* Smaller size for stones placed on the foundation */
   width: 80px;
   height: 80px;
+  font-size: 0.7rem;
   cursor: default;
-}
-
-.stone.placed:hover {
-  transform: none;
+  pointer-events: none;
 }
 
 .stone-content {
-  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+  padding: 1rem;
   font-family: 'Inter', sans-serif;
-  font-weight: 600;
-  font-size: 16px;
-  text-align: center;
-  padding: 12px;
-  max-width: 90%;
-}
-
-.stone.placed .stone-content {
-  font-size: 8px; /* Much smaller text when placed */
-  padding: 4px;
+  z-index: 1;
+  transform: scale(0.9); /* Keep text inside the hexagon */
+  pointer-events: none; /* Make sure clicks go to the stone, not the text */
 }
 
 .stone-line {
-  margin: 4px 0;
+  margin: 0.15rem 0;
+  font-size: 0.9rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.stone.placed .stone-line {
+  font-size: 0.65rem;
+  margin: 0.05rem 0;
 }
 
 .stone-checkmark {
   position: absolute;
-  top: 10px;
-  right: 10px;
-  background-color: #10b981;
-  color: white;
+  top: 10%;
+  right: 10%;
   width: 24px;
   height: 24px;
+  background-color: white;
+  color: #10b981;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
+  font-size: 1rem;
   font-weight: bold;
-  z-index: 10;
+  z-index: 2;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 768px) {
+  .stone {
+    width: 140px;
+    height: 140px;
+  }
+  
+  .stone-line {
+    font-size: 0.8rem;
+  }
 }
