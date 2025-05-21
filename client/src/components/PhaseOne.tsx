@@ -1,12 +1,6 @@
-import { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { useAuth } from '@/context/AuthContext';
+import React, { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import { useAssessment } from '@/context/AssessmentContext';
-import { FoundationStone } from '@/types/assessment';
-import { foundationStoneSets } from '@/lib/personality';
-import ProgressIndicator from './ProgressIndicator';
-import { toast } from '@/hooks/use-toast';
-import { useIsMobile } from '@/hooks/use-mobile';
 import FoundationExperience from './Foundation/FoundationExperience';
 
 type TransitionState = 'entering' | 'active' | 'exiting';
@@ -16,283 +10,51 @@ type TransitionState = 'entering' | 'active' | 'exiting';
  * This phase allows users to select foundation stones that form the base of their personality tower
  */
 const PhaseOne = () => {
-  const { state, selectFoundationStone, nextFoundationSet } = useAssessment();
-  const { foundationSet, selectedFoundationStones } = state;
-  const { user, isGuest } = useAuth();
-  const isMobile = useIsMobile();
-  
-  const [currentSet, setCurrentSet] = useState<FoundationStone[]>([]);
+  const { state, updateFoundationStones, setPhase } = useAssessment();
   const [transitionState, setTransitionState] = useState<TransitionState>('entering');
-  const [isSaving, setIsSaving] = useState(false);
-  const [hasInteracted, setHasInteracted] = useState(false);
-  const [lastSelectedId, setLastSelectedId] = useState<number | undefined>();
-  const stoneRefs = useRef<(HTMLDivElement | null)[]>([]);
   
-  // Time tracking for analytics
-  const phaseStartTime = useRef<number>(Date.now());
-  
-  // Analytics tracking
-  const logEvent = (eventName: string, eventData: any) => {
-    // In a production app, this would send to an analytics service
-    console.log(`[Analytics] ${eventName}:`, eventData);
+  // Handle completion of foundation stone selection
+  const handleFoundationComplete = (stoneSelections: number[]) => {
+    console.log("Foundation selections completed:", stoneSelections);
     
-    // Save partial progress to localStorage for both guests and authenticated users
-    const progressData = {
-      phase: 1,
-      foundationSet,
-      selectedFoundationStones,
-      timestamp: new Date().toISOString(),
-      userId: user?.id || 'guest'
-    };
+    // Save selections to assessment context
+    updateFoundationStones(stoneSelections);
     
-    localStorage.setItem('assessment_progress', JSON.stringify(progressData));
-  };
-  
-  // Get the current set of foundation stones
-  useEffect(() => {
-    const set = foundationStoneSets.find(set => set.id === foundationSet);
-    if (set) {
-      setCurrentSet(set.stones);
-      setTransitionState('active');
-      
-      // Log transition between foundation sets (except the initial load)
-      if (hasInteracted) {
-        logEvent('foundation_set_changed', { 
-          set_id: foundationSet, 
-          total_selected: selectedFoundationStones.length 
-        });
-      }
-    }
-  }, [foundationSet, hasInteracted, selectedFoundationStones.length]);
-  
-  // Attempt to restore partial progress on component mount
-  useEffect(() => {
-    const savedProgress = localStorage.getItem('assessment_progress');
-    if (savedProgress) {
-      try {
-        const progressData = JSON.parse(savedProgress);
-        if (progressData.phase === 1 && progressData.userId === (user?.id || 'guest')) {
-          // If there's saved progress, we could restore it here
-          // This is a simplified example - in a real app you'd need to handle this more carefully
-          // to avoid overwriting newer progress
-          
-          toast({
-            title: "Progress Restored",
-            description: "Your previous foundation stone selections have been loaded.",
-            variant: "default"
-          });
-          
-          logEvent('progress_restored', { phase: 1 });
-        }
-      } catch (e) {
-        console.error('Error restoring progress:', e);
-      }
-    }
-  }, [user?.id]);
-  
-  const handleStoneSelection = async (stone: FoundationStone) => {
-    setHasInteracted(true);
+    // Track time spent in analytics
+    console.log("[Analytics] foundation_phase_completed:", {
+      time_spent: Date.now() - startTime
+    });
+    
+    // Prepare to exit
     setTransitionState('exiting');
     
-    // Log the selection for debugging purposes
-    console.log('Stone selected:', {
-      id: stone.id,
-      name: stone.name,
-      category: stone.category,
-      set: foundationSet
-    });
-    
-    // Log the selection for analytics
-    logEvent('foundation_stone_selected', { 
-      stone_id: stone.id, 
-      stone_name: stone.name,
-      stone_category: stone.category,
-      set_id: foundationSet
-    });
-    
-    // Save progress
-    setIsSaving(true);
-    
-    try {
-      // Important: Set the last selected stone ID for visualization animation
-      // This needs to happen before saving to trigger the animation
-      setLastSelectedId(stone.id);
-      
-      // Simulate API call to save progress
-      // In a real app, this would be an actual API call
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
-      // Select the stone to update the context state
-      selectFoundationStone(stone);
-      
-      console.log('Stone added to selected stones, total:', selectedFoundationStones.length + 1);
-      
-      // Brief delay for animation - longer to allow visualization to complete
-      setTimeout(() => {
-        // If this is the last set, we'll move to phase 2 in the context
-        // Otherwise, we'll move to the next set of stones
-        nextFoundationSet();
-        setTransitionState('entering');
-        setIsSaving(false);
-      }, 1200);
-      
-      // If last stone is selected, show a completion message and visual celebration
-      if (foundationSet === 3) {
-        // Trigger a special completion animation
-        setTimeout(() => {
-          // Track completion time and log analytics
-          const timeSpent = Date.now() - phaseStartTime.current;
-          logEvent('foundation_phase_completed', { time_spent: timeSpent });
-          
-          // Show toast notification
-          toast({
-            title: "Foundation Complete!",
-            description: "You've successfully completed the Foundation phase of your personality tower!",
-            variant: "default",
-            duration: 6000 // Show for longer
-          });
-          
-          // After a delay, transition to phase 2
-          setTimeout(() => {
-            // Move to the next phase - the context will automatically transition to phase 2
-            // since this is the last foundation set
-            nextFoundationSet(); 
-          }, 2000);
-        }, 1000);
-      }
-      
-    } catch (error) {
-      console.error('Error saving progress:', error);
-      toast({
-        title: "Couldn't Save Progress",
-        description: "Your selection was recorded but we couldn't save your progress. You can continue the assessment.",
-        variant: "destructive"
-      });
-      setIsSaving(false);
-    }
-  };
-  
-  // Background pattern variants for each foundation set
-  const backgroundPatterns = [
-    "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%234f46e5' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")",
-    "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ec4899' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")",
-    "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%2310b981' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")",
-  ];
-  
-  // Handle completion of the Foundation phase
-  const handleFoundationComplete = (selections: number[]) => {
-    console.log('Foundation selections completed:', selections);
-    
-    // Track completion time and log analytics
-    const timeSpent = Date.now() - phaseStartTime.current;
-    logEvent('foundation_phase_completed', { time_spent: timeSpent });
-    
-    // Show toast notification
-    toast({
-      title: "Foundation Complete!",
-      description: "You've successfully completed the Foundation phase of your personality tower!",
-      variant: "default",
-      duration: 6000 // Show for longer
-    });
-    
-    // After a delay, transition to phase 2
+    // Move to next phase after exit animation completes
     setTimeout(() => {
-      // Move to the next phase
-      nextFoundationSet(); 
-    }, 2000);
+      setPhase(2);
+    }, 500);
   };
-
+  
+  // Track time spent for analytics
+  const [startTime] = useState(Date.now());
+  
+  // Set active state after enter animation completes
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setTransitionState('active');
+    }, 500);
+    
+    return () => clearTimeout(timer);
+  }, []);
+  
   return (
     <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="flex flex-col min-h-[80vh] w-full max-w-5xl mx-auto px-4 sm:px-6 relative"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -20 }}
+      transition={{ duration: 0.5 }}
+      className="phase-container"
     >
-      {/* Progress Indicator */}
-      <div className="w-full max-w-md mx-auto mb-6">
-        <div className="flex justify-between items-center mb-2">
-          <span className="text-sm font-semibold text-gray-700">Phase 1 of 4: Foundation</span>
-          <span className="text-sm text-gray-600">Set {foundationSet} of 3</span>
-        </div>
-        <ProgressIndicator 
-          progress={(foundationSet - 1) * 33.33} 
-          colors={{
-            background: "bg-gray-200",
-            fill: foundationSet === 1 
-              ? "bg-indigo-500" 
-              : foundationSet === 2 
-              ? "bg-pink-500"
-              : "bg-emerald-500"
-          }}
-        />
-      </div>
-      
-      <div className="text-center mb-8">
-        <h2 className="text-2xl md:text-3xl font-display font-semibold text-gray-900 mb-3">
-          {foundationSet === 1 
-            ? "Establish Your Foundation"
-            : foundationSet === 2
-            ? "Continue Building Your Base"
-            : "Complete Your Foundation"
-          }
-        </h2>
-        <p className="text-gray-600 max-w-2xl mx-auto">
-          Choose the stone that resonates most with your core traits and personality. 
-          These selections will form the foundation of your personality tower.
-        </p>
-      </div>
-      
-      {/* Integrate the new Foundation Experience Component */}
       <FoundationExperience onComplete={handleFoundationComplete} />
-      
-      {/* Foundation Set Indicators */}
-      <div className="text-center mb-8 mt-8">
-        <div className="flex justify-center space-x-3">
-          <motion.span 
-            className={`h-3 w-3 rounded-full ${foundationSet === 1 ? 'bg-indigo-500' : 'bg-gray-300'}`}
-            animate={{
-              scale: foundationSet === 1 ? [1, 1.2, 1] : 1,
-              transition: { repeat: foundationSet === 1 ? Infinity : 0, repeatDelay: 1 }
-            }}
-          ></motion.span>
-          <motion.span 
-            className={`h-3 w-3 rounded-full ${foundationSet === 2 ? 'bg-pink-500' : 'bg-gray-300'}`}
-            animate={{
-              scale: foundationSet === 2 ? [1, 1.2, 1] : 1,
-              transition: { repeat: foundationSet === 2 ? Infinity : 0, repeatDelay: 1 }
-            }}
-          ></motion.span>
-          <motion.span 
-            className={`h-3 w-3 rounded-full ${foundationSet === 3 ? 'bg-emerald-500' : 'bg-gray-300'}`}
-            animate={{
-              scale: foundationSet === 3 ? [1, 1.2, 1] : 1,
-              transition: { repeat: foundationSet === 3 ? Infinity : 0, repeatDelay: 1 }
-            }}
-          ></motion.span>
-        </div>
-      </div>
-
-      {/* Guidance Message */}
-      <div className="text-center mt-auto pb-6">
-        <p className="text-gray-600 italic text-sm">
-          {isSaving 
-            ? "Saving your selection..." 
-            : "Choose a foundation stone to continue building your personality tower."
-          }
-        </p>
-        
-        {/* Save status indicator */}
-        {isSaving && (
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="mt-3 flex justify-center"
-          >
-            <div className="animate-pulse h-2 w-24 bg-primary-200 rounded-full"></div>
-          </motion.div>
-        )}
-      </div>
     </motion.div>
   );
 };

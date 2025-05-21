@@ -1,26 +1,99 @@
-.stone-set-container {
-  max-width: 800px;
-  margin: 20px auto;
-}
-
-.stone-set-instructions {
-  font-family: 'Inter', sans-serif;
-  font-size: 18px;
-  font-weight: 400;
-  text-align: center;
-  margin-bottom: 24px;
-  color: #1e293b;
-}
-
 .stone-set {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.stone-set-header {
+  margin-bottom: 24px;
+}
+
+.stone-set-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.center-name {
+  font-weight: 700;
+}
+
+.set-number {
+  font-size: 16px;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.stone-set-progress {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.progress-text {
+  font-size: 14px;
+  color: #64748b;
+  text-align: right;
+}
+
+.progress-bar {
+  height: 6px;
+  background-color: #e2e8f0;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.5s ease;
+}
+
+.selection-instruction {
+  font-size: 16px;
+  color: #475569;
+  margin-bottom: 20px;
+}
+
+.stones-container {
+  display: flex;
+  flex-direction: column;
   gap: 24px;
 }
 
+.stone-wrapper {
+  display: flex;
+  justify-content: center;
+}
+
+/* Responsive styles */
 @media (max-width: 768px) {
-  .stone-set {
+  .stone-set-title {
     flex-direction: column;
-    align-items: center;
+    align-items: flex-start;
+    gap: 4px;
+  }
+  
+  .set-number {
+    font-size: 14px;
+  }
+  
+  .stones-container {
+    gap: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .stone-set-title {
+    font-size: 18px;
+  }
+  
+  .selection-instruction {
+    font-size: 14px;
   }
 }

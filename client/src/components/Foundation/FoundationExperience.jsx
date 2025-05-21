@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Stone from './Stone';
 import FoundationBase from './FoundationBase';
+import StoneSet from './StoneSet';
 import './FoundationExperience.css';
 import { STONE_SETS, STONE_COLORS } from './stoneData';
 
@@ -137,77 +138,28 @@ const FoundationExperience = ({ onComplete }) => {
   
   return (
     <div className="foundation-experience">
-      <div className="foundation-header">
-        <h2 className="phase-title">Select Your Foundation Stones</h2>
-        <div className="phase-progress">
-          <div className="progress-bar">
-            <div 
-              className="progress-fill"
-              style={{ width: `${getProgress()}%` }}
-            ></div>
-          </div>
-          <div className="progress-label">
-            <span className="current-set">{getSetSubtitle()}</span>
-            <span className="set-type" style={{ 
-              color: currentSetIndex < 3 ? '#3b82f6' : // Head - blue
-                     currentSetIndex < 6 ? '#ef4444' : // Heart - red
-                     '#10b981'                         // Body - green
-            }}>
-              {getCurrentSetType()} Center
-            </span>
-          </div>
-        </div>
-      </div>
+      <h2 className="phase-title">Choose Your Foundation Stones</h2>
       
-      <div className="foundation-content">
-        <div className="stone-selection">
-          <h3 className="selection-title">Choose one stone from this set:</h3>
-          
-          <AnimatePresence mode="wait">
-            <motion.div 
-              key={`stone-set-${currentSetIndex}`}
-              className="stone-options"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.3 }}
-            >
-              {currentStones.map((stone, index) => {
-                // Get the color for this set
-                const setType = Math.floor(currentSetIndex / 3); // 0: Head, 1: Heart, 2: Body
-                const colorSet = STONE_COLORS[setType];
-                
-                // Create gradient colors with variations based on index
-                let gradientColors;
-                if (index === 0) {
-                  gradientColors = { from: colorSet.light, to: colorSet.primary };
-                } else if (index === 1) {
-                  gradientColors = { from: colorSet.primary, to: colorSet.primary };
-                } else {
-                  gradientColors = { from: colorSet.primary, to: colorSet.dark };
-                }
-                
-                return (
-                  <Stone 
-                    key={`stone-${currentSetIndex}-${index}`}
-                    id={`${currentSetIndex}-${index}`}
-                    content={stone.content}
-                    isSelected={stone.selected}
-                    gradientColors={gradientColors}
-                    onClick={() => handleStoneSelect(index)}
-                    tabIndex={index + 1}
-                  />
-                );
-              })}
-            </motion.div>
-          </AnimatePresence>
+      <div className="foundation-layout">
+        <div className="foundation-visualizer">
+          <FoundationBase 
+            placedStones={placedStones} 
+            stoneData={allStoneData}
+          />
+          <div className="progress-indicator">
+            {currentSetIndex + 1} of 9 stone sets selected
+          </div>
         </div>
         
-        <div className="foundation-visualization">
-          <h3 className="visualization-title">Your Foundation</h3>
-          <FoundationBase 
-            placedStones={placedStones}
-            stoneData={allStoneData}
+        <div className="selection-area">
+          {/* Add a clear separator */}
+          <div className="section-divider"></div>
+          
+          <StoneSet
+            stones={currentStones}
+            onStoneSelect={handleStoneSelect}
+            currentSetIndex={currentSetIndex}
+            totalSets={STONE_SETS.length}
           />
         </div>
       </div>
