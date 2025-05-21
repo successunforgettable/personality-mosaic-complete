@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import FoundationExperience from '../components/Foundation/FoundationExperience';
+import FoundationExperience from '../components/Foundation/FoundationExperience.jsx';
 import { useCustomAlert } from '../components/CustomAlert';
 
 /**

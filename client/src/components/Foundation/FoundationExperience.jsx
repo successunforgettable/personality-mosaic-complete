@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import StoneSet from './StoneSet';
-import FoundationBase from './FoundationBase';
+import StoneSet from './StoneSet.jsx';
+import FoundationBase from './FoundationBase.jsx';
+import { STONE_SETS } from './stoneData.js';
 import './FoundationExperience.css';
 
 /**
@@ -18,36 +19,103 @@ const FoundationExperience = ({
   initialSelections = [],
   setIndex = 0 
 }) => {
-  // State for selected stones and animation
-  const [selectedStones, setSelectedStones] = useState(initialSelections);
+  // Set up the stones from the data
+  const [stoneData, setStoneData] = useState([]);
+  const [selectedStones, setSelectedStones] = useState([]);
   const [isAnimating, setIsAnimating] = useState(false);
   const [lastSelectedStoneId, setLastSelectedStoneId] = useState(null);
   
-  // Handle stone selection
-  const handleStoneSelect = (stones) => {
-    // Get the newly added stone (if any)
-    const newStone = stones.find(stone => 
-      !selectedStones.some(s => s.id === stone.id)
-    );
-    
-    // Update state
-    setSelectedStones(stones);
-    
-    // If there's a new stone added, trigger animation
-    if (newStone) {
-      setLastSelectedStoneId(newStone.id);
-      setIsAnimating(true);
+  // Initialize stone data from STONE_SETS
+  useEffect(() => {
+    // Create initial stone data structure from our sets
+    if (STONE_SETS && STONE_SETS[setIndex]) {
+      const stones = STONE_SETS[setIndex].map((content, index) => {
+        const categoryMap = {
+          0: 'head',
+          1: 'heart',
+          2: 'body'
+        };
+        
+        // Parse name from the content (before first bullet)
+        const name = content.split('•')[0].trim();
+        
+        return {
+          id: `${setIndex}-${index}`,
+          name,
+          content,
+          category: categoryMap[index] || 'unknown',
+          selected: false,
+          // If this stone is in initialSelections, mark it as selected
+          ...(initialSelections.some(s => s.stoneIndex === index) && { selected: true })
+        };
+      });
       
-      // Reset animation flag after animation completes
-      setTimeout(() => {
-        setIsAnimating(false);
-      }, 600); // Animation duration + small buffer
+      setStoneData(stones);
+      
+      // Also initialize selected stones from initialSelections if provided
+      if (initialSelections && initialSelections.length > 0) {
+        setSelectedStones(initialSelections);
+      }
+    }
+  }, [setIndex, initialSelections]);
+  
+  // Handle stone selection
+  const handleStoneSelect = (stoneIndex) => {
+    // Update the stone's selected state in the stoneData array
+    const updatedStoneData = stoneData.map((stone, idx) => {
+      if (idx === stoneIndex) {
+        return { ...stone, selected: !stone.selected };
+      }
+      return stone;
+    });
+    
+    // Update stone data
+    setStoneData(updatedStoneData);
+    
+    // Determine which stone was selected/deselected
+    const selectedStone = updatedStoneData[stoneIndex];
+    
+    if (selectedStone.selected) {
+      // Stone was selected - add it to selectedStones
+      const newStone = {
+        id: selectedStone.id,
+        name: selectedStone.name,
+        content: selectedStone.content,
+        category: selectedStone.category,
+        setIndex,
+        stoneIndex
+      };
+      
+      // Check if a stone for this category/position already exists
+      const existingStoneIndex = selectedStones.findIndex(stone => 
+        stone.stoneIndex === stoneIndex
+      );
+      
+      if (existingStoneIndex >= 0) {
+        // Replace existing stone
+        const newSelectedStones = [...selectedStones];
+        newSelectedStones[existingStoneIndex] = newStone;
+        setSelectedStones(newSelectedStones);
+      } else {
+        // Add new stone
+        setSelectedStones([...selectedStones, newStone]);
+      }
+      
+      // Trigger animation
+      setLastSelectedStoneId(selectedStone.id);
+      setIsAnimating(true);
+      setTimeout(() => setIsAnimating(false), 600);
+    } else {
+      // Stone was deselected - remove it from selectedStones
+      setSelectedStones(selectedStones.filter(stone => 
+        stone.id !== selectedStone.id
+      ));
     }
   };
   
   // Check if selection is complete (all stone positions filled)
   const isSelectionComplete = () => {
-    // For the new data structure, we need one stone from each category (0, 1, 2)
+    // We need one stone from each category (0, 1, 2)
     return [0, 1, 2].every(stoneIndex => 
       selectedStones.some(stone => stone.stoneIndex === stoneIndex)
     );
@@ -102,9 +170,10 @@ const FoundationExperience = ({
           variants={itemVariants}
         >
           <StoneSet 
-            selectedStones={selectedStones}
+            stones={stoneData}
             onStoneSelect={handleStoneSelect}
-            setIndex={setIndex}
+            currentSetIndex={setIndex}
+            totalSets={STONE_SETS.length}
           />
         </motion.div>
         

@@ -1,5 +1,5 @@
 import React from 'react';
-import Stone from './Stone';
+import Stone from './Stone.jsx';
 import './FoundationBase.css';
 
 /**
@@ -23,7 +23,7 @@ const FoundationBase = ({
     // This ensures consistent positioning
     const totalPositions = 3;
     
-    // Calculate angle step - distribute stones evenly
+    // Calculate angle step - distribute stones evenly around the circle
     const angleStep = (2 * Math.PI) / totalPositions;
     
     // Calculate angle (start from top, -π/2)
