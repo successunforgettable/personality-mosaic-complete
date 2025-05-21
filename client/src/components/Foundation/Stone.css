@@ -1,0 +1,66 @@
+.stone {
+  width: 160px;
+  height: 160px;
+  background: linear-gradient(135deg, #4c1d95 0%, #8b5cf6 100%);
+  border: 2px solid white;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+}
+
+.stone:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+}
+
+.stone.selected {
+  box-shadow: 0 0 20px rgba(139, 92, 246, 0.7);
+}
+
+.stone.placed {
+  width: 80px;
+  height: 80px;
+  cursor: default;
+}
+
+.stone.placed:hover {
+  transform: none;
+}
+
+.stone-content {
+  color: white;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: 16px;
+  text-align: center;
+  padding: 12px;
+}
+
+.stone.placed .stone-content {
+  font-size: 0;
+}
+
+.stone-line {
+  margin: 4px 0;
+}
+
+.stone-checkmark {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: #10b981;
+  color: white;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}

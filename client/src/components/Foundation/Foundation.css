@@ -1,0 +1,49 @@
+.foundation-container {
+  position: relative;
+  width: 320px;
+  height: 380px;
+  margin: 0 auto;
+}
+
+.foundation-circle {
+  width: 280px;
+  height: 280px;
+  border: 2px solid #e2e8f0;
+  border-radius: 50%;
+  position: absolute;
+  top: 20px;
+  left: 20px;
+}
+
+.foundation-center {
+  width: 10px;
+  height: 10px;
+  background-color: #94a3b8;
+  border-radius: 50%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+}
+
+.connecting-line {
+  position: absolute;
+  height: 2px;
+  background-color: #94a3b8;
+  z-index: 1;
+}
+
+.placed-stone {
+  width: 30px;
+  height: 30px;
+  z-index: 3;
+  transition: all 0.3s ease;
+}
+
+.foundation-progress {
+  text-align: center;
+  margin-top: 330px;
+  font-size: 14px;
+  color: #64748b;
+}
