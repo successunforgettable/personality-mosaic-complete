@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import Stone from './Stone';
+import { getStoneGradient } from './stoneData';
 import './FoundationBase.css';
 
 /**
@@ -43,11 +44,16 @@ const FoundationBase = ({
           // Calculate position based on stone.position (0-indexed)
           const position = calculatePosition(stone.position, 9); // 9 positions for Enneagram
           
-          // Get stone data from stoneData array
-          const stoneInfo = stoneData[stone.stoneIndex];
+          // Get stone data from stoneData array - find by setIndex and stoneIndex
+          const stoneInfo = stoneData.find(s => 
+            s.setIndex === stone.setIndex && s.stoneIndex === stone.stoneIndex
+          );
+          
+          // Get the gradient colors using the stone's set and index
+          const gradientColors = getStoneGradient(stone.setIndex, stone.stoneIndex);
           
           // Generate a unique key for each stone
-          const stoneKey = `placed-stone-${stone.position}-${stone.stoneIndex}-${index}`;
+          const stoneKey = `placed-stone-${stone.position}-${stone.setIndex}-${stone.stoneIndex}-${index}`;
           
           return (
             <motion.div
@@ -67,7 +73,7 @@ const FoundationBase = ({
                 id={stone.stoneIndex}
                 content={stoneInfo ? stoneInfo.content : ['Stone']}
                 isPlaced={true}
-                gradientColors={stoneInfo ? stoneInfo.gradientColors : undefined}
+                gradientColors={gradientColors}
               />
             </motion.div>
           );

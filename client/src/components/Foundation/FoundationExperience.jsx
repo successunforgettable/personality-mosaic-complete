@@ -4,7 +4,7 @@ import Stone from './Stone';
 import FoundationBase from './FoundationBase';
 import StoneSet from './StoneSet';
 import './FoundationExperience.css';
-import { STONE_SETS, STONE_COLORS } from './stoneData';
+import { STONE_SETS, STONE_COLORS, getStoneGradient } from './stoneData';
 
 /**
  * FoundationExperience Component
@@ -92,19 +92,8 @@ const FoundationExperience = ({ onComplete }) => {
     
     STONE_SETS.forEach((set, setIndex) => {
       set.forEach((stoneContent, stoneIndex) => {
-        // Get the color for this set
-        const setType = Math.floor(setIndex / 3); // 0: Head, 1: Heart, 2: Body
-        const colorSet = STONE_COLORS[setType];
-        
-        // Create gradient colors with variations based on stoneIndex
-        let gradientColors;
-        if (stoneIndex === 0) {
-          gradientColors = { from: colorSet.light, to: colorSet.primary };
-        } else if (stoneIndex === 1) {
-          gradientColors = { from: colorSet.primary, to: colorSet.primary };
-        } else {
-          gradientColors = { from: colorSet.primary, to: colorSet.dark };
-        }
+        // Get the color for this set from our improved stone color mapping
+        const gradientColors = getStoneGradient(setIndex, stoneIndex);
         
         data.push({
           content: stoneContent,
