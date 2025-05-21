@@ -8,16 +8,22 @@
 
 .foundation-base {
   position: relative;
-  width: 320px;
+  width: 320px; /* Exact diameter as specified in technical spec */
   height: 320px;
   border-radius: 50%;
-  background-color: #f1f5f9;
-  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.05), 
-              0 10px 30px rgba(0, 0, 0, 0.1);
+  background-color: #f8fafc;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
   display: flex;
   justify-content: center;
   align-items: center;
   overflow: visible;
+}
+
+.foundation-circle {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
 }
 
 .foundation-center {

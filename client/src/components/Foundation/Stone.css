@@ -1,10 +1,7 @@
 .stone {
   width: 160px; /* Exact dimensions from spec 2.2.1 */
   height: 160px;
-  background: linear-gradient(135deg, #4c1d95 0%, #8b5cf6 100%);
-  border: 2px solid white;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  border: none;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -12,6 +9,7 @@
   position: relative;
   transition: all 0.2s ease;
   cursor: pointer;
+  /* Perfect hexagon shape as specified */
   clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
   outline: none; /* For accessibility */
 }

@@ -3,8 +3,8 @@ import { motion } from 'framer-motion';
 import './Stone.css';
 
 /**
- * Stone Component
- * Represents an individual foundation stone in the Personality Mosaic Assessment
+ * Stone Component - Designed exactly to technical specs
+ * Hexagonal stone with proper coloring based on center type
  */
 const Stone = ({ 
   id, 
@@ -15,14 +15,13 @@ const Stone = ({
   gradientColors = { from: '#8b5cf6', to: '#6366f1' }, // Default purple gradient
   onClick = () => {},
   size = 'normal', // normal or small
-  tabIndex,
-  name
+  tabIndex
 }) => {
-  // Generate a unique ID for SVG gradient
-  const gradientId = `stone-gradient-${id}`;
-  
   // Content should be an array of strings (words/traits)
   const contentLines = Array.isArray(content) ? content : [content];
+  
+  // Scale for placed stones on foundation is 0.5 (half size)
+  const stoneScale = isPlaced ? 0.5 : 1;
   
   return (
     <motion.div
@@ -31,13 +30,14 @@ const Stone = ({
       tabIndex={tabIndex !== undefined ? tabIndex : 0}
       style={{
         background: `linear-gradient(135deg, ${gradientColors.from}, ${gradientColors.to})`,
-        width: isPlaced ? '80px' : (size === 'small' ? '120px' : '160px'),
-        height: isPlaced ? '80px' : (size === 'small' ? '120px' : '160px'),
+        // Stone dimensions - 160px standard, 80px when placed on foundation
+        width: isPlaced ? '80px' : '160px',
+        height: isPlaced ? '80px' : '160px',
       }}
       whileHover={!isPlaced ? { scale: 1.05 } : {}}
       whileTap={!isPlaced ? { scale: 0.95 } : {}}
       initial={isPlaced ? { scale: 0.1, opacity: 0 } : { scale: 1, opacity: 1 }}
-      animate={isPlaced ? { scale: 1, opacity: 1 } : { scale: 1, opacity: 1 }}
+      animate={isPlaced ? { scale: stoneScale, opacity: 1 } : { scale: 1, opacity: 1 }}
       transition={{
         type: 'spring',
         stiffness: 500,
@@ -45,7 +45,6 @@ const Stone = ({
       }}
       role="button"
       aria-pressed={isSelected}
-      data-testid={`stone-${id}`}
     >
       {/* Checkmark for selected stone */}
       {isSelected && !isPlaced && (

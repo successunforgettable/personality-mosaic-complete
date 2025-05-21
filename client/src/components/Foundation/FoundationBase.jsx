@@ -2,111 +2,94 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import Stone from './Stone';
 import './FoundationBase.css';
+import { STONE_SETS } from './stoneData';
 
 /**
- * FoundationBase Component
- * Displays the circular foundation with stones positioned around it
+ * FoundationBase Component - Implemented according to technical specs
  */
 const FoundationBase = ({ 
   placedStones = [], 
   stoneData = []
 }) => {
-  // Calculate positions for each stone
-  const calculatePosition = (index, totalStones) => {
-    const radius = 110; // Distance from center (slightly smaller than circle radius)
-    const angleStep = (2 * Math.PI) / totalStones;
-    const angle = angleStep * index - Math.PI / 2; // Start from top (subtract 90 degrees)
+  // Calculate positions following the exact spec formula:
+  // x = 50 + 45*cos(angle)
+  // y = 50 + 45*sin(angle)
+  const calculatePosition = (position, totalPositions) => {
+    const angleStep = (2 * Math.PI) / totalPositions;
+    // Start from top (subtract π/2 which is 90 degrees)
+    const angle = angleStep * position - Math.PI / 2;
     
-    // Calculate coordinates (adjusted to center the stones)
-    const x = radius * Math.cos(angle);
-    const y = radius * Math.sin(angle);
+    // Calculate x and y as percentages (center is at 50%)
+    const xPercent = 50 + 45 * Math.cos(angle);
+    const yPercent = 50 + 45 * Math.sin(angle);
     
     return {
-      left: `calc(50% + ${x}px - 40px)`, // 40px is half of the stone width when placed
-      top: `calc(50% + ${y}px - 40px)`,  // 40px is half of the stone height when placed
+      left: `${xPercent}%`,
+      top: `${yPercent}%`,
+      transform: 'translate(-50%, -50%)' // Center the stone on the calculated point
     };
+  };
+  
+  // Get the center type and colors for a stone
+  const getStoneColors = (setIndex) => {
+    const centerType = Math.floor(setIndex / 3); // 0: Head, 1: Heart, 2: Body
+    
+    const centerColors = {
+      0: { // Head - Blue
+        primary: '#3b82f6',
+        light: '#93c5fd',
+        dark: '#1d4ed8'
+      },
+      1: { // Heart - Red
+        primary: '#ef4444',
+        light: '#fca5a5',
+        dark: '#b91c1c'
+      },
+      2: { // Body - Green
+        primary: '#10b981',
+        light: '#6ee7b7',
+        dark: '#047857'
+      }
+    };
+    
+    return centerColors[centerType] || centerColors[0];
   };
   
   return (
     <div className="foundation-base">
+      {/* Circular base with 320px diameter */}
       <div className="foundation-circle">
-        {/* Inner dashed circle */}
-        <div className="foundation-inner-circle"></div>
-        
-        {/* Connection lines can be added here if needed */}
-        <svg className="foundation-connections" width="100%" height="100%" viewBox="0 0 320 320">
-          {/* Connections would go here */}
-        </svg>
-        
         {/* Placed stones */}
         {placedStones.map((stone, index) => {
-          // Calculate position based on stone.position (0-indexed)
-          const position = calculatePosition(stone.position, 9); // 9 positions for Enneagram
+          // Get position around the circle
+          const position = calculatePosition(stone.position, 9);
           
-          // Get stone data from stoneData array
-          const stoneInfo = stoneData.find(s => 
-            s.setIndex === stone.setIndex && s.stoneIndex === stone.stoneIndex
-          );
+          // Get stone content from data
+          const stoneData = STONE_SETS?.[stone.setIndex]?.[stone.stoneIndex] || ['Stone'];
           
-          // Get the center type (Head, Heart, Body)
-          const centerType = Math.floor(stone.setIndex / 3); // 0: Head, 1: Heart, 2: Body
+          // Get colors based on center type
+          const colors = getStoneColors(stone.setIndex);
           
-          // Define color mappings for each center
-          const centerColorMap = {
-            0: { // Head
-              primary: '#3b82f6', // Blue-500
-              light: '#93c5fd',   // Blue-300
-              dark: '#1d4ed8'     // Blue-700
-            },
-            1: { // Heart
-              primary: '#ef4444', // Red-500
-              light: '#fca5a5',   // Red-300
-              dark: '#b91c1c'     // Red-700
-            },
-            2: { // Body
-              primary: '#10b981', // Emerald-500
-              light: '#6ee7b7',   // Emerald-300
-              dark: '#047857'     // Emerald-700
-            }
-          };
-          
-          // Get the color set for this stone's center
-          const colorSet = centerColorMap[centerType] || { 
-            primary: '#64748b', 
-            light: '#94a3b8', 
-            dark: '#475569' 
-          };
-          
-          // Create gradient colors with variations based on stoneIndex
+          // Create gradient based on stone index variation
           const gradientColors = {
-            from: stone.stoneIndex === 0 ? colorSet.light : 
-                  stone.stoneIndex === 1 ? colorSet.primary : 
-                  colorSet.primary,
-            to: stone.stoneIndex === 0 ? colorSet.primary : 
-                stone.stoneIndex === 1 ? colorSet.primary : 
-                colorSet.dark
+            from: stone.stoneIndex === 0 ? colors.light : 
+                  stone.stoneIndex === 1 ? colors.primary : colors.primary,
+            to: stone.stoneIndex === 0 ? colors.primary : 
+                stone.stoneIndex === 1 ? colors.primary : colors.dark
           };
-          
-          // Generate a unique key for each stone
-          const stoneKey = `placed-stone-${stone.position}-${stone.setIndex}-${stone.stoneIndex}-${index}`;
           
           return (
             <motion.div
-              key={stoneKey}
+              key={`stone-${stone.position}-${index}`}
               className="positioned-stone"
               style={position}
               initial={{ opacity: 0, scale: 0 }}
               animate={{ opacity: 1, scale: 1 }}
-              transition={{
-                type: 'spring',
-                stiffness: 500,
-                damping: 30,
-                delay: index * 0.1
-              }}
+              transition={{ type: 'spring', stiffness: 500, damping: 30 }}
             >
               <Stone
-                id={stone.stoneIndex}
-                content={stoneInfo ? stoneInfo.content : ['Stone']}
+                id={`placed-${stone.position}`}
+                content={stoneData}
                 isPlaced={true}
                 gradientColors={gradientColors}
               />
