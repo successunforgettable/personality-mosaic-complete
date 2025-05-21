@@ -1,0 +1,90 @@
+.building-block-experience {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px 0;
+  position: relative;
+}
+
+.block-pairs-container {
+  position: relative;
+  min-height: 300px;
+}
+
+.progress-indicator {
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 16px;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.pair-slide {
+  position: absolute;
+  width: 100%;
+  transition: all 0.5s ease;
+  opacity: 0;
+  transform: translateX(50px);
+  pointer-events: none;
+}
+
+.pair-slide.active {
+  opacity: 1;
+  transform: translateX(0);
+  position: relative;
+  pointer-events: all;
+  z-index: 2;
+}
+
+.pair-slide.previous {
+  opacity: 0;
+  transform: translateX(-50px);
+  z-index: 1;
+}
+
+.pair-slide.next {
+  opacity: 0;
+  transform: translateX(50px);
+  z-index: 1;
+}
+
+.building-progress-dots {
+  display: flex;
+  justify-content: center;
+  margin-top: 30px;
+  gap: 8px;
+}
+
+.progress-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: #e2e8f0;
+  transition: all 0.3s ease;
+}
+
+.progress-dot.active {
+  background-color: #3b82f6;
+  transform: scale(1.2);
+}
+
+.progress-dot.completed {
+  background-color: #a3e635;
+}
+
+.completion-message {
+  text-align: center;
+  padding: 40px;
+  background-color: #f0fdf4;
+  border-radius: 8px;
+  border: 1px solid #86efac;
+}
+
+.completion-message h3 {
+  color: #16a34a;
+  font-size: 24px;
+  margin-bottom: 12px;
+}
+
+.completion-message p {
+  color: #4d7c0f;
+}
