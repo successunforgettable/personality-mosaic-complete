@@ -29,7 +29,7 @@ const FoundationBase = ({ placedStones = [], stoneContents = [] }) => {
             const position = calculateStonePosition(stoneData.position);
             return (
               <line
-                key={index}
+                key={`line-${stoneData.position}-${index}`}
                 x1="50"
                 y1="50"
                 x2={position.x}
@@ -47,7 +47,7 @@ const FoundationBase = ({ placedStones = [], stoneContents = [] }) => {
           
           return (
             <Stone
-              key={`placed-stone-${stoneData.position}`}
+              key={`placed-stone-${stoneData.position}-${index}`}
               content={stoneContent}
               selected={true}
               onClick={() => {}} // No action for placed stones
