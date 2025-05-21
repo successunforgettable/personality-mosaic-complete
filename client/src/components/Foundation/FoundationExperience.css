@@ -14,9 +14,9 @@
 
 .foundation-layout {
   display: flex;
-  flex-direction: row;
-  gap: 40px;
-  align-items: flex-start;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
 }
 
 /* Foundation visualization section */
@@ -79,10 +79,10 @@
 }
 
 .section-divider {
+  width: 100%;
   height: 1px;
   background-color: #e2e8f0;
-  width: 100%;
-  margin-bottom: 24px;
+  margin: 20px 0;
 }
 
 .selection-title {
@@ -108,12 +108,25 @@
 }
 
 /* Responsive adjustments */
-@media (max-width: 1024px) {
+@media (min-width: 1024px) {
   .foundation-layout {
-    flex-direction: column;
-    gap: 40px;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-between;
   }
   
+  .foundation-visualizer {
+    flex: 1;
+    max-width: 400px;
+  }
+  
+  .selection-area {
+    flex: 1;
+    max-width: 600px;
+  }
+}
+
+@media (max-width: 1024px) {
   .foundation-visualizer {
     position: relative;
     top: 0;
