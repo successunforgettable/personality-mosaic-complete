@@ -9,7 +9,7 @@ import Assessment from "@/pages/Assessment";
 import BasicAssessment from "@/pages/BasicAssessment";
 import DirectRegisterForm from "@/pages/DirectRegisterForm";
 import DirectLoginForm from "@/pages/DirectLoginForm";
-import SimpleFoundation from "./SimpleFoundation";
+import FoundationStonePage from "@/pages/FoundationStonePage";
 import UserProfile from "@/pages/UserProfile";
 import ResultsCompare from "@/pages/ResultsCompare";
 import ResetPassword from "@/pages/ResetPassword";
@@ -42,9 +42,7 @@ function Router() {
           <Route path="/" component={Home} />
           <Route path="/assessment">
             <ProtectedRoute allowGuest={true}>
-              <div>
-                <SimpleFoundation />
-              </div>
+              <FoundationStonePage />
             </ProtectedRoute>
           </Route>
           <Route path="/original-assessment">
