@@ -5,32 +5,59 @@
 
 // Stone set definitions with center-specific content for each stone
 export const STONE_SETS = [
-  // Set 0: Primary stone set (Head, Heart, Body)
+  // Set 1 (Head vs. Heart vs. Body)
   [
-    // 0: Head center stone
-    'Thinking Center•Analysis & Logic•Strategic Planning',
-    // 1: Heart center stone
-    'Feeling Center•Empathy & Connection•Emotional Intelligence',
-    // 2: Body center stone
-    'Instinctual Center•Action & Energy•Physical Awareness'
+    "THINKING • ANALYSIS • LOGIC",
+    "FEELING • EMOTION • CONNECTION",
+    "ACTION • INSTINCT • PHYSICALITY"
   ],
-  // Set 1: Alternative stone set (can be used for different user groups)
+  // Set 2
   [
-    // 0: Head center stone
-    'Intellectual Center•Reasoning & Problem Solving•Mental Processing',
-    // 1: Heart center stone
-    'Emotional Center•Relationships & Compassion•Social Awareness',
-    // 2: Body center stone
-    'Physical Center•Momentum & Vitality•Gut Reactions'
+    "PLANNING • STRATEGY • FORESIGHT",
+    "EMPATHY • COMPASSION • SUPPORT",
+    "MOTION • PRACTICE • IMPLEMENTATION"
   ],
-  // Set 2: Advanced stone set (more nuanced descriptions)
+  // Set 3
   [
-    // 0: Head center stone
-    'Mind Center•Analytical Processing•Conceptual Understanding•Strategic Thinking',
-    // 1: Heart center stone
-    'Heart Center•Emotional Intelligence•Relational Connection•Interpersonal Harmony',
-    // 2: Body center stone 
-    'Body Center•Action Intelligence•Physical Awareness•Instinctive Response'
+    "KNOWLEDGE • UNDERSTANDING • WISDOM",
+    "EXPRESSION • CREATIVITY • SENSITIVITY",
+    "STRENGTH • ENDURANCE • RESILIENCE"
+  ],
+  // Set 4
+  [
+    "REASONING • CONSIDERATION • DELIBERATION",
+    "ATTUNEMENT • HARMONY • BALANCE",
+    "WILLPOWER • DECISIVENESS • COURAGE"
+  ],
+  // Set 5
+  [
+    "PERCEPTION • INSIGHT • CLARITY",
+    "APPRECIATION • GRATITUDE • RECOGNITION",
+    "GROUNDEDNESS • STABILITY • RELIABILITY"
+  ],
+  // Set 6
+  [
+    "MINDFULNESS • AWARENESS • ATTENTION",
+    "PLAYFULNESS • JOY • SPONTANEITY",
+    "PERSEVERANCE • DETERMINATION • DILIGENCE"
+  ],
+  // Set 7
+  [
+    "OBJECTIVITY • DETACHMENT • NEUTRALITY",
+    "AUTHENTICITY • HONESTY • SINCERITY",
+    "ADAPTABILITY • FLEXIBILITY • RESPONSIVENESS"
+  ],
+  // Set 8
+  [
+    "CURIOSITY • EXPLORATION • DISCOVERY",
+    "ACCEPTANCE • FORGIVENESS • RECONCILIATION",
+    "ASSERTIVENESS • BOUNDARY-SETTING • PROTECTION"
+  ],
+  // Set 9
+  [
+    "DISCERNMENT • DISCRIMINATION • PRECISION",
+    "COMPASSION • KINDNESS • TENDERNESS",
+    "PRESENCE • CENTEREDNESS • EMBODIMENT"
   ]
 ];
 

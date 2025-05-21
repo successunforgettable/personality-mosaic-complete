@@ -76,8 +76,8 @@ const Stone = ({
       {name && <div className="stone-name">{name}</div>}
       
       <div className="stone-content">
-        {contentItems.map((line, index) => (
-          <div key={index} className="stone-line">{line}</div>
+        {content.split('•').map((text, i) => (
+          <div key={i} className="stone-line">{text.trim()}</div>
         ))}
       </div>
       
