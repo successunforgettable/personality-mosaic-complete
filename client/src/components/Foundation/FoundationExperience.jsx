@@ -4,7 +4,7 @@ import Stone from './Stone';
 import FoundationBase from './FoundationBase';
 import StoneSet from './StoneSet';
 import './FoundationExperience.css';
-import { STONE_SETS, STONE_COLORS, getStoneGradient } from './stoneData';
+import { STONE_SETS, STONE_COLORS } from './stoneData';
 
 /**
  * FoundationExperience Component
@@ -92,8 +92,44 @@ const FoundationExperience = ({ onComplete }) => {
     
     STONE_SETS.forEach((set, setIndex) => {
       set.forEach((stoneContent, stoneIndex) => {
-        // Get the color for this set from our improved stone color mapping
-        const gradientColors = getStoneGradient(setIndex, stoneIndex);
+        // Get the center type (Head, Heart, Body)
+        const centerType = Math.floor(setIndex / 3); // 0: Head, 1: Heart, 2: Body
+        
+        // Define color mappings for each center
+        const centerColorMap = {
+          0: { // Head
+            primary: '#3b82f6', // Blue-500
+            light: '#93c5fd',   // Blue-300
+            dark: '#1d4ed8'     // Blue-700
+          },
+          1: { // Heart
+            primary: '#ef4444', // Red-500
+            light: '#fca5a5',   // Red-300
+            dark: '#b91c1c'     // Red-700
+          },
+          2: { // Body
+            primary: '#10b981', // Emerald-500
+            light: '#6ee7b7',   // Emerald-300
+            dark: '#047857'     // Emerald-700
+          }
+        };
+        
+        // Get the color set for this stone's center
+        const colorSet = centerColorMap[centerType] || { 
+          primary: '#64748b', 
+          light: '#94a3b8', 
+          dark: '#475569' 
+        };
+        
+        // Create gradient colors with variations based on stoneIndex
+        const gradientColors = {
+          from: stoneIndex === 0 ? colorSet.light : 
+                stoneIndex === 1 ? colorSet.primary : 
+                colorSet.primary,
+          to: stoneIndex === 0 ? colorSet.primary : 
+              stoneIndex === 1 ? colorSet.primary : 
+              colorSet.dark
+        };
         
         data.push({
           content: stoneContent,

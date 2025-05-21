@@ -1,7 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import Stone from './Stone';
-import { getStoneGradient } from './stoneData';
 import './FoundationBase.css';
 
 /**
@@ -44,13 +43,49 @@ const FoundationBase = ({
           // Calculate position based on stone.position (0-indexed)
           const position = calculatePosition(stone.position, 9); // 9 positions for Enneagram
           
-          // Get stone data from stoneData array - find by setIndex and stoneIndex
+          // Get stone data from stoneData array
           const stoneInfo = stoneData.find(s => 
             s.setIndex === stone.setIndex && s.stoneIndex === stone.stoneIndex
           );
           
-          // Get the gradient colors using the stone's set and index
-          const gradientColors = getStoneGradient(stone.setIndex, stone.stoneIndex);
+          // Get the center type (Head, Heart, Body)
+          const centerType = Math.floor(stone.setIndex / 3); // 0: Head, 1: Heart, 2: Body
+          
+          // Define color mappings for each center
+          const centerColorMap = {
+            0: { // Head
+              primary: '#3b82f6', // Blue-500
+              light: '#93c5fd',   // Blue-300
+              dark: '#1d4ed8'     // Blue-700
+            },
+            1: { // Heart
+              primary: '#ef4444', // Red-500
+              light: '#fca5a5',   // Red-300
+              dark: '#b91c1c'     // Red-700
+            },
+            2: { // Body
+              primary: '#10b981', // Emerald-500
+              light: '#6ee7b7',   // Emerald-300
+              dark: '#047857'     // Emerald-700
+            }
+          };
+          
+          // Get the color set for this stone's center
+          const colorSet = centerColorMap[centerType] || { 
+            primary: '#64748b', 
+            light: '#94a3b8', 
+            dark: '#475569' 
+          };
+          
+          // Create gradient colors with variations based on stoneIndex
+          const gradientColors = {
+            from: stone.stoneIndex === 0 ? colorSet.light : 
+                  stone.stoneIndex === 1 ? colorSet.primary : 
+                  colorSet.primary,
+            to: stone.stoneIndex === 0 ? colorSet.primary : 
+                stone.stoneIndex === 1 ? colorSet.primary : 
+                colorSet.dark
+          };
           
           // Generate a unique key for each stone
           const stoneKey = `placed-stone-${stone.position}-${stone.setIndex}-${stone.stoneIndex}-${index}`;

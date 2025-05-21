@@ -57,15 +57,15 @@ const StoneSet = ({
       
       <div className="stones-container">
         {stones.map((stone, index) => {
-          // Create gradient colors with variations based on index
-          let gradientColors;
-          if (index === 0) {
-            gradientColors = { from: colorSet.light, to: colorSet.primary };
-          } else if (index === 1) {
-            gradientColors = { from: colorSet.primary, to: colorSet.primary };
-          } else {
-            gradientColors = { from: colorSet.primary, to: colorSet.dark };
-          }
+          // Use the detailed stone gradient mapping from stoneData
+          const gradientColors = {
+            from: index === 0 ? colorSet.light : 
+                  index === 1 ? colorSet.primary : 
+                  colorSet.primary,
+            to: index === 0 ? colorSet.primary : 
+                index === 1 ? colorSet.primary : 
+                colorSet.dark
+          };
           
           return (
             <motion.div
