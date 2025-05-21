@@ -1,0 +1,156 @@
+/* Foundation Phase Component Styles */
+
+.foundation-phase {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.phase-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.phase-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 0.5rem;
+}
+
+.phase-description {
+  font-size: 1.1rem;
+  color: #64748b;
+  max-width: 36rem;
+  margin: 0 auto;
+}
+
+/* Progress Bar Styles */
+.progress-container {
+  max-width: 500px;
+  margin: 0 auto 2rem;
+  text-align: center;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 0.75rem;
+  background-color: #e2e8f0;
+  border-radius: 9999px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background-color: #3b82f6; /* Blue color */
+  border-radius: 9999px;
+  transition: width 0.3s ease;
+}
+
+.progress-text {
+  font-size: 0.9rem;
+  color: #64748b;
+  margin-top: 0.5rem;
+}
+
+/* Main Layout */
+.foundation-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* Foundation Visualizer Container */
+.foundation-visualizer-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+/* Stone Selection Area */
+.stone-selection-container {
+  width: 100%;
+  background-color: white;
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Center Header */
+.center-header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.center-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.set-indicator {
+  font-size: 1rem;
+  color: #64748b;
+}
+
+/* Navigation Controls */
+.navigation-controls {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.nav-button {
+  padding: 0.75rem 1.5rem;
+  background-color: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.375rem;
+  font-weight: 500;
+  color: #334155;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.nav-button:hover:not(:disabled) {
+  background-color: #e2e8f0;
+}
+
+.nav-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.complete-button {
+  padding: 0.75rem 1.5rem;
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 0.375rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.complete-button:hover {
+  background-color: #2563eb;
+}
+
+/* Responsive Layout */
+@media (min-width: 768px) {
+  .foundation-layout {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+
+  .foundation-visualizer-container {
+    width: 50%;
+    position: sticky;
+    top: 2rem;
+  }
+
+  .stone-selection-container {
+    width: 50%;
+  }
+}
