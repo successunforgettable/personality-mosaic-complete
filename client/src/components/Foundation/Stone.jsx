@@ -1,59 +1,121 @@
 import React from 'react';
+import { motion } from 'framer-motion';
+import { getStoneGradient } from './stoneData';
 import './Stone.css';
 
 /**
- * Stone Component
- * A hexagonal stone component for the foundation phase
- * Follows the specifications in tech_spec_v2.md
+ * Stone component - Represents an individual foundation stone
+ * Uses framer-motion for animations
+ * 
+ * @param {Object} props
+ * @param {string|number} props.id - Unique identifier for the stone
+ * @param {string} props.content - String content with • separators
+ * @param {boolean} props.selected - Whether this stone is currently selected
+ * @param {Function} props.onClick - Click handler function
+ * @param {number} props.stoneIndex - Index of the stone within its set
+ * @param {Object} props.position - Position when placed on foundation {x, y}
+ * @param {boolean} props.isPlaced - Whether this stone is placed on the foundation
+ * @param {number} props.setIndex - Index of the stone set
+ * @param {string} props.category - Category of the stone (head, heart, body)
  */
-const Stone = ({ 
-  content, 
-  selected, 
-  onClick, 
+const Stone = ({
+  id,
+  content,
+  name,
+  selected,
+  onClick,
   stoneIndex,
   position,
   isPlaced = false,
-  gradientColors = { from: '#93c5fd', to: '#3b82f6' }
+  setIndex = 0,
+  category,
+  tabIndex
 }) => {
-  // Calculate styles for stones placed around the foundation
-  const placedStyle = isPlaced && position ? {
-    position: 'absolute',
-    left: `${position.x}%`,
-    top: `${position.y}%`,
-    transform: 'translate(-50%, -50%) scale(0.5)', // Stones are 0.5x size when placed
-    transition: 'all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)',
-  } : {};
-
-  // Extract content lines - supports both string array and dot-delimited format
-  const contentLines = Array.isArray(content) 
-    ? content 
-    : (content ? content.split('•').filter(line => line.trim()) : []);
+  // Get gradient for this stone
+  const background = getStoneGradient(setIndex, stoneIndex);
+  
+  // Parse content if it's a string with separators
+  const contentItems = typeof content === 'string' 
+    ? content.split('•').filter(line => line.trim()).map(s => s.trim())
+    : Array.isArray(content) ? content : [];
   
   return (
-    <div 
+    <motion.div 
       className={`stone ${selected ? 'selected' : ''} ${isPlaced ? 'placed' : ''}`}
       onClick={() => !isPlaced && onClick(stoneIndex)}
-      style={placedStyle}
+      style={{ 
+        background,
+        ...(isPlaced ? {
+          position: 'absolute',
+          left: `${position.x}%`,
+          top: `${position.y}%`,
+          transform: 'translate(-50%, -50%)'
+        } : {})
+      }}
+      initial={isPlaced ? { scale: 0, opacity: 0 } : { scale: 1 }}
+      animate={isPlaced ? { 
+        scale: 0.5, // Smaller when placed
+        opacity: 1 
+      } : { 
+        scale: selected ? 1.05 : 1,
+      }}
+      transition={{
+        type: 'spring',
+        stiffness: 500,
+        damping: 30,
+        duration: 0.6
+      }}
       role="button"
       aria-pressed={selected}
-      tabIndex={isPlaced ? -1 : 0}
+      tabIndex={tabIndex || 0}
+      data-id={id}
+      data-category={category}
+      data-set-index={setIndex}
+      data-stone-index={stoneIndex}
     >
-      <div 
-        className="stone-content"
-        style={{
-          background: `linear-gradient(135deg, ${gradientColors.from}, ${gradientColors.to})`
-        }}
-      >
-        <div className="stone-text">
-          {contentLines.map((line, index) => (
-            <div key={index} className="stone-text-item">
-              {typeof line === 'string' ? line.trim() : line}
-            </div>
-          ))}
-        </div>
+      {name && <div className="stone-name">{name}</div>}
+      
+      <div className="stone-content">
+        {contentItems.map((line, index) => (
+          <div key={index} className="stone-line">{line}</div>
+        ))}
       </div>
+      
       {selected && !isPlaced && <div className="stone-checkmark">✓</div>}
-    </div>
+    </motion.div>
+  );
+};
+
+/**
+ * Foundation Stone component - Used when a stone is placed on the foundation
+ * Implemented as a specialized version of the Stone component
+ */
+export const FoundationStone = ({
+  id,
+  name,
+  content,
+  category,
+  setIndex = 0,
+  stoneIndex = 0,
+  position,
+  isAnimating
+}) => {
+  return (
+    <Stone
+      id={id}
+      name={name}
+      content={content}
+      category={category}
+      setIndex={setIndex}
+      stoneIndex={stoneIndex}
+      position={{
+        x: (position.x / 320) * 100, // Convert from px to percentage
+        y: (position.y / 320) * 100
+      }}
+      selected={true}
+      isPlaced={true}
+      onClick={() => {}} // No click handler needed for placed stones
+    />
   );
 };
 

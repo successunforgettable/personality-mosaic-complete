@@ -1,206 +1,150 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import Stone from './Stone';
-import ExactFoundation from './ExactFoundation';
 import StoneSet from './StoneSet';
+import FoundationBase from './FoundationBase';
 import './FoundationExperience.css';
-import './continue-button.css';
 
 /**
- * FoundationExperience Component
- * The main component for Phase 1 of the Personality Mosaic Assessment
- * Handles the stone selection process through all sets
+ * FoundationExperience - Main component for the Foundation Stone phase (Phase 1)
+ * Manages the complete foundation stone selection experience with animations
+ * 
+ * @param {Object} props
+ * @param {Function} props.onComplete - Callback when foundation selection is complete
+ * @param {Array} props.initialSelections - Optional initial selections (for resuming)
+ * @param {number} props.setIndex - Stone set index to use (default: 0)
  */
-const FoundationExperience = ({ onComplete }) => {
-  // Stone sets data - directly from the specification
-  const STONE_SETS = [
-    // Head Center (Sets 0-2)
-    [
-      ["Analytical", "Observant", "Investigative"],
-      ["Thoughtful", "Insightful", "Perceptive"],
-      ["Strategic", "Focused", "Detail-oriented"]
-    ],
-    // Heart Center (Sets 3-5)
-    [
-      ["Empathetic", "Compassionate", "Understanding"],
-      ["Expressive", "Passionate", "Authentic"],
-      ["Supportive", "Caring", "Nurturing"]
-    ],
-    // Body Center (Sets 6-8)
-    [
-      ["Action-oriented", "Practical", "Hands-on"],
-      ["Grounded", "Stable", "Reliable"],
-      ["Adaptable", "Resilient", "Energetic"]
-    ]
-  ];
-  
-  // Flatten stone sets for easier access
-  const flatStoneSets = STONE_SETS.flat();
-  
-  // Current set of stones being displayed (0-indexed)
-  const [currentSetIndex, setCurrentSetIndex] = useState(0);
-  
-  // Stones that have been placed on the foundation
-  const [placedStones, setPlacedStones] = useState([]);
-  
-  // Array to track which stone was selected from each set
-  const [stoneSelections, setStoneSelections] = useState([]);
-  
-  // Track visited sets for validation and UI purposes
-  const [visitedSets, setVisitedSets] = useState([0]);
-  
-  // Current stones being displayed (with selection state)
-  const [currentStones, setCurrentStones] = useState([
-    { content: flatStoneSets[0][0], selected: false },
-    { content: flatStoneSets[0][1], selected: false },
-    { content: flatStoneSets[0][2], selected: false },
-  ]);
+const FoundationExperience = ({ 
+  onComplete, 
+  initialSelections = [],
+  setIndex = 0 
+}) => {
+  // State for selected stones and animation
+  const [selectedStones, setSelectedStones] = useState(initialSelections);
+  const [isAnimating, setIsAnimating] = useState(false);
+  const [lastSelectedStoneId, setLastSelectedStoneId] = useState(null);
   
   // Handle stone selection
-  const handleStoneSelect = (stoneIndex) => {
-    // Update current stones to show selection
-    const updatedStones = currentStones.map((stone, idx) => ({
-      ...stone,
-      selected: idx === stoneIndex
-    }));
-    setCurrentStones(updatedStones);
-    
-    // Add to selections array (replace if already exists)
-    const newSelections = [...stoneSelections];
-    newSelections[currentSetIndex] = stoneIndex;
-    setStoneSelections(newSelections);
-    
-    // Update placed stones accordingly
-    const newPlacedStones = placedStones.filter(stone => 
-      stone.position !== currentSetIndex
+  const handleStoneSelect = (stones) => {
+    // Get the newly added stone (if any)
+    const newStone = stones.find(stone => 
+      !selectedStones.some(s => s.id === stone.id)
     );
     
-    // Add the new stone
-    newPlacedStones.push({
-      stoneIndex,
-      position: currentSetIndex,
-      content: flatStoneSets[currentSetIndex][stoneIndex]
-    });
+    // Update state
+    setSelectedStones(stones);
     
-    // Update the placed stones state
-    setPlacedStones(newPlacedStones);
-    
-    // User manually goes to next set - no automatic progression
-  };
-  
-  // Update current stones when set changes and check for existing selections
-  useEffect(() => {
-    if (currentSetIndex < flatStoneSets.length) {
-      // Load the new set of stones and check if any was previously selected
-      const existingSelection = stoneSelections[currentSetIndex];
+    // If there's a new stone added, trigger animation
+    if (newStone) {
+      setLastSelectedStoneId(newStone.id);
+      setIsAnimating(true);
       
-      setCurrentStones([
-        { 
-          content: flatStoneSets[currentSetIndex][0], 
-          selected: existingSelection === 0 
-        },
-        { 
-          content: flatStoneSets[currentSetIndex][1], 
-          selected: existingSelection === 1 
-        },
-        { 
-          content: flatStoneSets[currentSetIndex][2], 
-          selected: existingSelection === 2 
-        },
-      ]);
-    }
-  }, [currentSetIndex, stoneSelections, flatStoneSets]);
-  
-  // Enhanced navigation functions
-  // Function to go back to previous set
-  const goToPreviousSet = () => {
-    if (currentSetIndex > 0) {
-      setCurrentSetIndex(currentSetIndex - 1);
+      // Reset animation flag after animation completes
+      setTimeout(() => {
+        setIsAnimating(false);
+      }, 600); // Animation duration + small buffer
     }
   };
-
-  // Function to go forward to next set with tracking
-  const goToNextSet = () => {
-    if (currentSetIndex < flatStoneSets.length - 1) {
-      const nextSetIndex = currentSetIndex + 1;
-      setCurrentSetIndex(nextSetIndex);
-      
-      // Track visited sets for validation
-      if (!visitedSets.includes(nextSetIndex)) {
-        setVisitedSets([...visitedSets, nextSetIndex]);
+  
+  // Check if selection is complete (all stone positions filled)
+  const isSelectionComplete = () => {
+    // For the new data structure, we need one stone from each category (0, 1, 2)
+    return [0, 1, 2].every(stoneIndex => 
+      selectedStones.some(stone => stone.stoneIndex === stoneIndex)
+    );
+  };
+  
+  // Handle completion
+  const handleComplete = () => {
+    if (isSelectionComplete() && onComplete) {
+      onComplete(selectedStones);
+    }
+  };
+  
+  // Animation variants for page elements
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: { 
+      opacity: 1,
+      transition: { 
+        staggerChildren: 0.1,
+        delayChildren: 0.1
       }
     }
   };
   
-  // Get center type name
-  const getCenterType = () => {
-    const centerIndex = Math.floor(currentSetIndex / 3);
-    return ['Head', 'Heart', 'Body'][centerIndex] || 'Head';
-  };
-  
-  // Get subtitle based on current set index
-  const getSetSubtitle = () => {
-    const types = ['Head', 'Heart', 'Body'];
-    const setType = types[Math.floor(currentSetIndex / 3)];
-    const setNumber = (currentSetIndex % 3) + 1;
-    
-    return `${setType} Set ${setNumber} of 3`;
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: { 
+      y: 0, 
+      opacity: 1,
+      transition: { type: 'spring', stiffness: 300, damping: 24 }
+    }
   };
   
   return (
-    <div className="foundation-experience">
-      <h2 className="phase-title">Choose Your Foundation Stones</h2>
+    <motion.div 
+      className="foundation-experience"
+      initial="hidden"
+      animate="visible"
+      variants={containerVariants}
+    >
+      <motion.div className="foundation-header" variants={itemVariants}>
+        <h1 className="foundation-title">Foundation Stones</h1>
+        <p className="foundation-subtitle">
+          Select one stone from each center to establish the foundation of your personality profile
+        </p>
+      </motion.div>
       
       <div className="foundation-layout">
-        <div className="foundation-visualizer">
-          {/* Using the exact specification from technical documentation */}
-          <ExactFoundation selectedStones={placedStones} />
-          <div className="progress-indicator">
-            {currentSetIndex + 1} of 9 stone sets selected
-          </div>
-        </div>
-        
-        <div className="selection-area">
-          <div className="section-divider"></div>
-          
-          <StoneSet
-            stones={currentStones}
+        {/* Stone selection area */}
+        <motion.div 
+          className="foundation-selection-area"
+          variants={itemVariants}
+        >
+          <StoneSet 
+            selectedStones={selectedStones}
             onStoneSelect={handleStoneSelect}
-            currentSetIndex={currentSetIndex}
-            totalSets={flatStoneSets.length}
+            setIndex={setIndex}
           />
-          
-          {/* Navigation buttons with improved controls */}
-          <div className="navigation-controls">
-            <button 
-              className="nav-button" 
-              onClick={goToPreviousSet}
-              disabled={currentSetIndex === 0}
-            >
-              Previous Set
-            </button>
-            
-            <button 
-              className="nav-button"
-              onClick={goToNextSet}
-              disabled={currentSetIndex === flatStoneSets.length - 1}
-            >
-              Next Set
-            </button>
-            
-            {/* Only show complete button when all sets have selections */}
-            {stoneSelections.filter(selection => selection !== undefined).length === flatStoneSets.length && (
-              <button 
-                className="continue-button primary-button"
-                onClick={() => onComplete(stoneSelections)}
-              >
-                Complete Foundation
-              </button>
-            )}
-          </div>
-        </div>
+        </motion.div>
+        
+        {/* Foundation visualization area */}
+        <motion.div 
+          className="foundation-visualization-area"
+          variants={itemVariants}
+        >
+          <FoundationBase 
+            selectedStones={selectedStones}
+            isAnimating={isAnimating}
+            lastSelectedStoneId={lastSelectedStoneId}
+            setIndex={setIndex}
+          />
+        </motion.div>
       </div>
-    </div>
+      
+      {/* Action buttons */}
+      <motion.div 
+        className="foundation-actions"
+        variants={itemVariants}
+      >
+        <AnimatePresence>
+          {isSelectionComplete() && (
+            <motion.button 
+              className="btn btn-primary"
+              onClick={handleComplete}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 20 }}
+              transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              Complete Foundation
+            </motion.button>
+          )}
+        </AnimatePresence>
+      </motion.div>
+    </motion.div>
   );
 };
 

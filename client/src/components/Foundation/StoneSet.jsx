@@ -1,88 +1,120 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+import React, { useState } from 'react';
 import Stone from './Stone';
+import { STONE_SETS } from './stoneData';
 import './StoneSet.css';
 
 /**
- * StoneSet Component
- * Displays a set of three foundation stones for selection
- * Follows the specifications from the technical documentation
+ * StoneSet component - Manages the selection of foundation stones
+ * Displays a set of stones for each category (head, heart, body)
+ * 
+ * @param {Object} props
+ * @param {Array} props.selectedStones - Array of currently selected stones
+ * @param {Function} props.onStoneSelect - Callback when a stone is selected
+ * @param {number} props.setIndex - Index of the stone set to display (default: 0 for head/heart/body)
  */
-const StoneSet = ({ stones, onStoneSelect, currentSetIndex }) => {
-  // Determine center type (Head, Heart, Body) based on set index
-  const centerType = Math.floor(currentSetIndex / 3);
+const StoneSet = ({ 
+  selectedStones = [], 
+  onStoneSelect,
+  setIndex = 0 
+}) => {
+  // Current active category index (0 = head, 1 = heart, 2 = body)
+  const [activeCategoryIndex, setActiveCategoryIndex] = useState(0);
   
-  // Define color sets for the three centers
-  const colorSets = [
-    { // Head
-      primary: '#3b82f6', // Blue-500
-      light: '#93c5fd',   // Blue-300
-      dark: '#1d4ed8'     // Blue-700
-    },
-    { // Heart
-      primary: '#ef4444', // Red-500
-      light: '#fca5a5',   // Red-300
-      dark: '#b91c1c'     // Red-700
-    },
-    { // Body
-      primary: '#10b981', // Emerald-500
-      light: '#6ee7b7',   // Emerald-300
-      dark: '#047857'     // Emerald-700
-    }
+  // Category names/centers
+  const categories = [
+    { index: 0, name: 'head', label: 'Head Center' },
+    { index: 1, name: 'heart', label: 'Heart Center' },
+    { index: 2, name: 'body', label: 'Body Center' }
   ];
   
-  // Get color set for current stone set
-  const colorSet = colorSets[centerType] || colorSets[0];
+  // Check if a stone is selected
+  const isStoneSelected = (setIdx, stoneIdx) => {
+    return selectedStones.some(stone => 
+      stone.setIndex === setIdx && stone.stoneIndex === stoneIdx
+    );
+  };
   
-  // Determine set type name (Head, Heart, Body)
-  const setTypes = ['Head', 'Heart', 'Body'];
-  const setTypeName = setTypes[centerType];
+  // Handle stone click
+  const handleStoneClick = (stoneIdx) => {
+    // Create stone object with content from STONE_SETS
+    const stoneContent = STONE_SETS[setIndex]?.[stoneIdx];
+    if (!stoneContent) return;
+    
+    const newStone = {
+      id: `${setIndex}-${stoneIdx}`,
+      setIndex: setIndex,
+      stoneIndex: stoneIdx,
+      name: stoneContent.split('•')[0].trim(),
+      content: stoneContent,
+      category: categories.find(c => c.index === stoneIdx)?.name || 'unknown'
+    };
+    
+    // Check if this stone is already selected
+    const isAlreadySelected = isStoneSelected(setIndex, stoneIdx);
+    
+    if (isAlreadySelected) {
+      // Deselect the stone
+      onStoneSelect(selectedStones.filter(stone => 
+        !(stone.setIndex === setIndex && stone.stoneIndex === stoneIdx)
+      ));
+      return;
+    }
+    
+    // Check if another stone from the same position is already selected
+    const existingStoneAtSamePosition = selectedStones.find(stone => 
+      stone.stoneIndex === stoneIdx
+    );
+    
+    if (existingStoneAtSamePosition) {
+      // Replace the existing stone in this position
+      onStoneSelect([
+        ...selectedStones.filter(stone => stone.stoneIndex !== stoneIdx),
+        newStone
+      ]);
+    } else {
+      // Add this stone to selections
+      onStoneSelect([...selectedStones, newStone]);
+    }
+  };
   
-  // Set number within its center (1-3)
-  const setNumber = (currentSetIndex % 3) + 1;
+  // Calculate selection count and total required
+  const selectionCount = selectedStones.length;
+  const totalRequired = 3; // One stone for each center
   
   return (
-    <div className="stone-set-container">
+    <div className="stone-set">
+      <div className="selection-counter">
+        <span className="count">{selectionCount}</span> of {totalRequired} stones selected
+      </div>
+      
+      {/* Category tabs */}
       <div className="stone-set-header">
-        <h3 className="set-title">{setTypeName} Center</h3>
-        <div className="set-subtitle">Set {setNumber} of 3</div>
+        {categories.map(category => (
+          <button
+            key={category.index}
+            className={`category-tab ${category.name} ${activeCategoryIndex === category.index ? 'active' : ''}`}
+            onClick={() => setActiveCategoryIndex(category.index)}
+          >
+            {category.label}
+          </button>
+        ))}
       </div>
       
-      <div className="stone-set-instructions">
-        Select one stone that resonates with you:
-      </div>
-      
-      <div className="stone-set">
-        {stones.map((stone, index) => {
-          // Use the detailed stone gradient mapping
-          const gradientColors = {
-            from: index === 0 ? colorSet.light : 
-                  index === 1 ? colorSet.primary : 
-                  colorSet.primary,
-            to: index === 0 ? colorSet.primary : 
-                index === 1 ? colorSet.primary : 
-                colorSet.dark
-          };
-          
-          return (
-            <motion.div
-              key={`stone-container-${index}`}
-              className="stone-wrapper"
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.3, delay: index * 0.1 }}
-            >
-              <Stone 
-                content={stone.content}
-                selected={stone.selected}
-                onClick={() => onStoneSelect(index)}
-                stoneIndex={index}
-                gradientColors={gradientColors}
-                tabIndex={index + 1}
-              />
-            </motion.div>
-          );
-        })}
+      {/* Stone container */}
+      <div className="stone-container">
+        {STONE_SETS[setIndex] && STONE_SETS[setIndex][activeCategoryIndex] && (
+          <Stone
+            key={`${setIndex}-${activeCategoryIndex}`}
+            id={`${setIndex}-${activeCategoryIndex}`}
+            content={STONE_SETS[setIndex][activeCategoryIndex]}
+            name={STONE_SETS[setIndex][activeCategoryIndex].split('•')[0].trim()}
+            category={categories.find(c => c.index === activeCategoryIndex)?.name}
+            stoneIndex={activeCategoryIndex}
+            setIndex={setIndex}
+            selected={isStoneSelected(setIndex, activeCategoryIndex)}
+            onClick={() => handleStoneClick(activeCategoryIndex)}
+          />
+        )}
       </div>
     </div>
   );

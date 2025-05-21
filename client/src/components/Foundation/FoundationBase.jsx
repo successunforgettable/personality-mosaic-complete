@@ -1,102 +1,77 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 import Stone from './Stone';
 import './FoundationBase.css';
-import { STONE_SETS } from './stoneData';
 
 /**
- * FoundationBase Component - Implemented according to technical specs
+ * FoundationBase component - Displays the circular foundation with selected stones
+ * 
+ * @param {Object} props
+ * @param {Array} props.selectedStones - Array of selected stones to display
+ * @param {boolean} props.isAnimating - Whether to show animation for the most recently added stone
+ * @param {string|number} props.lastSelectedStoneId - ID of the most recently selected stone (for animation)
+ * @param {number} props.setIndex - Current stone set index
  */
 const FoundationBase = ({ 
-  placedStones = [], 
-  stoneData = []
+  selectedStones = [], 
+  isAnimating = false, 
+  lastSelectedStoneId,
+  setIndex = 0
 }) => {
-  // Calculate positions following the exact spec formula:
-  // x = 50 + 45*cos(angle)
-  // y = 50 + 45*sin(angle)
-  const calculatePosition = (position, totalPositions) => {
+  // Function to calculate position on the circle
+  const calculatePosition = (index, total) => {
+    // Always use 3 positions (for head, heart, body) regardless of actual count
+    // This ensures consistent positioning
+    const totalPositions = 3;
+    
+    // Calculate angle step - distribute stones evenly
     const angleStep = (2 * Math.PI) / totalPositions;
-    // Start from top (subtract π/2 which is 90 degrees)
-    const angle = angleStep * position - Math.PI / 2;
     
-    // Calculate x and y as percentages (center is at 50%)
-    const xPercent = 50 + 45 * Math.cos(angle);
-    const yPercent = 50 + 45 * Math.sin(angle);
+    // Calculate angle (start from top, -π/2)
+    // Each stone goes to its position based on stoneIndex (0, 1, or 2)
+    // Not the order they were added
+    const stoneIndex = selectedStones[index]?.stoneIndex || index;
+    const angle = stoneIndex * angleStep - Math.PI / 2;
     
-    return {
-      left: `${xPercent}%`,
-      top: `${yPercent}%`,
-      transform: 'translate(-50%, -50%)' // Center the stone on the calculated point
-    };
+    // Calculate x and y coordinates as percentages
+    // This allows the foundation to be responsive
+    const radius = 45; // % from center
+    const x = 50 + radius * Math.cos(angle);
+    const y = 50 + radius * Math.sin(angle);
+    
+    return { x, y };
   };
-  
-  // Get the center type and colors for a stone
-  const getStoneColors = (setIndex) => {
-    const centerType = Math.floor(setIndex / 3); // 0: Head, 1: Heart, 2: Body
-    
-    const centerColors = {
-      0: { // Head - Blue
-        primary: '#3b82f6',
-        light: '#93c5fd',
-        dark: '#1d4ed8'
-      },
-      1: { // Heart - Red
-        primary: '#ef4444',
-        light: '#fca5a5',
-        dark: '#b91c1c'
-      },
-      2: { // Body - Green
-        primary: '#10b981',
-        light: '#6ee7b7',
-        dark: '#047857'
-      }
-    };
-    
-    return centerColors[centerType] || centerColors[0];
-  };
-  
+
   return (
     <div className="foundation-base">
-      {/* Circular base with 320px diameter */}
-      <div className="foundation-circle">
-        {/* Placed stones */}
-        {placedStones.map((stone, index) => {
-          // Get position around the circle
-          const position = calculatePosition(stone.position, 9);
-          
-          // Get stone content from data
-          const stoneData = STONE_SETS?.[stone.setIndex]?.[stone.stoneIndex] || ['Stone'];
-          
-          // Get colors based on center type
-          const colors = getStoneColors(stone.setIndex);
-          
-          // Create gradient based on stone index variation
-          const gradientColors = {
-            from: stone.stoneIndex === 0 ? colors.light : 
-                  stone.stoneIndex === 1 ? colors.primary : colors.primary,
-            to: stone.stoneIndex === 0 ? colors.primary : 
-                stone.stoneIndex === 1 ? colors.primary : colors.dark
-          };
-          
-          return (
-            <motion.div
-              key={`stone-${stone.position}-${index}`}
-              className="positioned-stone"
-              style={position}
-              initial={{ opacity: 0, scale: 0 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ type: 'spring', stiffness: 500, damping: 30 }}
-            >
+      {selectedStones.length === 0 ? (
+        <div className="foundation-placeholder">
+          <div className="foundation-label">Foundation</div>
+          <div className="foundation-placeholder-text">
+            Select stones from each center to build your foundation
+          </div>
+        </div>
+      ) : (
+        <>
+          <div className="foundation-label">Foundation</div>
+          <div className="foundation-stone-container">
+            {selectedStones.map((stone, index) => (
               <Stone
-                id={`placed-${stone.position}`}
-                content={stoneData}
+                key={stone.id || `stone-${index}`}
+                id={stone.id || `stone-${index}`}
+                content={stone.content}
+                name={stone.name}
+                category={stone.category}
+                setIndex={stone.setIndex || setIndex}
+                stoneIndex={stone.stoneIndex !== undefined ? stone.stoneIndex : index}
+                position={calculatePosition(index, selectedStones.length)}
                 isPlaced={true}
-                gradientColors={gradientColors}
+                selected={true}
+                onClick={() => {}} // No action when clicking on placed stones
               />
-            </motion.div>
-          );
-        })}
-      </div>
+            ))}
+          </div>
+        </>
+      )}
     </div>
   );
 };
