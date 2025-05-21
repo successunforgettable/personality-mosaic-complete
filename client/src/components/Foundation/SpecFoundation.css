@@ -1,0 +1,142 @@
+/* 
+ * SpecFoundation.css
+ * Follows the technical specifications exactly:
+ * - Circular foundation base (320px diameter)
+ * - Stones positioned using the formula: x = 50 + 45*cos(angle), y = 50 + 45*sin(angle)
+ * - Stones sized 80px × 80px when placed on foundation
+ */
+
+.spec-foundation {
+  position: relative;
+  width: 100%;
+  max-width: 320px;
+  margin: 0 auto;
+}
+
+.foundation-circle {
+  width: 320px; /* Exactly 320px diameter as specified */
+  height: 320px;
+  border-radius: 50%;
+  background-color: #f8fafc;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+.foundation-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.05);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 20;
+  font-weight: 600;
+  color: #475569;
+  font-size: 1.1rem;
+}
+
+/* Stone styling */
+.stone {
+  width: 80px; /* Exactly 80px as specified */
+  height: 80px; /* Exactly 80px as specified */
+  position: absolute;
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%); /* Hexagon shape */
+  background: linear-gradient(135deg, #93c5fd, #3b82f6, #1d4ed8); /* Default blue gradient */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  z-index: 10;
+}
+
+/* Position stones according to spec formula: x = 50 + 45*cos(angle), y = 50 + 45*sin(angle) */
+/* These positions are calculated for a 9-stone layout starting from the top */
+
+/* Position 1 (top) */
+.position-1 {
+  left: 50%;
+  top: 5%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, #93c5fd, #3b82f6, #1d4ed8); /* Blue for Head */
+}
+
+/* Position 2 (top right) */
+.position-2 {
+  right: 16%;
+  top: 21%;
+  background: linear-gradient(135deg, #93c5fd, #3b82f6, #1d4ed8); /* Blue for Head */
+}
+
+/* Position 3 (right) */
+.position-3 {
+  right: 5%;
+  top: 50%;
+  transform: translateY(-50%);
+  background: linear-gradient(135deg, #93c5fd, #3b82f6, #1d4ed8); /* Blue for Head */
+}
+
+/* Position 4 (bottom right) */
+.position-4 {
+  right: 16%;
+  bottom: 21%;
+  background: linear-gradient(135deg, #fca5a5, #ef4444, #b91c1c); /* Red for Heart */
+}
+
+/* Position 5 (bottom) */
+.position-5 {
+  left: 50%;
+  bottom: 5%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, #fca5a5, #ef4444, #b91c1c); /* Red for Heart */
+}
+
+/* Position 6 (bottom left) */
+.position-6 {
+  left: 16%;
+  bottom: 21%;
+  background: linear-gradient(135deg, #fca5a5, #ef4444, #b91c1c); /* Red for Heart */
+}
+
+/* Position 7 (left) */
+.position-7 {
+  left: 5%;
+  top: 50%;
+  transform: translateY(-50%);
+  background: linear-gradient(135deg, #6ee7b7, #10b981, #047857); /* Green for Body */
+}
+
+/* Position 8 (top left) */
+.position-8 {
+  left: 16%;
+  top: 21%;
+  background: linear-gradient(135deg, #6ee7b7, #10b981, #047857); /* Green for Body */
+}
+
+/* Position 9 (extra position if needed) */
+.position-9 {
+  left: 50%;
+  top: 30%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, #6ee7b7, #10b981, #047857); /* Green for Body */
+}
+
+/* Media query for mobile responsiveness */
+@media (max-width: 480px) {
+  .foundation-circle {
+    width: 280px;
+    height: 280px;
+  }
+
+  .foundation-center {
+    width: 100px;
+    height: 100px;
+  }
+
+  .stone {
+    width: 70px;
+    height: 70px;
+  }
+}
