@@ -1,0 +1,152 @@
+/* 
+ * FixedFoundation.css
+ * This CSS implements the exact specs from the technical documentation
+ */
+
+.fixed-foundation {
+  width: 100%;
+  max-width: 320px;
+  margin: 0 auto;
+  position: relative;
+}
+
+.fixed-foundation-circle {
+  width: 320px; /* Exact 320px diameter as specified */
+  height: 320px;
+  border-radius: 50%;
+  background-color: #f8fafc;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+.fixed-foundation-center {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.05);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+  font-weight: 600;
+  color: #475569;
+  font-size: 1.1rem;
+}
+
+.fixed-stone-position {
+  position: absolute;
+  width: 80px; /* Exact 80px width as specified */
+  height: 80px; /* Exact 80px height as specified */
+  z-index: 5;
+}
+
+/* Hard-coded positions for each stone placement */
+.position-1 {
+  top: 4%;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.position-2 {
+  top: 14%;
+  right: 14%;
+  transform: translateX(-10%);
+}
+
+.position-3 {
+  top: 50%;
+  right: 4%;
+  transform: translate(-0%, -50%);
+}
+
+.position-4 {
+  bottom: 14%;
+  right: 14%;
+  transform: translateX(-10%);
+}
+
+.position-5 {
+  bottom: 4%;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.position-6 {
+  bottom: 14%;
+  left: 14%;
+  transform: translateX(10%);
+}
+
+.position-7 {
+  top: 50%;
+  left: 4%;
+  transform: translate(0%, -50%);
+}
+
+.position-8 {
+  top: 14%;
+  left: 14%;
+  transform: translateX(10%);
+}
+
+.position-9 {
+  top: 25%;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.fixed-stone {
+  width: 100%;
+  height: 100%;
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%); /* Hexagon shape */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  border: 2px solid white;
+  border-radius: 8px; /* As specified in technical requirements */
+}
+
+.fixed-stone-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 4px;
+  width: 100%;
+  height: 100%;
+}
+
+.fixed-stone-text {
+  margin: 2px 0;
+  font-size: 9px;
+  font-weight: 600;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  font-family: 'Inter', sans-serif;
+  color: white;
+}
+
+/* Media query for mobile responsiveness */
+@media (max-width: 480px) {
+  .fixed-foundation-circle {
+    width: 280px;
+    height: 280px;
+  }
+  
+  .fixed-foundation-center {
+    width: 100px;
+    height: 100px;
+    font-size: 0.9rem;
+  }
+  
+  .fixed-stone-position {
+    width: 70px;
+    height: 70px;
+  }
+}
