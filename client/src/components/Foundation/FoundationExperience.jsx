@@ -4,6 +4,7 @@ import Stone from './Stone';
 import FoundationBase from './FoundationBase';
 import StoneSet from './StoneSet';
 import './FoundationExperience.css';
+import './continue-button.css';
 import { STONE_SETS, STONE_COLORS } from './stoneData';
 
 /**
@@ -77,17 +78,28 @@ const FoundationExperience = ({ onComplete }) => {
     }, 800);
   };
   
-  // Update current stones when set changes
+  // Update current stones when set changes and check for existing selections
   useEffect(() => {
     if (currentSetIndex < STONE_SETS.length) {
-      // Load the new set of stones
+      // Load the new set of stones and check if any was previously selected
+      const existingSelection = stoneSelections[currentSetIndex];
+      
       setCurrentStones([
-        { content: STONE_SETS[currentSetIndex][0], selected: false },
-        { content: STONE_SETS[currentSetIndex][1], selected: false },
-        { content: STONE_SETS[currentSetIndex][2], selected: false },
+        { 
+          content: STONE_SETS[currentSetIndex][0], 
+          selected: existingSelection === 0 
+        },
+        { 
+          content: STONE_SETS[currentSetIndex][1], 
+          selected: existingSelection === 1 
+        },
+        { 
+          content: STONE_SETS[currentSetIndex][2], 
+          selected: existingSelection === 2 
+        },
       ]);
     }
-  }, [currentSetIndex]);
+  }, [currentSetIndex, stoneSelections]);
   
   // Prepare stone data for rendering with correct colors
   const getStoneData = () => {
@@ -249,9 +261,9 @@ const FoundationExperience = ({ onComplete }) => {
             </button>
             
             {/* Only show complete button when all sets have selections */}
-            {stoneSelections.length === STONE_SETS.length && (
+            {stoneSelections.filter(selection => selection !== undefined).length === STONE_SETS.length && (
               <button 
-                className="continue-button"
+                className="continue-button primary-button"
                 onClick={() => onComplete(stoneSelections)}
               >
                 Complete Foundation
