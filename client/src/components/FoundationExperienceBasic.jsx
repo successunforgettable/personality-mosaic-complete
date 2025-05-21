@@ -1,12 +1,10 @@
 import React, { useState } from 'react';
-import { useAssessment } from '@/context/AssessmentContext';
 
 /**
- * Completely simplified foundation stone experience with minimal dependencies
+ * Extremely simplified foundation stone experience
+ * No dependencies, no complex animations - just the core functionality
  */
-const PhaseOne = () => {
-  const { setPhase } = useAssessment();
-  
+const FoundationExperienceBasic = () => {
   // Current stone set
   const [currentSet, setCurrentSet] = useState(0);
   
@@ -45,7 +43,7 @@ const PhaseOne = () => {
   };
   
   // Get background color for stone
-  const getStoneColor = (index: number, isSelected: boolean) => {
+  const getStoneColor = (index, isSelected) => {
     const center = getCurrentCenter();
     
     if (center === 'head') {
@@ -58,12 +56,12 @@ const PhaseOne = () => {
   };
   
   // Get text color for stone
-  const getStoneTextColor = (isSelected: boolean) => {
+  const getStoneTextColor = (isSelected) => {
     return isSelected ? 'white' : '#1e293b';
   };
   
   // Handle stone selection
-  const selectStone = (index: number) => {
+  const selectStone = (index) => {
     const newSelected = [...selected];
     newSelected[currentSet] = index;
     setSelected(newSelected);
@@ -80,12 +78,6 @@ const PhaseOne = () => {
     if (currentSet < stones.length - 1) {
       setCurrentSet(currentSet + 1);
     }
-  };
-  
-  // Complete foundation and move to next phase
-  const completeFoundation = () => {
-    console.log("Foundation selections completed:", selected);
-    setPhase(2);
   };
   
   // Check if all stones are selected
@@ -153,7 +145,7 @@ const PhaseOne = () => {
   };
   
   return (
-    <div style={{ maxWidth: '800px', margin: '0 auto', padding: '20px', opacity: 1 }} className="phase-container">
+    <div style={{ maxWidth: '800px', margin: '0 auto', padding: '20px' }}>
       <h1 style={{ textAlign: 'center', marginBottom: '30px' }}>
         Personality Mosaic Assessment
       </h1>
@@ -240,7 +232,7 @@ const PhaseOne = () => {
         
         {isComplete() && (
           <button
-            onClick={completeFoundation}
+            onClick={() => alert('Selection complete! Moving to next phase...')}
             style={{
               padding: '10px 20px',
               backgroundColor: '#3b82f6',
@@ -259,4 +251,4 @@ const PhaseOne = () => {
   );
 };
 
-export default PhaseOne;
+export default FoundationExperienceBasic;
