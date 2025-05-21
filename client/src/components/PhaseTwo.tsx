@@ -4,6 +4,7 @@ import { useAssessment } from "@/context/AssessmentContext";
 import { BuildingBlock, BuildingBlockPair } from "@/types/assessment";
 import { buildingBlockPairs } from "@/lib/personality";
 import TowerVisualization from "./TowerVisualization";
+import BuildingBlockExperience from "./BuildingBlocks/BuildingBlockExperience";
 
 const PhaseTwo = () => {
   const { state, selectBuildingBlock, setPhase } = useAssessment();
@@ -25,8 +26,28 @@ const PhaseTwo = () => {
     }
   };
   
-  // Filter out pairs that have already been selected
-  const remainingPairs = buildingBlockPairs.filter(pair => !selectedPairs.includes(pair.id));
+  // Handle completion of building blocks phase
+  const handleBuildingBlocksComplete = (selectedBlocks: any[]) => {
+    console.log('Building blocks selected:', selectedBlocks);
+    
+    // Process the selected blocks
+    selectedBlocks.forEach(selection => {
+      const block = selection.block;
+      const pairId = selection.pairId;
+      
+      // Add to context
+      selectBuildingBlock({
+        id: block.id,
+        name: block.name,
+        description: block.description
+      } as BuildingBlock);
+    });
+    
+    // Move to the next phase after a short delay
+    setTimeout(() => {
+      setPhase(3);
+    }, 1000);
+  };
   
   return (
     <motion.div
@@ -40,55 +61,10 @@ const PhaseTwo = () => {
         <p className="text-gray-600 max-w-2xl mx-auto">These blocks will define the structure of your personality tower. Select which statement in each pair feels more authentic to you.</p>
       </div>
 
-      <div className="space-y-8 mb-10">
-        {remainingPairs.slice(0, 2).map((pair) => (
-          <motion.div
-            key={pair.id}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="bg-white rounded-xl shadow-md overflow-hidden"
-          >
-            <div className="p-5 border-b border-gray-100">
-              <h3 className="font-semibold text-gray-900">{pair.title}</h3>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-gray-100">
-              <div 
-                className="p-5 cursor-pointer hover:bg-gray-50 transition-all"
-                onClick={() => handleBlockSelection(pair.blockA, pair.id)}
-              >
-                <div className="flex items-start mb-3">
-                  <div className="h-6 w-6 rounded-full border-2 border-gray-300 flex-shrink-0 mt-0.5"></div>
-                  <div className="ml-3">
-                    <h4 className="font-medium text-gray-900">{pair.blockA.name}</h4>
-                    <p className="text-gray-600 text-sm mt-1">{pair.blockA.description}</p>
-                  </div>
-                </div>
-                <div className="ml-9">
-                  <div className="h-20 w-full overflow-hidden rounded-lg">
-                    <img src={pair.blockA.image} alt={`${pair.blockA.name} block`} className="w-full h-full object-cover" />
-                  </div>
-                </div>
-              </div>
-              <div 
-                className="p-5 cursor-pointer hover:bg-gray-50 transition-all"
-                onClick={() => handleBlockSelection(pair.blockB, pair.id)}
-              >
-                <div className="flex items-start mb-3">
-                  <div className="h-6 w-6 rounded-full border-2 border-gray-300 flex-shrink-0 mt-0.5"></div>
-                  <div className="ml-3">
-                    <h4 className="font-medium text-gray-900">{pair.blockB.name}</h4>
-                    <p className="text-gray-600 text-sm mt-1">{pair.blockB.description}</p>
-                  </div>
-                </div>
-                <div className="ml-9">
-                  <div className="h-20 w-full overflow-hidden rounded-lg">
-                    <img src={pair.blockB.image} alt={`${pair.blockB.name} block`} className="w-full h-full object-cover" />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        ))}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
+        <div className="md:col-span-2">
+          <BuildingBlockExperience onComplete={handleBuildingBlocksComplete} />
+        </div>
       </div>
 
       <div className="flex flex-col items-center justify-center mb-10">
