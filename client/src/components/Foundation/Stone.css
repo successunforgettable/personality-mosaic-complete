@@ -1,6 +1,7 @@
 .stone {
-  width: 160px;
+  width: 160px; /* Exact dimension from spec */
   height: 160px;
+  background: linear-gradient(135deg, var(--secondary-color) 0%, var(--primary-color) 100%);
   border: 2px solid white;
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
@@ -10,7 +11,6 @@
   position: relative;
   transition: all 0.2s ease;
   cursor: pointer;
-  /* Hexagonal shape */
   clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
 }
 
@@ -36,7 +36,7 @@
 .stone-content {
   color: white;
   font-family: 'Inter', sans-serif;
-  font-weight: 600;
+  font-weight: 600; /* SemiBold as specified */
   font-size: 16px;
   text-align: center;
   padding: 12px;
@@ -49,6 +49,7 @@
 
 .stone-line {
   margin: 4px 0;
+  text-transform: uppercase; /* Ensure uppercase text */
 }
 
 .stone-name {
