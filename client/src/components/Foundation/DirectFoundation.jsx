@@ -66,19 +66,23 @@ export const DirectFoundation = ({ selectedStones = [] }) => {
     return 'BODY';
   };
   
-  // Position calculation using exact specifications
+  // Position calculation using fixed positions to guarantee correct placement
   const getStonePosition = (index) => {
-    const totalStones = 9;
-    const angleStep = (2 * Math.PI) / totalStones;
-    // Start from top (270 degrees or -90 degrees in radians)
-    const angle = angleStep * index - Math.PI / 2;
+    // Fixed positions for the stones in a perfect circle
+    const positions = [
+      { x: 50, y: 5 },     // Top
+      { x: 84, y: 21 },    // Top right
+      { x: 89, y: 50 },    // Right
+      { x: 78, y: 78 },    // Bottom right
+      { x: 50, y: 90 },    // Bottom
+      { x: 22, y: 78 },    // Bottom left
+      { x: 11, y: 50 },    // Left
+      { x: 16, y: 21 },    // Top left
+      { x: 50, y: 5 }      // Top (extra position if needed)
+    ];
     
-    // Use the specification formula: x = 50 + 45*cos(angle), y = 50 + 45*sin(angle)
-    // This positions stones in a circle at 45% distance from center
-    const x = 50 + 45 * Math.cos(angle);
-    const y = 50 + 45 * Math.sin(angle);
-    
-    return { x, y };
+    // Return the fixed position for this index
+    return positions[index % positions.length];
   };
 
   return (
