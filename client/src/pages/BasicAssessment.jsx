@@ -101,8 +101,7 @@ const BasicAssessment = () => {
                   : 'bg-gray-100 hover:bg-gray-200'
               }`}
             >
-              <div className="font-medium mb-1">{traits[0]}</div>
-              <div className="text-sm">{traits.slice(1).join(', ')}</div>
+              <div className="font-medium mb-1">{traits}</div>
             </div>
           ))}
         </div>
