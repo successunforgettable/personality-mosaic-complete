@@ -140,7 +140,7 @@ export default function Home() {
             <div className="flex flex-col sm:flex-row gap-4">
               <div 
                 className="px-8 py-4 bg-[#7c3aed] text-white rounded-lg font-medium shadow-md hover:bg-[#6d28d9] hover:scale-[1.02] hover:shadow-lg transition-all duration-200 text-center cursor-pointer"
-                onClick={() => window.location.href = "/signup"}
+                onClick={() => window.location.href = "/foundation-experience"}
               >
                 Begin Your Tower
               </div>

@@ -46,6 +46,11 @@ function Router() {
               <SimpleStones />
             </ProtectedRoute>
           </Route>
+          <Route path="/foundation-experience">
+            <ProtectedRoute allowGuest={true}>
+              <FoundationExperiencePage />
+            </ProtectedRoute>
+          </Route>
           <Route path="/original-assessment">
             <ProtectedRoute allowGuest={true}>
               <Assessment />
