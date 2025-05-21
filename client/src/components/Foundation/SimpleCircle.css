@@ -41,74 +41,20 @@
   clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
   z-index: 1;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transform: translate(-50%, -50%);
 }
 
-/* Stone 1 - Top (0 degrees) */
-.stone-1 {
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  background: linear-gradient(135deg, #93c5fd, #3b82f6, #1d4ed8); /* Blue */
+/* Stone colors by type */
+.stone-blue {
+  background: linear-gradient(135deg, #93c5fd, #3b82f6, #1d4ed8); /* Blue - Head */
 }
 
-/* Stone 2 - Top Right (45 degrees) */
-.stone-2 {
-  top: 16%;
-  right: 16%;
-  background: linear-gradient(135deg, #93c5fd, #3b82f6, #1d4ed8); /* Blue */
+.stone-red {
+  background: linear-gradient(135deg, #fca5a5, #ef4444, #b91c1c); /* Red - Heart */
 }
 
-/* Stone 3 - Right (90 degrees) */
-.stone-3 {
-  top: 50%;
-  right: 0;
-  transform: translateY(-50%);
-  background: linear-gradient(135deg, #93c5fd, #3b82f6, #1d4ed8); /* Blue */
-}
-
-/* Stone 4 - Bottom Right (135 degrees) */
-.stone-4 {
-  bottom: 16%;
-  right: 16%;
-  background: linear-gradient(135deg, #fca5a5, #ef4444, #b91c1c); /* Red */
-}
-
-/* Stone 5 - Bottom (180 degrees) */
-.stone-5 {
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  background: linear-gradient(135deg, #fca5a5, #ef4444, #b91c1c); /* Red */
-}
-
-/* Stone 6 - Bottom Left (225 degrees) */
-.stone-6 {
-  bottom: 16%;
-  left: 16%;
-  background: linear-gradient(135deg, #fca5a5, #ef4444, #b91c1c); /* Red */
-}
-
-/* Stone 7 - Left (270 degrees) */
-.stone-7 {
-  top: 50%;
-  left: 0;
-  transform: translateY(-50%);
-  background: linear-gradient(135deg, #6ee7b7, #10b981, #047857); /* Green */
-}
-
-/* Stone 8 - Top Left (315 degrees) */
-.stone-8 {
-  top: 16%;
-  left: 16%;
-  background: linear-gradient(135deg, #6ee7b7, #10b981, #047857); /* Green */
-}
-
-/* Stone 9 - Additional Stone */
-.stone-9 {
-  top: 35%;
-  left: 50%;
-  transform: translateX(-50%);
-  background: linear-gradient(135deg, #6ee7b7, #10b981, #047857); /* Green */
+.stone-green {
+  background: linear-gradient(135deg, #6ee7b7, #10b981, #047857); /* Green - Body */
 }
 
 /* Media query for mobile responsiveness */
