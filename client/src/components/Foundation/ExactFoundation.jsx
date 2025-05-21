@@ -1,126 +1,59 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 import './ExactFoundation.css';
 
 /**
- * ExactFoundation Component - Implements the precise specifications from the technical documentation
- * - Circular foundation base (320px diameter)
- * - Stone Placement using exact formula: x = 50 + 45*cos(angle), y = 50 + 45*sin(angle)
- * - Stone sizing exactly 80px × 80px when placed on foundation
+ * ExactFoundation - A precise implementation following technical specifications
+ * Stone visualization on a foundation base
  */
-
-// FoundationStone - represents a single stone placed on the foundation
-const FoundationStone = ({ stoneData, position }) => {
-  // Determine the correct color based on the stone's center
-  const getStoneColor = (category) => {
-    switch(category) {
-      case 'Head':
-        return {
-          primary: '#3b82f6', // Blue-500
-          light: '#93c5fd',   // Blue-300
-          dark: '#1d4ed8'     // Blue-700
-        };
-      case 'Heart':
-        return {
-          primary: '#ef4444', // Red-500
-          light: '#fca5a5',   // Red-300
-          dark: '#b91c1c'     // Red-700
-        };
-      case 'Body':
-        return {
-          primary: '#10b981', // Emerald-500
-          light: '#6ee7b7',   // Emerald-300
-          dark: '#047857'     // Emerald-700
-        };
-      default:
-        return {
-          primary: '#3b82f6',
-          light: '#93c5fd',
-          dark: '#1d4ed8'
-        };
-    }
-  };
-
-  // Get the stone's category (Head, Heart, Body)
-  const category = stoneData.category;
-  const colors = getStoneColor(category);
-  
-  // Get content for the stone
-  const getStoneContent = () => {
-    if (stoneData.baselines) {
-      return stoneData.baselines.split(' • ');
-    }
-    return [stoneData.name || ''];
-  };
-  
-  const content = getStoneContent();
-
-  return (
-    <motion.div
-      className="stone-wrapper"
-      style={{
-        position: 'absolute',
-        left: `${position.x}%`,
-        top: `${position.y}%`,
-        transform: 'translate(-50%, -50%)'
-      }}
-      initial={{ scale: 0, opacity: 0 }}
-      animate={{ scale: 1, opacity: 1 }}
-      transition={{ 
-        type: 'spring', 
-        stiffness: 300, 
-        damping: 20
-      }}
-    >
-      <div 
-        className="exact-stone"
-        style={{ 
-          background: `linear-gradient(135deg, ${colors.light}, ${colors.primary}, ${colors.dark})` 
-        }}
-      >
-        <div className="stone-content">
-          {content.map((text, i) => (
-            <div key={i} className="stone-text">{text}</div>
-          ))}
-        </div>
-      </div>
-    </motion.div>
-  );
-};
-
-// Main ExactFoundation component
 const ExactFoundation = ({ selectedStones = [] }) => {
-  // Calculate position using the exact formula from specification
-  const getStonePosition = (index) => {
+  // Calculate stone positions with precise math from spec
+  const calculateStonePositions = () => {
+    const positions = [];
     const totalStones = 9;
     const angleStep = (2 * Math.PI) / totalStones;
-    // Start from top (-90 degrees = -PI/2 radians)
-    const angle = angleStep * index - Math.PI / 2;
     
-    // Use the exact formula: x = 50 + 45*cos(angle), y = 50 + 45*sin(angle)
-    const x = 50 + 45 * Math.cos(angle);
-    const y = 50 + 45 * Math.sin(angle);
+    for (let i = 0; i < totalStones; i++) {
+      const angle = i * angleStep;
+      // Position on a circle with radius precisely as per spec
+      const x = 50 + 45 * Math.cos(angle);
+      const y = 50 + 45 * Math.sin(angle);
+      
+      // Determine the stone's center type (Head, Heart, Body)
+      const centerType = Math.floor(i / 3);
+      
+      positions.push({ x, y, centerType });
+    }
     
-    return { x, y };
+    return positions;
   };
-
+  
+  // All possible stone positions
+  const stonePositions = calculateStonePositions();
+  
   return (
-    <div className="exact-foundation-container">
-      <div className="exact-foundation-circle">
-        {/* Foundation center */}
-        <div className="exact-foundation-center">
-          <span>Foundation</span>
-        </div>
+    <div className="foundation-container">
+      <div className="foundation-circle">
+        <div className="foundation-center">Foundation</div>
         
-        {/* Placed stones */}
+        {/* Only render stones that have been selected */}
         {selectedStones.map((stone, index) => {
-          const position = getStonePosition(index);
+          if (index >= stonePositions.length) return null;
+          
+          const position = stonePositions[index];
+          const centerClass = 
+            position.centerType === 0 ? 'head-stone' : 
+            position.centerType === 1 ? 'heart-stone' : 
+            'body-stone';
+          
           return (
-            <FoundationStone 
-              key={`stone-${index}`} 
-              stoneData={stone} 
-              position={position}
-            />
+            <div
+              key={`foundation-stone-${index}`}
+              className={`foundation-stone ${centerClass}`}
+              style={{
+                left: `${position.x}%`,
+                top: `${position.y}%`
+              }}
+            ></div>
           );
         })}
       </div>

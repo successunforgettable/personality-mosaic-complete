@@ -5,9 +5,10 @@ import './StoneSet.css';
 
 /**
  * StoneSet Component
- * Displays a set of three foundation stones that the user can select from
+ * Displays a set of three foundation stones for selection
+ * Follows the specifications from the technical documentation
  */
-const StoneSet = ({ stones, onStoneSelect, currentSetIndex, totalSets }) => {
+const StoneSet = ({ stones, onStoneSelect, currentSetIndex }) => {
   // Determine center type (Head, Heart, Body) based on set index
   const centerType = Math.floor(currentSetIndex / 3);
   
@@ -53,7 +54,7 @@ const StoneSet = ({ stones, onStoneSelect, currentSetIndex, totalSets }) => {
       
       <div className="stone-set">
         {stones.map((stone, index) => {
-          // Use the detailed stone gradient mapping from stoneData
+          // Use the detailed stone gradient mapping
           const gradientColors = {
             from: index === 0 ? colorSet.light : 
                   index === 1 ? colorSet.primary : 
@@ -72,11 +73,11 @@ const StoneSet = ({ stones, onStoneSelect, currentSetIndex, totalSets }) => {
               transition={{ duration: 0.3, delay: index * 0.1 }}
             >
               <Stone 
-                id={`${currentSetIndex}-${index}`}
                 content={stone.content}
-                isSelected={stone.selected}
-                gradientColors={gradientColors}
+                selected={stone.selected}
                 onClick={() => onStoneSelect(index)}
+                stoneIndex={index}
+                gradientColors={gradientColors}
                 tabIndex={index + 1}
               />
             </motion.div>

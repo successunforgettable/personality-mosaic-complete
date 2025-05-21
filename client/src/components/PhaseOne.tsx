@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useAssessment } from '@/context/AssessmentContext';
 import { FoundationStone } from '@/types/assessment';
-import SimplePhaseOne from './Foundation/SimplePhaseOne';
+import FoundationExperience from './Foundation/FoundationExperience';
 
 type TransitionState = 'entering' | 'active' | 'exiting';
 
@@ -11,8 +11,23 @@ type TransitionState = 'entering' | 'active' | 'exiting';
  * This phase allows users to select foundation stones that form the base of their personality tower
  */
 const PhaseOne = () => {
-  const { setPhase } = useAssessment();
+  const { state, selectFoundationStone, setPhase } = useAssessment();
   const [transitionState, setTransitionState] = useState<TransitionState>('entering');
+  
+  // Handle completion of foundation stone selection
+  const handleFoundationComplete = (stoneSelections: number[]) => {
+    console.log("Foundation selections completed:", stoneSelections);
+    
+    // Move to next phase after exit animation completes
+    setTransitionState('exiting');
+    
+    setTimeout(() => {
+      setPhase(2);
+    }, 500);
+  };
+  
+  // Track time spent for analytics
+  const [startTime] = useState(Date.now());
   
   // Set active state after enter animation completes
   useEffect(() => {
@@ -31,7 +46,7 @@ const PhaseOne = () => {
       transition={{ duration: 0.5 }}
       className="phase-container"
     >
-      <SimplePhaseOne />
+      <FoundationExperience onComplete={handleFoundationComplete} />
     </motion.div>
   );
 };

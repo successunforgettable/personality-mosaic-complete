@@ -35,7 +35,7 @@
 .stone-set {
   display: flex;
   justify-content: center;
-  gap: 24px; /* exact 24px spacing between stones as specified */
+  gap: 24px; /* Exactly 24px gap between stones as specified */
   flex-wrap: wrap;
 }
 
@@ -44,7 +44,7 @@
   justify-content: center;
 }
 
-/* Media query for responsive layout */
+/* Media query for responsive layout on mobile */
 @media (max-width: 768px) {
   .stone-set {
     flex-direction: column;

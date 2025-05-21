@@ -1,25 +1,21 @@
-/* 
- * ExactFoundation.css
- * Follows the exact specifications from the technical documentation
- */
-
-.exact-foundation-container {
+.foundation-container {
   width: 100%;
   max-width: 320px;
   margin: 0 auto;
   position: relative;
 }
 
-.exact-foundation-circle {
-  width: 320px; /* Exact 320px diameter as specified in technical requirements */
+.foundation-circle {
+  width: 320px; /* Exact 320px diameter as specified in tech spec */
   height: 320px;
   border-radius: 50%;
   background-color: #f8fafc;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
   position: relative;
+  overflow: visible;
 }
 
-.exact-foundation-center {
+.foundation-center {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -32,62 +28,49 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 10;
   font-weight: 600;
   color: #475569;
   font-size: 1.1rem;
+  z-index: 10;
 }
 
-.stone-wrapper {
+.foundation-stone {
+  position: absolute;
+  width: 80px;
+  height: 80px;
+  transform: translate(-50%, -50%);
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease-in-out;
   z-index: 5;
 }
 
-.exact-stone {
-  width: 80px; /* Exactly 80px width as specified */
-  height: 80px; /* Exactly 80px height as specified */
-  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%); /* Hexagon shape */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: white;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+/* Stone colors follow the Head/Heart/Body triads */
+.head-stone {
+  background: linear-gradient(135deg, #93c5fd, #3b82f6, #1d4ed8); /* Blue - Head */
 }
 
-.stone-content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 4px;
-  width: 100%;
-  height: 100%;
+.heart-stone {
+  background: linear-gradient(135deg, #fca5a5, #ef4444, #b91c1c); /* Red - Heart */
 }
 
-.stone-text {
-  margin: 1px 0;
-  font-size: 8px; /* Small text for legibility */
-  font-weight: 600;
-  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
-  font-family: 'Inter', sans-serif;
-  color: white;
-  line-height: 1.1;
+.body-stone {
+  background: linear-gradient(135deg, #6ee7b7, #10b981, #047857); /* Green - Body */
 }
 
-/* Media query for mobile responsiveness */
-@media (max-width: 480px) {
-  .exact-foundation-circle {
+/* Media query for responsive layout */
+@media (max-width: 768px) {
+  .foundation-circle {
     width: 280px;
     height: 280px;
   }
   
-  .exact-foundation-center {
+  .foundation-center {
     width: 100px;
     height: 100px;
-    font-size: 0.9rem;
   }
   
-  .exact-stone {
+  .foundation-stone {
     width: 70px;
     height: 70px;
   }
