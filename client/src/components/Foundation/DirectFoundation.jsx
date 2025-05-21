@@ -45,6 +45,20 @@ const DirectStone = ({ content, centerType, size }) => {
 
 // Main DirectFoundation component - implements a direct approach to the foundation visualization
 export const DirectFoundation = ({ selectedStones = [] }) => {
+  // Get stone content from the selected stone object
+  const getStoneContent = (stone) => {
+    // Extract content from stone data if available
+    if (stone.content) return stone.content;
+    
+    // Try to create content from baselines if available
+    if (stone.baselines) {
+      return stone.baselines.split(' • ');
+    }
+    
+    // Default to using name if content/baselines not available
+    return [stone.name || ''];
+  };
+  
   // Center mapping based on index (0-2: HEAD, 3-5: HEART, 6-8: BODY)
   const getCenterType = (index) => {
     if (index < 3) return 'HEAD';
@@ -79,6 +93,7 @@ export const DirectFoundation = ({ selectedStones = [] }) => {
         {selectedStones.map((stone, index) => {
           const position = getStonePosition(index);
           const centerType = getCenterType(stone.setIndex || 0);
+          const stoneContent = getStoneContent(stone);
           
           return (
             <motion.div
@@ -98,7 +113,7 @@ export const DirectFoundation = ({ selectedStones = [] }) => {
               }}
             >
               <DirectStone 
-                content={stone.content || []}
+                content={stoneContent}
                 centerType={centerType}
                 size="small"
               />

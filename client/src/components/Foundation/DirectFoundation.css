@@ -77,8 +77,9 @@
 }
 
 .direct-stone.small .stone-line {
-  font-size: 0; /* Hide text in small stones for cleaner visualization */
+  font-size: 8px; /* Show text in small stones but with reduced size */
   margin: 0;
+  font-weight: 500;
 }
 
 /* Media query for mobile responsiveness */
