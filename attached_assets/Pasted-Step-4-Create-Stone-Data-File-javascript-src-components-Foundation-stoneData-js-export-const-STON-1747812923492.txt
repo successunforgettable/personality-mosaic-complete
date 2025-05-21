@@ -1,3 +1,5 @@
+Step 4: Create Stone Data File
+javascript// src/components/Foundation/stoneData.js
 export const STONE_SETS = [
   // Set 1 (Head vs. Heart vs. Body)
   [

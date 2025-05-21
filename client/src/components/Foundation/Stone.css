@@ -1,66 +1,98 @@
 .stone {
-  width: 160px;
-  height: 160px;
-  background: linear-gradient(135deg, #4c1d95 0%, #8b5cf6 100%);
-  border: 2px solid white;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-  display: flex;
-  align-items: center;
-  justify-content: center;
   position: relative;
-  transition: all 0.2s ease;
+  width: 140px;
+  height: 140px;
+  margin: 0 auto;
+  transition: transform 0.3s ease, filter 0.3s ease;
   cursor: pointer;
-  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  user-select: none;
 }
 
 .stone:hover {
-  transform: scale(1.05);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+  transform: translateY(-5px);
+  filter: brightness(1.1);
 }
 
-.stone.selected {
-  box-shadow: 0 0 20px rgba(139, 92, 246, 0.7);
+.stone-selected {
+  transform: translateY(-8px);
 }
 
-.stone.placed {
-  width: 80px;
-  height: 80px;
-  cursor: default;
+.stone-selected .stone-shape {
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
 }
 
-.stone.placed:hover {
-  transform: none;
-}
-
-.stone-content {
-  color: white;
-  font-family: 'Inter', sans-serif;
-  font-weight: 600;
-  font-size: 16px;
-  text-align: center;
-  padding: 12px;
-}
-
-.stone.placed .stone-content {
-  font-size: 0;
-}
-
-.stone-line {
-  margin: 4px 0;
-}
-
-.stone-checkmark {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background-color: #10b981;
-  color: white;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
+.stone-shape {
+  width: 100%;
+  height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: bold;
+  color: white;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Pentagon shape (HEAD stones) */
+.shape-pentagon {
+  clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
+}
+
+/* Hexagon shape (HEART stones) */
+.shape-hexagon {
+  clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+}
+
+/* Octagon shape (BODY stones) */
+.shape-octagon {
+  clip-path: polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%);
+}
+
+.stone-content {
+  padding: 15px;
+  text-align: center;
+  width: 90%;
+  height: 90%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.stone-title {
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+}
+
+.stone-traits {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.stone-trait {
+  font-size: 12px;
+  opacity: 0.9;
+  display: block;
+}
+
+/* Responsive styles */
+@media (max-width: 640px) {
+  .stone {
+    width: 120px;
+    height: 120px;
+  }
+  
+  .stone-title {
+    font-size: 12px;
+  }
+  
+  .stone-trait {
+    font-size: 10px;
+  }
 }
