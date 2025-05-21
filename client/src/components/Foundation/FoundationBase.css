@@ -1,23 +1,31 @@
 .foundation-base {
-  position: relative;
   width: 320px;
   height: 320px;
-  border-radius: 50%;
+  margin: 0 auto;
+  position: relative;
+}
+
+.foundation-circle {
+  width: 100%;
+  height: 100%;
   background-color: #f8fafc;
-  background-image: radial-gradient(circle, #f1f5f9 0%, #e2e8f0 100%);
-  border: 2px solid #e2e8f0;
-  margin: 40px auto;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.07),
-              inset 0 1px 3px rgba(255, 255, 255, 0.6);
+  border-radius: 50%;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: visible;
-  /* Subtle grid pattern for foundation base */
-  background-size: 20px 20px;
-  background-image: 
-    linear-gradient(to right, rgba(226, 232, 240, 0.3) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(226, 232, 240, 0.3) 1px, transparent 1px);
+  border: 2px solid #e2e8f0;
+}
+
+.foundation-circle::after {
+  content: '';
+  position: absolute;
+  width: 70%;
+  height: 70%;
+  border-radius: 50%;
+  border: 2px dashed #94a3b8;
+  opacity: 0.5;
 }
 
 .foundation-label {
@@ -33,7 +41,6 @@
   width: 100%;
   text-transform: uppercase;
   letter-spacing: 1px;
-  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.8);
 }
 
 .foundation-stone-container {
@@ -53,6 +60,7 @@
   color: #94a3b8;
   text-align: center;
   padding: 20px;
+  height: 100%;
   animation: pulse 2s infinite;
 }
 
@@ -73,35 +81,6 @@
   margin-top: 10px;
   max-width: 200px;
   line-height: 1.5;
-}
-
-/* Responsible for the connecting lines between stones */
-.foundation-base::after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 60%;
-  height: 60%;
-  transform: translate(-50%, -50%);
-  border-radius: 50%;
-  border: 1px dashed rgba(148, 163, 184, 0.5);
-  pointer-events: none;
-}
-
-/* Circle in the middle of the foundation */
-.foundation-base::before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 30%;
-  height: 30%;
-  transform: translate(-50%, -50%);
-  border-radius: 50%;
-  background-color: rgba(255, 255, 255, 0.4);
-  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
-  pointer-events: none;
 }
 
 /* Responsive design */
