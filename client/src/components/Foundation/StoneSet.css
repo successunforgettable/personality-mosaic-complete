@@ -1,22 +1,26 @@
-.stone-set {
+.stone-set-container {
   display: flex;
   flex-direction: column;
-  max-width: 600px;
-  margin: 0 auto;
+  width: 100%;
+  padding: 1rem;
+  background-color: #f8fafc;
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .stone-set-header {
-  margin-bottom: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
 }
 
 .stone-set-title {
-  font-size: 20px;
-  font-weight: 600;
-  color: #1e293b;
-  margin-bottom: 12px;
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  flex-direction: column;
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0;
 }
 
 .center-name {
@@ -24,76 +28,54 @@
 }
 
 .set-number {
-  font-size: 16px;
-  color: #64748b;
-  font-weight: 500;
+  font-size: 1rem;
+  font-weight: 400;
+  opacity: 0.8;
 }
 
 .stone-set-progress {
   display: flex;
-  flex-direction: column;
-  gap: 4px;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .progress-text {
-  font-size: 14px;
+  font-size: 0.875rem;
   color: #64748b;
-  text-align: right;
 }
 
 .progress-bar {
-  height: 6px;
+  flex: 1;
+  height: 0.5rem;
   background-color: #e2e8f0;
-  border-radius: 3px;
+  border-radius: 1rem;
   overflow: hidden;
 }
 
 .progress-fill {
   height: 100%;
-  border-radius: 3px;
-  transition: width 0.5s ease;
+  background-color: #3b82f6;
+  transition: width 0.3s ease;
 }
 
-.selection-instruction {
-  font-size: 16px;
-  color: #475569;
-  margin-bottom: 20px;
+.stone-set-instructions {
+  font-size: 1rem;
+  color: #334155;
+  margin-bottom: 1rem;
+  text-align: center;
 }
 
-.stones-container {
+/* Horizontal layout for stones */
+.stone-set {
   display: flex;
-  flex-direction: column;
-  gap: 24px;
+  flex-direction: row;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  margin: 0 auto;
 }
 
 .stone-wrapper {
   display: flex;
   justify-content: center;
-}
-
-/* Responsive styles */
-@media (max-width: 768px) {
-  .stone-set-title {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 4px;
-  }
-  
-  .set-number {
-    font-size: 14px;
-  }
-  
-  .stones-container {
-    gap: 16px;
-  }
-}
-
-@media (max-width: 480px) {
-  .stone-set-title {
-    font-size: 18px;
-  }
-  
-  .selection-instruction {
-    font-size: 14px;
-  }
 }

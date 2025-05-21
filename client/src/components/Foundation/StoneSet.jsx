@@ -7,6 +7,7 @@ import './StoneSet.css';
 /**
  * StoneSet Component
  * Displays a set of stones for selection in the current phase
+ * Updated to use horizontal layout
  */
 const StoneSet = ({
   stones = [],
@@ -24,7 +25,7 @@ const StoneSet = ({
   const setNumber = (currentSetIndex % 3) + 1;
   
   return (
-    <div className="stone-set">
+    <div className="stone-set-container">
       <div className="stone-set-header">
         <h2 className="stone-set-title">
           <span className="center-name" style={{ 
@@ -53,9 +54,11 @@ const StoneSet = ({
         </div>
       </div>
       
-      <p className="selection-instruction">Select one stone that resonates with you:</p>
+      <div className="stone-set-instructions">
+        Select one stone that resonates with you:
+      </div>
       
-      <div className="stones-container">
+      <div className="stone-set">
         {stones.map((stone, index) => {
           // Use the detailed stone gradient mapping from stoneData
           const gradientColors = {
@@ -71,8 +74,8 @@ const StoneSet = ({
             <motion.div
               key={`stone-container-${index}`}
               className="stone-wrapper"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.3, delay: index * 0.1 }}
             >
               <Stone 
