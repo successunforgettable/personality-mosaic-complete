@@ -241,7 +241,7 @@ const WING_PATTERNS = {
   // Type 9 wings (9w8 and 9w1) - Using proven Type 9 foundation from Section 1
   type9w8: {
     name: "Peacemaker with Challenger wing",
-    foundationSelections: [1, 0, 2, 0, 1, 0, 0, 1, 1], // Exact Type 9 pattern from Section 1
+    foundationSelections: [2, 0, 0, 0, 1, 0, 0, 1, 1], // Exact Type 9 pattern from Section 1
     buildingBlockSelections: [
       {id: "b1-left", title: "Systematic Approach"}, // Left = wing 8 per spec algorithm
       {id: "b2-right", title: "Group Focus"},
@@ -255,7 +255,7 @@ const WING_PATTERNS = {
 
   type9w1: {
     name: "Peacemaker with Perfectionist wing",
-    foundationSelections: [1, 0, 2, 0, 1, 0, 0, 1, 1], // Exact Type 9 pattern from Section 1
+    foundationSelections: [2, 0, 0, 0, 1, 0, 0, 1, 1], // Exact Type 9 pattern from Section 1
     buildingBlockSelections: [
       {id: "b1-right", title: "Intuitive Approach"}, // Right = wing 1 per spec algorithm
       {id: "b2-right", title: "Group Focus"},
