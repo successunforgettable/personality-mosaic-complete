@@ -42,7 +42,7 @@ function Router() {
       {!hideHeaderFooter && <Header />}
       <main className={`flex-grow ${hideHeaderFooter ? "" : "mt-16"}`}>
         <Switch>
-          <Route path="/" component={HomePage} />
+          <Route path="/" component={Home} />
           <Route path="/legacy" component={Home} />
           <Route path="/assessment">
             <ProtectedRoute allowGuest={true}>

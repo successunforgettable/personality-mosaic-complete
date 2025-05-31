@@ -4,10 +4,10 @@
  */
 
 import { useState, useEffect } from 'react';
-import { PhaseOne } from './PhaseOne.jsx';
-import { PhaseTwo } from './PhaseTwo.jsx';
-import { PhaseThree } from './PhaseThree.jsx';
-import { PhaseFour } from './PhaseFour.jsx';
+import PhaseOne from './PhaseOne.jsx';
+import PhaseTwo from './PhaseTwo.jsx';
+import PhaseThree from './PhaseThree.jsx';
+import PhaseFour from './PhaseFour.jsx';
 import { Section7Report } from './Section7Report.jsx';
 import { analyzePersonality } from '../lib/personalityAnalysis.js';
 import { generateSubtypeAnalysis } from '../lib/subtypeAnalysis.js';
