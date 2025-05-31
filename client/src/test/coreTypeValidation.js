@@ -163,7 +163,7 @@ const CORE_TYPE_PATTERNS = {
 
   type8: {
     name: "Challenger",
-    foundationSelections: [2, 2, 2, 2, 2, 2, 2, 2, 2], // Power, control, directness
+    foundationSelections: [2, 2, 1, 2, 2, 2, 2, 2, 2], // C (Body) | C (Anger) | B (Assertive) - HIGH confidence per spec line 2812
     buildingBlockSelections: [
       {id: "b1-right", title: "Intuitive Approach"},
       {id: "b2-left", title: "Individual Focus"},
@@ -185,7 +185,7 @@ const CORE_TYPE_PATTERNS = {
 
   type9: {
     name: "Peacemaker",
-    foundationSelections: [1, 0, 2, 0, 1, 0, 0, 1, 1], // Peace and harmony focus - more distinct from helper pattern
+    foundationSelections: [2, 0, 0, 0, 1, 0, 0, 1, 1], // C (Body) | A (Fear) | A (Withdrawn) - MEDIUM confidence per spec line 2805
     buildingBlockSelections: [
       {id: "b1-right", title: "Intuitive Approach"},
       {id: "b2-right", title: "Group Focus"},
