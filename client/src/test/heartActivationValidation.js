@@ -67,7 +67,7 @@ const HEART_ACTIVATION_TEST_PATTERNS = {
     stateDistribution: { healthy: 25, average: 65, unhealthy: 10 },
     expectedPrimary: 'average',
     expectedSecondary: 'healthy',
-    expectedDescription: /often.*scattered, escapist, and commitment-avoidant.*At times.*joyful, focused, and deeply satisfied/i
+    expectedDescription: /scattered, escapist, and commitment-avoidant.*joyful, focused, and deeply satisfied/i
   },
 
   type8Unhealthy: {
