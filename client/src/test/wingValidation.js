@@ -6,15 +6,15 @@
 import { generatePersonalityAnalysis } from '../lib/personalityAnalysis.js';
 
 const WING_PATTERNS = {
-  // Type 1 wings (1w9 and 1w2)
+  // Type 1 wings (1w9 and 1w2) - Using proven Type 1 foundation from Section 1
   type1w9: {
     name: "Perfectionist with Peacemaker wing",
-    foundationSelections: [0, 0, 2, 0, 0, 0, 0, 0, 2], // Systematic with some harmony
+    foundationSelections: [0, 0, 2, 0, 0, 0, 2, 0, 2], // Exact Type 1 pattern from Section 1
     buildingBlockSelections: [
-      {id: "b1-left", title: "Systematic Approach"},
-      {id: "b2-right", title: "Group Focus"}, // Wing 9 influence
+      {id: "b1-left", title: "Systematic Approach"}, // Left = wing 9
+      {id: "b2-left", title: "Individual Focus"},
       {id: "b3-left", title: "Detail Oriented"},
-      {id: "b4-left", title: "Steady Pace"}, // Wing 9 influence
+      {id: "b4-left", title: "Steady Pace"},
       {id: "b5-left", title: "Theoretical"}
     ],
     expectedType: 1,
@@ -23,26 +23,26 @@ const WING_PATTERNS = {
 
   type1w2: {
     name: "Perfectionist with Helper wing",
-    foundationSelections: [0, 0, 2, 1, 0, 0, 2, 1, 2], // Systematic with some helping
+    foundationSelections: [0, 0, 2, 0, 0, 0, 2, 0, 2], // Exact Type 1 pattern from Section 1
     buildingBlockSelections: [
-      {id: "b1-left", title: "Systematic Approach"},
-      {id: "b2-right", title: "Group Focus"}, // Wing 2 influence
+      {id: "b1-right", title: "Intuitive Approach"}, // Right = wing 2
+      {id: "b2-right", title: "Group Focus"},
       {id: "b3-left", title: "Detail Oriented"},
       {id: "b4-left", title: "Steady Pace"},
-      {id: "b5-right", title: "Practical"} // Wing 2 influence
+      {id: "b5-left", title: "Theoretical"}
     ],
     expectedType: 1,
     expectedWing: 2
   },
 
-  // Type 2 wings (2w1 and 2w3)
+  // Type 2 wings (2w1 and 2w3) - Using proven Type 2 foundation from Section 1
   type2w1: {
     name: "Helper with Perfectionist wing",
-    foundationSelections: [1, 1, 2, 1, 1, 1, 1, 1, 1], // Strong helping pattern with minimal systematic elements
+    foundationSelections: [1, 1, 2, 1, 1, 1, 1, 1, 1], // Exact Type 2 pattern from Section 1
     buildingBlockSelections: [
-      {id: "b1-left", title: "Systematic Approach"}, // Wing 1 influence
+      {id: "b1-left", title: "Systematic Approach"}, // Left = wing 1
       {id: "b2-right", title: "Group Focus"},
-      {id: "b3-left", title: "Detail Oriented"}, // Wing 1 influence
+      {id: "b3-right", title: "Big Picture"},
       {id: "b4-left", title: "Steady Pace"},
       {id: "b5-right", title: "Practical"}
     ],
@@ -52,12 +52,12 @@ const WING_PATTERNS = {
 
   type2w3: {
     name: "Helper with Achiever wing",
-    foundationSelections: [1, 1, 1, 1, 1, 1, 1, 1, 2], // Helping with achievement focus
+    foundationSelections: [1, 1, 2, 1, 1, 1, 1, 1, 1], // Exact Type 2 pattern from Section 1
     buildingBlockSelections: [
-      {id: "b1-left", title: "Systematic Approach"}, // Wing 3 influence
+      {id: "b1-right", title: "Intuitive Approach"}, // Right = wing 3
       {id: "b2-right", title: "Group Focus"},
-      {id: "b3-right", title: "Big Picture"}, // Wing 3 influence
-      {id: "b4-right", title: "Dynamic Pace"}, // Wing 3 influence
+      {id: "b3-right", title: "Big Picture"},
+      {id: "b4-left", title: "Steady Pace"},
       {id: "b5-right", title: "Practical"}
     ],
     expectedType: 2,
@@ -67,10 +67,10 @@ const WING_PATTERNS = {
   // Type 3 wings (3w2 and 3w4)
   type3w2: {
     name: "Achiever with Helper wing",
-    foundationSelections: [2, 1, 1, 1, 2, 1, 2, 2, 2], // Achievement with helping elements
+    foundationSelections: [2, 1, 1, 2, 2, 2, 2, 2, 2], // Exact Type 3 pattern from Section 1
     buildingBlockSelections: [
-      {id: "b1-left", title: "Systematic Approach"},
-      {id: "b2-right", title: "Group Focus"}, // Wing 2 influence
+      {id: "b1-left", title: "Systematic Approach"}, // Left = wing 2
+      {id: "b2-right", title: "Group Focus"},
       {id: "b3-right", title: "Big Picture"},
       {id: "b4-right", title: "Dynamic Pace"},
       {id: "b5-right", title: "Practical"}
@@ -81,22 +81,22 @@ const WING_PATTERNS = {
 
   type3w4: {
     name: "Achiever with Individualist wing",
-    foundationSelections: [2, 1, 0, 2, 1, 1, 2, 1, 2], // Achievement with individualistic elements
+    foundationSelections: [2, 1, 1, 2, 2, 2, 2, 2, 2], // Exact Type 3 pattern from Section 1
     buildingBlockSelections: [
-      {id: "b1-right", title: "Intuitive Approach"}, // Wing 4 influence
-      {id: "b2-left", title: "Individual Focus"}, // Wing 4 influence
+      {id: "b1-right", title: "Intuitive Approach"}, // Right = wing 4
+      {id: "b2-right", title: "Group Focus"},
       {id: "b3-right", title: "Big Picture"},
       {id: "b4-right", title: "Dynamic Pace"},
-      {id: "b5-left", title: "Theoretical"} // Wing 4 influence
+      {id: "b5-right", title: "Practical"}
     ],
     expectedType: 3,
     expectedWing: 4
   },
 
-  // Type 4 wings (4w3 and 4w5)
+  // Type 4 wings (4w3 and 4w5) - Using proven Type 4 foundation from Section 1
   type4w3: {
     name: "Individualist with Achiever wing",
-    foundationSelections: [1, 1, 1, 0, 1, 1, 2, 1, 2], // Individualistic with achievement focus
+    foundationSelections: [1, 1, 0, 0, 1, 1, 0, 1, 0], // Exact Type 4 pattern from Section 1
     buildingBlockSelections: [
       {id: "b1-left", title: "Systematic Approach"}, // Wing 3 influence
       {id: "b2-right", title: "Group Focus"}, // Wing 3 influence
