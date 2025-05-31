@@ -5,6 +5,7 @@ import BuildingBlockExperience from '../components/BuildingBlocks/BuildingBlockE
 import ColorPaletteExperience from '../components/ColorPalette/ColorPaletteExperience.jsx';
 import DetailExperience from '../components/PhaseFour/DetailExperience.jsx';
 import { useToast } from '@/hooks/use-toast';
+import { generatePersonalityAnalysis } from '../lib/personalityAnalysis.js';
 
 /**
  * FoundationExperiencePage - Page wrapper for the Foundation Experience
@@ -17,6 +18,7 @@ const FoundationExperiencePage = () => {
   const [buildingBlockSelections, setBuildingBlockSelections] = useState([]);
   const [colorPaletteSelections, setColorPaletteSelections] = useState([]);
   const [detailSelections, setDetailSelections] = useState([]);
+  const [personalityResults, setPersonalityResults] = useState(null);
   
   // Toast hook for notifications
   const { toast } = useToast();
@@ -87,21 +89,26 @@ const FoundationExperiencePage = () => {
     // Save to localStorage for persistence
     localStorage.setItem('personality_details', JSON.stringify(data.detailSelections));
     
+    // Generate personality analysis
+    const analysisResults = generatePersonalityAnalysis({
+      foundationSelections: data.foundationSelections,
+      buildingBlockSelections: data.buildingBlockSelections,
+      colorPaletteSelections: data.colorPaletteSelections,
+      detailSelections: data.detailSelections
+    });
+    
+    setPersonalityResults(analysisResults);
+    
     // Move to results phase
     setCurrentPhase('results');
     
     // Show confirmation
     toast({
       title: "Assessment Complete",
-      description: "Your personality mosaic is complete! View your results.",
+      description: "Your personality analysis is ready! View your complete results.",
     });
     
-    console.log('Complete assessment data:', {
-      foundation: data.foundationSelections,
-      buildingBlocks: data.buildingBlockSelections,
-      colors: data.colorPaletteSelections,
-      details: data.detailSelections
-    });
+    console.log('Complete personality analysis:', analysisResults);
   };
   
   // Animation variants
@@ -155,40 +162,142 @@ const FoundationExperiencePage = () => {
           />
         )}
         
-        {currentPhase === 'results' && (
+        {currentPhase === 'results' && personalityResults && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            style={{ textAlign: 'center', padding: '3rem', maxWidth: '800px', margin: '0 auto' }}
+            style={{ padding: '3rem', maxWidth: '1000px', margin: '0 auto' }}
           >
-            <h2 style={{ fontSize: '2.5rem', color: '#1e293b', marginBottom: '1.5rem' }}>
-              🎉 Assessment Complete!
-            </h2>
-            <p style={{ fontSize: '1.2rem', color: '#64748b', marginBottom: '2rem' }}>
-              Congratulations! You've completed your Personality Mosaic Assessment.
-            </p>
-            
+            <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
+              <h2 style={{ fontSize: '2.5rem', color: '#1e293b', marginBottom: '1rem' }}>
+                Your Personality Mosaic Results
+              </h2>
+              <p style={{ fontSize: '1.2rem', color: '#64748b' }}>
+                Discover your unique personality pattern and insights
+              </p>
+            </div>
+
+            {/* Primary Type Results */}
+            <div style={{ 
+              background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)', 
+              color: 'white',
+              borderRadius: '16px', 
+              padding: '2rem', 
+              marginBottom: '2rem',
+              textAlign: 'center'
+            }}>
+              <h3 style={{ fontSize: '1.8rem', marginBottom: '0.5rem' }}>
+                Type {personalityResults.primaryType.number}: {personalityResults.primaryType.name}
+              </h3>
+              <p style={{ fontSize: '1.1rem', opacity: 0.9, marginBottom: '1rem' }}>
+                {personalityResults.primaryType.description}
+              </p>
+              <div style={{ fontSize: '0.9rem', opacity: 0.8 }}>
+                Confidence: {personalityResults.primaryType.confidence}%
+              </div>
+            </div>
+
+            {/* Wing and Arrows */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
+              {personalityResults.wing && (
+                <div style={{ 
+                  background: '#f0fdf4', 
+                  border: '1px solid #10b981', 
+                  borderRadius: '12px', 
+                  padding: '1.5rem' 
+                }}>
+                  <h4 style={{ color: '#065f46', marginBottom: '0.5rem', fontSize: '1.2rem' }}>Wing</h4>
+                  <p style={{ color: '#047857', fontSize: '1rem', fontWeight: '600' }}>{personalityResults.wing.wing}</p>
+                  <p style={{ color: '#059669', fontSize: '0.9rem' }}>Strength: {personalityResults.wing.strength}</p>
+                </div>
+              )}
+              
+              {personalityResults.arrows && (
+                <div style={{ 
+                  background: '#fef3c7', 
+                  border: '1px solid #f59e0b', 
+                  borderRadius: '12px', 
+                  padding: '1.5rem' 
+                }}>
+                  <h4 style={{ color: '#92400e', marginBottom: '0.5rem', fontSize: '1.2rem' }}>Growth Direction</h4>
+                  <p style={{ color: '#b45309', fontSize: '0.9rem', marginBottom: '0.5rem' }}>
+                    Integration → Type {personalityResults.arrows.integration.type}
+                  </p>
+                  <p style={{ color: '#b45309', fontSize: '0.9rem' }}>
+                    Stress → Type {personalityResults.arrows.disintegration.type}
+                  </p>
+                </div>
+              )}
+            </div>
+
+            {/* States and Subtypes */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
+              {personalityResults.states && (
+                <div style={{ 
+                  background: '#fef7ff', 
+                  border: '1px solid #c084fc', 
+                  borderRadius: '12px', 
+                  padding: '1.5rem' 
+                }}>
+                  <h4 style={{ color: '#7c2d92', marginBottom: '0.5rem', fontSize: '1.2rem' }}>Current State</h4>
+                  <p style={{ color: '#8b5cf6', fontSize: '1rem', fontWeight: '600' }}>{personalityResults.states.dominantState}</p>
+                  <p style={{ color: '#9333ea', fontSize: '0.9rem' }}>{personalityResults.states.analysis}</p>
+                </div>
+              )}
+              
+              {personalityResults.subtypes && (
+                <div style={{ 
+                  background: '#ecfdf5', 
+                  border: '1px solid #34d399', 
+                  borderRadius: '12px', 
+                  padding: '1.5rem' 
+                }}>
+                  <h4 style={{ color: '#047857', marginBottom: '0.5rem', fontSize: '1.2rem' }}>Subtype Focus</h4>
+                  <p style={{ color: '#059669', fontSize: '1rem', fontWeight: '600' }}>{personalityResults.subtypes.dominantName}</p>
+                  <p style={{ color: '#10b981', fontSize: '0.9rem' }}>Stack: {personalityResults.subtypes.stack}</p>
+                </div>
+              )}
+            </div>
+
+            {/* Type Scores */}
             <div style={{ 
               background: '#f8fafc', 
               border: '1px solid #e2e8f0', 
               borderRadius: '12px', 
               padding: '2rem', 
-              marginBottom: '2rem',
-              textAlign: 'left' 
+              marginBottom: '2rem' 
             }}>
-              <h3 style={{ marginBottom: '1rem', color: '#1e293b' }}>Your Assessment Summary:</h3>
-              <div style={{ marginBottom: '1rem' }}>
-                <strong>Foundation Stones:</strong> {foundationSelections.length} selections across 9 sets
+              <h4 style={{ color: '#1e293b', marginBottom: '1rem', fontSize: '1.2rem' }}>Type Score Breakdown</h4>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem' }}>
+                {personalityResults.primaryType.topThree.map((result, index) => (
+                  <div key={result.type} style={{ textAlign: 'center' }}>
+                    <div style={{ fontSize: '1.5rem', fontWeight: '600', color: index === 0 ? '#6366f1' : '#64748b' }}>
+                      Type {result.type}
+                    </div>
+                    <div style={{ fontSize: '0.9rem', color: '#94a3b8' }}>
+                      Score: {result.score}
+                    </div>
+                  </div>
+                ))}
               </div>
-              <div style={{ marginBottom: '1rem' }}>
-                <strong>Building Blocks:</strong> {buildingBlockSelections.length} preference choices
-              </div>
-              <div style={{ marginBottom: '1rem' }}>
-                <strong>Color Palette:</strong> {colorPaletteSelections.length} colors selected
-              </div>
-              <div>
-                <strong>Detail Elements:</strong> {detailSelections.length} finishing details chosen
+            </div>
+
+            {/* Summary */}
+            <div style={{ 
+              background: '#f1f5f9', 
+              borderRadius: '12px', 
+              padding: '2rem', 
+              marginBottom: '2rem',
+              textAlign: 'center'
+            }}>
+              <h4 style={{ color: '#1e293b', marginBottom: '1rem', fontSize: '1.2rem' }}>Assessment Summary</h4>
+              <div style={{ color: '#475569', lineHeight: '1.6' }}>
+                <p><strong>Your Type:</strong> {personalityResults.summary.fullType}</p>
+                <p><strong>Dominant Subtype:</strong> {personalityResults.summary.dominantSubtype}</p>
+                <p><strong>Current State:</strong> {personalityResults.summary.dominantState}</p>
+                <p><strong>Growth Direction:</strong> Type {personalityResults.summary.integrationDirection}</p>
+                <p><strong>Stress Direction:</strong> Type {personalityResults.summary.stressDirection}</p>
               </div>
             </div>
             
@@ -224,7 +333,14 @@ const FoundationExperiencePage = () => {
                   fontWeight: '600',
                   cursor: 'pointer'
                 }}
-                onClick={() => setCurrentPhase('foundation')}
+                onClick={() => {
+                  setCurrentPhase('foundation');
+                  setPersonalityResults(null);
+                  setFoundationSelections([]);
+                  setBuildingBlockSelections([]);
+                  setColorPaletteSelections([]);
+                  setDetailSelections([]);
+                }}
               >
                 Start New Assessment
               </button>
