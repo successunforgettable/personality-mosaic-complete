@@ -7,6 +7,7 @@ import NotFound from "@/pages/not-found";
 import Home from "@/pages/Home";
 import Assessment from "@/pages/Assessment";
 import BasicAssessment from "@/pages/BasicAssessment";
+import HomePage from "@/pages/HomePage";
 import DirectRegisterForm from "@/pages/DirectRegisterForm";
 import DirectLoginForm from "@/pages/DirectLoginForm";
 import SimpleStones from "@/pages/SimpleStones";
@@ -41,7 +42,8 @@ function Router() {
       {!hideHeaderFooter && <Header />}
       <main className={`flex-grow ${hideHeaderFooter ? "" : "mt-16"}`}>
         <Switch>
-          <Route path="/" component={Home} />
+          <Route path="/" component={HomePage} />
+          <Route path="/legacy" component={Home} />
           <Route path="/assessment">
             <ProtectedRoute allowGuest={true}>
               <SimpleStones />
