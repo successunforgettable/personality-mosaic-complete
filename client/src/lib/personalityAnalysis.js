@@ -11,19 +11,19 @@ const TYPE_WEIGHTS = {
     2: { 7: 6, 8: 5, 3: 4 }  // Action/Instinct/Physicality -> Enthusiast (energy), Challenger, Achiever
   },
   1: { // Stone Set 2: Core Motivations  
-    0: { 1: 6, 6: 5, 5: 4 }, // Preparation/Certainty/Security -> Perfectionist (order), Loyalist (security), Investigator (preparation)
-    1: { 7: 6, 3: 5, 4: 4, 2: 3 }, // Authenticity/Image/Recognition -> Enthusiast (recognition/excitement), Achiever (image), Individualist (authenticity), Helper (recognition)
+    0: { 6: 6, 1: 4, 5: 4 }, // Preparation/Certainty/Security -> Loyalist (security), Perfectionist (order), Investigator (preparation)
+    1: { 3: 6, 7: 4, 4: 4, 2: 3 }, // Authenticity/Image/Recognition -> Achiever (image/success), Enthusiast (recognition), Individualist (authenticity), Helper (recognition)
     2: { 8: 6, 1: 4, 6: 3 }  // Justice/Control/Strength -> Challenger (control/justice), Perfectionist (justice), Loyalist (strength)
   },
   2: { // Stone Set 3: Energy Direction
     0: { 5: 6, 4: 5, 9: 4 }, // Reflection/Depth/Privacy -> Investigator, Individualist, Peacemaker
-    1: { 7: 8, 3: 5, 8: 2 }, // Achievement/Influence/Impact -> Enthusiast (very strong), Achiever, Challenger (very reduced)
-    2: { 1: 6, 9: 5, 2: 4 }  // Structure/Support/Harmony -> Perfectionist, Peacemaker, Helper
+    1: { 3: 6, 7: 5, 8: 3 }, // Achievement/Influence/Impact -> Achiever (achievement focus), Enthusiast, Challenger
+    2: { 9: 6, 1: 5, 2: 4 }  // Structure/Support/Harmony -> Peacemaker (harmony), Perfectionist, Helper
   },
   3: { // Stone Set 4: Social Approach
     0: { 5: 6, 1: 4, 4: 4 }, // Objectivity/Perspective/Space -> Investigator (objectivity), Perfectionist (perspective), Individualist (space)
-    1: { 2: 6, 6: 4, 9: 4 }, // Closeness/Intimacy/Bonding -> Helper (closeness), Loyalist (bonding), Peacemaker (intimacy)
-    2: { 7: 7, 8: 4, 3: 4 }  // Independence/Self-reliance/Freedom -> Enthusiast (freedom), Challenger (reduced), Achiever
+    1: { 6: 6, 2: 5, 9: 4 }, // Closeness/Intimacy/Bonding -> Loyalist (bonding/trust), Helper (closeness), Peacemaker (intimacy)
+    2: { 3: 6, 7: 5, 8: 4 }  // Independence/Self-reliance/Freedom -> Achiever (independence), Enthusiast (freedom), Challenger
   },
   4: { // Stone Set 5: Processing Style
     0: { 1: 6, 5: 5, 3: 4 }, // Systems/Concepts/Ideas -> Perfectionist (systems), Investigator (concepts), Achiever (ideas)
@@ -37,18 +37,18 @@ const TYPE_WEIGHTS = {
   },
   6: { // Stone Set 7: Conflict Style
     0: { 9: 6, 2: 4, 5: 4 }, // Peace/Mediation/Compromise -> Peacemaker (peace/mediation), Helper (mediation), Investigator (compromise)
-    1: { 7: 6, 3: 4, 2: 4 }, // Support/Flexibility/Adaptation -> Enthusiast (flexibility), Achiever (adaptation), Helper (support)
-    2: { 7: 6, 8: 5, 1: 4, 6: 3 }  // Directness/Challenge/Honesty -> Enthusiast (directness from enthusiasm), Challenger (directness/challenge), Perfectionist (honesty), Loyalist (directness)
+    1: { 2: 6, 7: 4, 3: 4 }, // Support/Flexibility/Adaptation -> Helper (support), Enthusiast (flexibility), Achiever (adaptation)
+    2: { 8: 6, 1: 5, 7: 4, 6: 3 }  // Directness/Challenge/Honesty -> Challenger (directness/challenge), Perfectionist (honesty), Enthusiast, Loyalist (directness)
   },
   7: { // Stone Set 8: Success Definition
     0: { 1: 6, 5: 4, 6: 4 }, // Accuracy/Principles/Improvement -> Perfectionist (accuracy/principles/improvement), Investigator (accuracy), Loyalist (principles)
     1: { 2: 6, 7: 4, 4: 4 }, // Connection/Acknowledgment/Appreciation -> Helper (connection), Enthusiast (acknowledgment), Individualist (appreciation)
-    2: { 7: 6, 3: 5, 8: 4 }  // Mastery/Achievement/Capability -> Enthusiast (mastery through experiences), Achiever (achievement/mastery), Challenger (capability)
+    2: { 3: 7, 7: 4, 8: 4 }  // Mastery/Achievement/Capability -> Achiever (achievement/mastery focus), Enthusiast (mastery through experiences), Challenger (capability)
   },
   8: { // Stone Set 9: Relationship Priority
     0: { 5: 6, 4: 5, 1: 4 }, // Autonomy/Self-sufficiency/Space -> Investigator (autonomy), Individualist (self-sufficiency), Perfectionist (space)
-    1: { 2: 6, 9: 5, 6: 4 }, // Mutuality/Sharing/Reciprocity -> Helper (mutuality/sharing), Peacemaker (reciprocity), Loyalist (mutuality)
-    2: { 7: 6, 8: 5, 3: 4, 1: 3 }  // Leadership/Mentorship/Direction -> Enthusiast (leadership through inspiration), Challenger (leadership), Achiever (mentorship), Perfectionist (direction)
+    1: { 9: 6, 2: 5, 6: 4 }, // Mutuality/Sharing/Reciprocity -> Peacemaker (reciprocity/harmony), Helper (mutuality/sharing), Loyalist (mutuality)
+    2: { 3: 6, 8: 5, 7: 4, 1: 3 }  // Leadership/Mentorship/Direction -> Achiever (mentorship/direction), Challenger (leadership), Enthusiast, Perfectionist (direction)
   }
 };
 
