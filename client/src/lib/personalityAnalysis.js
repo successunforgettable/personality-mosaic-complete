@@ -224,31 +224,82 @@ export function determineInfluence(primaryType, blockSelections) {
 }
 
 /**
- * Determine mood patterns from building block selections (using approved terminology)
+ * Determine mood patterns from building block selections - EXACT specification implementation from section 4.6
  */
 export function determineMoodPatterns(primaryType, blockSelections) {
-  if (!blockSelections || blockSelections.length < 3) return null;
+  if (!blockSelections || blockSelections.length < 4) return null;
   
-  const arrows = ARROW_MAP[primaryType];
-  if (!arrows) return null;
-  
-  // Good mood strength from 3rd block selection
+  // Good mood and bad mood direction map - EXACT from specification section 4.6
+  const moodMap = {
+    1: { goodMood: 7, badMood: 4 },
+    2: { goodMood: 4, badMood: 8 },
+    3: { goodMood: 6, badMood: 9 },
+    4: { goodMood: 1, badMood: 2 },
+    5: { goodMood: 8, badMood: 7 },
+    6: { goodMood: 9, badMood: 3 },
+    7: { goodMood: 5, badMood: 1 },
+    8: { goodMood: 2, badMood: 5 },
+    9: { goodMood: 3, badMood: 6 }
+  };
+
+  // Type names mapping for internal reference
+  const typeNames = {
+    1: 'Reformer',
+    2: 'Helper',
+    3: 'Achiever',
+    4: 'Individualist',
+    5: 'Investigator',
+    6: 'Sentinel',
+    7: 'Enthusiast',
+    8: 'Challenger',
+    9: 'Peacemaker'
+  };
+
+  // 3rd block selection confirms good mood traits
+  const goodMoodType = moodMap[primaryType].goodMood;
   const goodMoodStrength = blockSelections[2]?.id?.includes('left') ? 'strong' : 'moderate';
-  
-  // Bad mood strength from 4th block selection (if available)
-  const badMoodStrength = blockSelections.length > 3 && 
-    blockSelections[3]?.id?.includes('left') ? 'strong' : 'moderate';
-  
+
+  // 4th block selection confirms bad mood traits  
+  const badMoodType = moodMap[primaryType].badMood;
+  const badMoodStrength = blockSelections[3]?.id?.includes('left') ? 'strong' : 'moderate';
+
+  // Good mood traits by type for constructing descriptions - EXACT from specification
+  const goodMoodTraits = {
+    1: 'more spontaneous, positive, and open to possibilities',
+    2: 'more authentic and in touch with your own needs',
+    3: 'more loyal, committed, and team-oriented',
+    4: 'more disciplined, structured, and principle-focused',
+    5: 'more confident, decisive, and action-oriented',
+    6: 'more peaceful, trusting, and relaxed',
+    7: 'more focused, thoughtful, and depth-oriented',
+    8: 'more emotionally open, supportive, and nurturing',
+    9: 'more motivated, productive, and goal-oriented'
+  };
+
+  // Bad mood traits by type for constructing descriptions - EXACT from specification
+  const badMoodTraits = {
+    1: 'more critical, rigid, and perfectionistic',
+    2: 'more controlling, demanding, and confrontational',
+    3: 'more disengaged, indecisive, and procrastinating',
+    4: 'more dependent on approval and emotionally needy',
+    5: 'more scattered, distracted, and avoidant',
+    6: 'more image-conscious, competitive, and superficial',
+    7: 'more critical, judgmental, and detail-fixated',
+    8: 'more withdrawn, detached, and intellectualizing',
+    9: 'more anxious, suspicious, and seeking reassurance'
+  };
+
   return {
+    // Technical data for internal use
     goodMood: {
-      type: arrows.integration,
+      type: goodMoodType,
       strength: goodMoodStrength,
-      description: `When you're in a good mood, you tend to be more like Type ${arrows.integration}`
+      description: `When you're in a good mood, you are ${goodMoodTraits[goodMoodType]}`
     },
     badMood: {
-      type: arrows.disintegration,
+      type: badMoodType,
       strength: badMoodStrength,
-      description: `When you're in a bad mood, you tend to be more like Type ${arrows.disintegration}`
+      description: `When you're in a bad mood, you are ${badMoodTraits[badMoodType]}`
     }
   };
 }
