@@ -36,13 +36,13 @@ const TYPE_WEIGHTS = {
     2: { 8: 6, 1: 4, 3: 4 }  // Authority/Power/Direction -> Challenger (power/authority), Perfectionist (direction), Achiever (authority)
   },
   6: { // Stone Set 7: Conflict Style
-    0: { 9: 6, 2: 4, 5: 4 }, // Peace/Mediation/Compromise -> Peacemaker (peace/mediation), Helper (mediation), Investigator (compromise)
+    0: { 9: 7, 5: 4, 2: 3 }, // Peace/Mediation/Compromise -> Peacemaker (strong peace focus), Investigator (compromise), Helper (reduced)
     1: { 2: 6, 7: 4, 3: 4 }, // Support/Flexibility/Adaptation -> Helper (support), Enthusiast (flexibility), Achiever (adaptation)
     2: { 8: 6, 1: 5, 7: 4, 6: 3 }  // Directness/Challenge/Honesty -> Challenger (directness/challenge), Perfectionist (honesty), Enthusiast, Loyalist (directness)
   },
   7: { // Stone Set 8: Success Definition
     0: { 1: 6, 5: 4, 6: 4 }, // Accuracy/Principles/Improvement -> Perfectionist (accuracy/principles/improvement), Investigator (accuracy), Loyalist (principles)
-    1: { 2: 6, 7: 4, 4: 4 }, // Connection/Acknowledgment/Appreciation -> Helper (connection), Enthusiast (acknowledgment), Individualist (appreciation)
+    1: { 9: 6, 2: 5, 7: 4, 4: 4 }, // Connection/Acknowledgment/Appreciation -> Peacemaker (appreciation/harmony), Helper (connection), Enthusiast (acknowledgment), Individualist (appreciation)
     2: { 3: 7, 7: 4, 8: 4 }  // Mastery/Achievement/Capability -> Achiever (achievement/mastery focus), Enthusiast (mastery through experiences), Challenger (capability)
   },
   8: { // Stone Set 9: Relationship Priority
