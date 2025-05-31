@@ -12,27 +12,27 @@ const TYPE_WEIGHTS = {
   },
   1: { // Stone Set 2: Core Motivations  
     0: { 1: 6, 6: 5, 5: 4 }, // Preparation/Certainty/Security -> Perfectionist (order), Loyalist (security), Investigator (preparation)
-    1: { 3: 6, 4: 5, 2: 4 }, // Authenticity/Image/Recognition -> Achiever (image), Individualist (authenticity), Helper (recognition)
+    1: { 7: 6, 3: 5, 4: 4, 2: 3 }, // Authenticity/Image/Recognition -> Enthusiast (recognition/excitement), Achiever (image), Individualist (authenticity), Helper (recognition)
     2: { 8: 6, 1: 4, 6: 3 }  // Justice/Control/Strength -> Challenger (control/justice), Perfectionist (justice), Loyalist (strength)
   },
   2: { // Stone Set 3: Energy Direction
     0: { 5: 6, 4: 5, 9: 4 }, // Reflection/Depth/Privacy -> Investigator, Individualist, Peacemaker
-    1: { 7: 7, 3: 5, 8: 3 }, // Achievement/Influence/Impact -> Enthusiast (strong), Achiever, Challenger (reduced)
+    1: { 7: 8, 3: 5, 8: 2 }, // Achievement/Influence/Impact -> Enthusiast (very strong), Achiever, Challenger (very reduced)
     2: { 1: 6, 9: 5, 2: 4 }  // Structure/Support/Harmony -> Perfectionist, Peacemaker, Helper
   },
   3: { // Stone Set 4: Social Approach
     0: { 5: 6, 1: 4, 4: 4 }, // Objectivity/Perspective/Space -> Investigator (objectivity), Perfectionist (perspective), Individualist (space)
     1: { 2: 6, 6: 4, 9: 4 }, // Closeness/Intimacy/Bonding -> Helper (closeness), Loyalist (bonding), Peacemaker (intimacy)
-    2: { 7: 6, 8: 5, 3: 4 }  // Independence/Self-reliance/Freedom -> Enthusiast (freedom), Challenger, Achiever
+    2: { 7: 7, 8: 4, 3: 4 }  // Independence/Self-reliance/Freedom -> Enthusiast (freedom), Challenger (reduced), Achiever
   },
   4: { // Stone Set 5: Processing Style
     0: { 1: 6, 5: 5, 3: 4 }, // Systems/Concepts/Ideas -> Perfectionist (systems), Investigator (concepts), Achiever (ideas)
-    1: { 4: 6, 7: 4, 2: 4 }, // Expression/Mood/Feeling -> Individualist (expression/mood), Enthusiast (expression), Helper (feeling)
+    1: { 7: 6, 4: 5, 2: 4 }, // Expression/Mood/Feeling -> Enthusiast (expression/optimism), Individualist (expression/mood), Helper (feeling)
     2: { 3: 6, 8: 5, 1: 4 }  // Results/Efficiency/Utility -> Achiever (results/efficiency), Challenger (results), Perfectionist (efficiency)
   },
   5: { // Stone Set 6: Stress Reaction
     0: { 1: 6, 6: 5, 5: 4 }, // Vigilance/Analysis/Foresight -> Perfectionist (vigilance), Loyalist (foresight), Investigator (analysis)
-    1: { 4: 6, 7: 4, 3: 4 }, // Recognition/Identity/Uniqueness -> Individualist (identity/uniqueness), Enthusiast (recognition), Achiever (recognition)
+    1: { 7: 6, 4: 5, 3: 4 }, // Recognition/Identity/Uniqueness -> Enthusiast (recognition/excitement), Individualist (identity/uniqueness), Achiever (recognition)
     2: { 8: 6, 1: 4, 3: 4 }  // Authority/Power/Direction -> Challenger (power/authority), Perfectionist (direction), Achiever (authority)
   },
   6: { // Stone Set 7: Conflict Style
