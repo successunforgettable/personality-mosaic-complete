@@ -193,14 +193,18 @@ const FoundationExperiencePage = () => {
               marginBottom: '2rem',
               textAlign: 'center'
             }}>
-              <h3 style={{ fontSize: '1.8rem', marginBottom: '0.5rem' }}>
+              <div style={{ fontSize: '1rem', opacity: 0.8, marginBottom: '0.5rem' }}>
+                Your Core Energy Pattern
+              </div>
+              <h3 style={{ fontSize: '2rem', marginBottom: '1rem', fontWeight: 'bold' }}>
                 {comprehensiveReport.corePattern.name}
               </h3>
-              <p style={{ fontSize: '1.1rem', opacity: 0.9, marginBottom: '1rem' }}>
+              <p style={{ fontSize: '1.2rem', opacity: 0.9, marginBottom: '1.5rem' }}>
                 {comprehensiveReport.corePattern.coreDriver}
               </p>
-              <div style={{ fontSize: '0.9rem', opacity: 0.8 }}>
-                Confidence: {personalityResults.primaryType.confidence}%
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem', opacity: 0.8 }}>
+                <span>Pattern Confidence: {personalityResults.primaryType.confidence}%</span>
+                <span>With {personalityResults.influence.influenceNumber} Influence</span>
               </div>
             </div>
 
@@ -258,6 +262,66 @@ const FoundationExperiencePage = () => {
                   </p>
                 </div>
               )}
+            </div>
+
+            {/* Two Dominant States Analysis */}
+            <div style={{ 
+              background: '#f0f9ff', 
+              border: '1px solid #0ea5e9', 
+              borderRadius: '16px', 
+              padding: '2rem', 
+              marginBottom: '2rem'
+            }}>
+              <h3 style={{ color: '#0c4a6e', fontSize: '1.6rem', marginBottom: '1rem' }}>
+                Your Two Dominant States
+              </h3>
+              <p style={{ color: '#0369a1', fontSize: '1rem', marginBottom: '1.5rem' }}>
+                Your personality pattern shows two primary states that influence your behavior and decision-making
+              </p>
+              
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem' }}>
+                {personalityResults.influence && (
+                  <div style={{ 
+                    background: 'white',
+                    border: '1px solid #0ea5e9',
+                    borderRadius: '12px',
+                    padding: '1.5rem'
+                  }}>
+                    <h4 style={{ color: '#0c4a6e', fontSize: '1.2rem', marginBottom: '1rem' }}>
+                      Primary Influence State
+                    </h4>
+                    <p style={{ color: '#0369a1', fontSize: '1rem', marginBottom: '0.5rem' }}>
+                      <strong>{personalityResults.influence.description}</strong>
+                    </p>
+                    <p style={{ color: '#0891b2', fontSize: '0.9rem' }}>
+                      Strength: {personalityResults.influence.strength}
+                    </p>
+                  </div>
+                )}
+                
+                {personalityResults.moodPatterns && (
+                  <div style={{ 
+                    background: 'white',
+                    border: '1px solid #0ea5e9',
+                    borderRadius: '12px',
+                    padding: '1.5rem'
+                  }}>
+                    <h4 style={{ color: '#0c4a6e', fontSize: '1.2rem', marginBottom: '1rem' }}>
+                      Mood Pattern States
+                    </h4>
+                    <div style={{ marginBottom: '0.75rem' }}>
+                      <p style={{ color: '#10b981', fontSize: '0.9rem', marginBottom: '0.25rem' }}>
+                        <strong>Good Mood:</strong> {personalityResults.moodPatterns.goodMood.description}
+                      </p>
+                    </div>
+                    <div>
+                      <p style={{ color: '#f59e0b', fontSize: '0.9rem' }}>
+                        <strong>Challenging Mood:</strong> {personalityResults.moodPatterns.badMood.description}
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
 
             {/* Priority Focus Area */}
