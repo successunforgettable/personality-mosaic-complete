@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import FoundationExperience from '../components/Foundation/FoundationExperience.jsx';
+import BuildingBlockExperience from '../components/BuildingBlocks/BuildingBlockExperience.jsx';
 import { useToast } from '@/hooks/use-toast';
 
 /**
@@ -11,6 +12,7 @@ const FoundationExperiencePage = () => {
   // State management
   const [currentPhase, setCurrentPhase] = useState('foundation');
   const [foundationSelections, setFoundationSelections] = useState([]);
+  const [buildingBlockSelections, setBuildingBlockSelections] = useState([]);
   
   // Toast hook for notifications
   const { toast } = useToast();
@@ -34,6 +36,25 @@ const FoundationExperiencePage = () => {
     
     // Log for debugging
     console.log('Foundation selections:', selections);
+  };
+
+  // Handle completion of building blocks selection
+  const handleBuildingBlockComplete = (data) => {
+    setBuildingBlockSelections(data.buildingBlockSelections);
+    
+    // Save to localStorage for persistence
+    localStorage.setItem('personality_building_blocks', JSON.stringify(data.buildingBlockSelections));
+    
+    // Move to next phase
+    setCurrentPhase('colors');
+    
+    // Show confirmation
+    toast({
+      title: "Building Blocks Complete",
+      description: "Building blocks phase complete! Moving to color palette.",
+    });
+    
+    console.log('Building block selections:', data.buildingBlockSelections);
   };
   
   // Animation variants
@@ -64,19 +85,25 @@ const FoundationExperiencePage = () => {
         )}
         
         {currentPhase === 'building' && (
+          <BuildingBlockExperience 
+            onComplete={handleBuildingBlockComplete}
+            foundationSelections={foundationSelections}
+          />
+        )}
+        
+        {currentPhase === 'colors' && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
           >
-            <h2>Building Blocks Phase - Coming Soon</h2>
-            <p>You've completed the Foundation phase! The next phase is in development.</p>
+            <h2>Color Palette Phase - Coming Soon</h2>
+            <p>You've completed the Foundation and Building Blocks phases!</p>
             <div className="selections-summary">
-              <h3>Your Foundation Selections:</h3>
+              <h3>Your Progress:</h3>
               <ul>
-                {foundationSelections.map((selection, index) => (
-                  <li key={index}>Set {index + 1}: Stone {selection + 1}</li>
-                ))}
+                <li><strong>Foundation:</strong> {foundationSelections.length} stones selected</li>
+                <li><strong>Building Blocks:</strong> {buildingBlockSelections.length} blocks selected</li>
               </ul>
             </div>
           </motion.div>

@@ -1,90 +1,208 @@
 .building-block-experience {
-  max-width: 800px;
+  width: 100%;
+  max-width: 1000px;
   margin: 0 auto;
-  padding: 20px 0;
-  position: relative;
+  padding: 2rem;
+  font-family: 'Inter', sans-serif;
 }
 
-.block-pairs-container {
-  position: relative;
-  min-height: 300px;
-}
-
-.progress-indicator {
+.building-block-header {
   text-align: center;
-  margin-bottom: 20px;
-  font-size: 16px;
+  margin-bottom: 3rem;
+}
+
+.phase-title {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 1rem;
+}
+
+.phase-subtitle {
+  font-size: 1.1rem;
   color: #64748b;
+  margin-bottom: 1.5rem;
+}
+
+.progress-info {
+  font-size: 1rem;
+  color: #94a3b8;
   font-weight: 500;
 }
 
-.pair-slide {
-  position: absolute;
-  width: 100%;
-  transition: all 0.5s ease;
-  opacity: 0;
-  transform: translateX(50px);
-  pointer-events: none;
+.building-block-pair {
+  margin-bottom: 2rem;
 }
 
-.pair-slide.active {
-  opacity: 1;
-  transform: translateX(0);
-  position: relative;
-  pointer-events: all;
-  z-index: 2;
-}
-
-.pair-slide.previous {
-  opacity: 0;
-  transform: translateX(-50px);
-  z-index: 1;
-}
-
-.pair-slide.next {
-  opacity: 0;
-  transform: translateX(50px);
-  z-index: 1;
-}
-
-.building-progress-dots {
+.block-container {
   display: flex;
+  align-items: center;
   justify-content: center;
-  margin-top: 30px;
-  gap: 8px;
+  gap: 2rem;
+  max-width: 800px;
+  margin: 0 auto;
 }
 
-.progress-dot {
-  width: 10px;
-  height: 10px;
+.building-block {
+  flex: 1;
+  max-width: 320px;
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  border: 2px solid #cbd5e1;
+  border-radius: 12px;
+  padding: 2rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.building-block:hover {
+  border-color: #6366f1;
+  box-shadow: 0 8px 15px rgba(99, 102, 241, 0.15);
+  transform: translateY(-2px);
+}
+
+.left-block {
+  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+}
+
+.right-block {
+  background: linear-gradient(135deg, #fef3c7 0%, #fed7aa 100%);
+}
+
+.block-title {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 0.75rem;
+  text-align: center;
+}
+
+.block-description {
+  font-size: 1rem;
+  color: #475569;
+  text-align: center;
+  line-height: 1.5;
+}
+
+.vs-divider {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #64748b;
+  padding: 0 1rem;
+  background-color: #f1f5f9;
   border-radius: 50%;
-  background-color: #e2e8f0;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.completion-section {
+  text-align: center;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.completion-section h3 {
+  font-size: 1.8rem;
+  color: #1e293b;
+  margin-bottom: 1rem;
+}
+
+.completion-section p {
+  font-size: 1.1rem;
+  color: #64748b;
+  margin-bottom: 2rem;
+}
+
+.selections-summary {
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  text-align: left;
+}
+
+.selections-summary h4 {
+  font-size: 1.2rem;
+  color: #1e293b;
+  margin-bottom: 1rem;
+}
+
+.foundation-summary,
+.blocks-summary {
+  margin-bottom: 0.5rem;
+  color: #475569;
+}
+
+.complete-button {
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 1rem 2rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(99, 102, 241, 0.25);
+}
+
+.complete-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(99, 102, 241, 0.35);
+}
+
+.back-button {
+  position: absolute;
+  bottom: 2rem;
+  left: 2rem;
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  padding: 0.75rem 1.5rem;
+  color: #475569;
+  cursor: pointer;
   transition: all 0.3s ease;
 }
 
-.progress-dot.active {
-  background-color: #3b82f6;
-  transform: scale(1.2);
+.back-button:hover {
+  background: #e2e8f0;
+  border-color: #94a3b8;
 }
 
-.progress-dot.completed {
-  background-color: #a3e635;
-}
-
-.completion-message {
-  text-align: center;
-  padding: 40px;
-  background-color: #f0fdf4;
-  border-radius: 8px;
-  border: 1px solid #86efac;
-}
-
-.completion-message h3 {
-  color: #16a34a;
-  font-size: 24px;
-  margin-bottom: 12px;
-}
-
-.completion-message p {
-  color: #4d7c0f;
+/* Responsive design */
+@media (max-width: 768px) {
+  .building-block-experience {
+    padding: 1rem;
+  }
+  
+  .phase-title {
+    font-size: 1.8rem;
+  }
+  
+  .block-container {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .vs-divider {
+    transform: rotate(90deg);
+    margin: 0.5rem 0;
+  }
+  
+  .building-block {
+    max-width: 100%;
+    padding: 1.5rem;
+  }
+  
+  .back-button {
+    position: static;
+    margin-top: 2rem;
+    width: 100%;
+  }
 }

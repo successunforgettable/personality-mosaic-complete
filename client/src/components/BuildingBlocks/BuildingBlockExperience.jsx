@@ -1,120 +1,159 @@
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import BuildingBlockPair from './BuildingBlockPair';
-import { BUILDING_BLOCK_PAIRS } from './BuildingBlockData';
+import React, { useState } from 'react';
+import { motion } from 'framer-motion';
 import './BuildingBlockExperience.css';
 
-const BuildingBlockExperience = ({ onComplete }) => {
-  // State for current pair index
+/**
+ * BuildingBlockExperience - Phase 2 of the Personality Mosaic Assessment
+ * Handles the building block selection experience
+ */
+const BuildingBlockExperience = ({ onComplete, foundationSelections = [] }) => {
   const [currentPairIndex, setCurrentPairIndex] = useState(0);
-  
-  // State for selected blocks
-  const [selectedBlocks, setSelectedBlocks] = useState([]);
-  
-  // Track completed status
-  const [isCompleted, setIsCompleted] = useState(false);
-  
-  // Handle block selection
-  const handleBlockSelect = (block, pairId) => {
-    // Check if we already have a selection for this pair
-    const existingSelectionIndex = selectedBlocks.findIndex(
-      selection => selection.pairId === pairId
-    );
-    
-    if (existingSelectionIndex >= 0) {
-      // Replace existing selection
-      const updatedSelections = [...selectedBlocks];
-      updatedSelections[existingSelectionIndex] = { 
-        block,
-        pairId
-      };
-      setSelectedBlocks(updatedSelections);
-    } else {
-      // Add new selection
-      setSelectedBlocks([...selectedBlocks, { 
-        block,
-        pairId
-      }]);
+  const [selections, setSelections] = useState([]);
+
+  // Sample building block pairs - these would come from your specification
+  const buildingBlockPairs = [
+    {
+      id: 'pair-1',
+      left: { id: 'b1-left', title: 'Systematic Approach', description: 'Methodical • Organized • Structured' },
+      right: { id: 'b1-right', title: 'Intuitive Approach', description: 'Instinctive • Spontaneous • Flow-based' }
+    },
+    {
+      id: 'pair-2', 
+      left: { id: 'b2-left', title: 'Individual Focus', description: 'Personal • Independent • Self-directed' },
+      right: { id: 'b2-right', title: 'Group Focus', description: 'Collective • Collaborative • Team-oriented' }
+    },
+    {
+      id: 'pair-3',
+      left: { id: 'b3-left', title: 'Detail Oriented', description: 'Precise • Thorough • Comprehensive' },
+      right: { id: 'b3-right', title: 'Big Picture', description: 'Conceptual • Strategic • Visionary' }
+    },
+    {
+      id: 'pair-4',
+      left: { id: 'b4-left', title: 'Steady Pace', description: 'Consistent • Reliable • Sustainable' },
+      right: { id: 'b4-right', title: 'Dynamic Pace', description: 'Varied • Adaptive • Energetic' }
+    },
+    {
+      id: 'pair-5',
+      left: { id: 'b5-left', title: 'Theoretical', description: 'Conceptual • Abstract • Principle-based' },
+      right: { id: 'b5-right', title: 'Practical', description: 'Applied • Concrete • Results-focused' }
     }
-    
-    // Wait a moment before advancing to next pair
+  ];
+
+  const currentPair = buildingBlockPairs[currentPairIndex];
+  const isComplete = selections.length === buildingBlockPairs.length;
+
+  const handleBlockSelect = (block) => {
+    const newSelections = [...selections];
+    newSelections[currentPairIndex] = block;
+    setSelections(newSelections);
+
+    // Auto-advance to next pair after selection
     setTimeout(() => {
-      if (currentPairIndex < BUILDING_BLOCK_PAIRS.length - 1) {
+      if (currentPairIndex < buildingBlockPairs.length - 1) {
         setCurrentPairIndex(currentPairIndex + 1);
-      } else {
-        // Completed all pairs
-        setIsCompleted(true);
-        
-        // Call complete callback
-        if (onComplete) {
-          setTimeout(() => {
-            onComplete(selectedBlocks);
-          }, 1000);
-        }
       }
-    }, 700);
+    }, 600);
   };
-  
-  // Get selected block ID for current pair
-  const getSelectedBlockId = (pairId) => {
-    const selection = selectedBlocks.find(s => s.pairId === pairId);
-    return selection ? selection.block.id : null;
+
+  const handleComplete = () => {
+    if (onComplete) {
+      onComplete({
+        foundationSelections,
+        buildingBlockSelections: selections
+      });
+    }
   };
-  
-  // Render all building block pairs
+
   return (
-    <div className="building-block-experience">
-      <AnimatePresence mode="wait">
-        {!isCompleted ? (
-          <motion.div
-            key="building-blocks"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="block-pairs-container"
-          >
-            <div className="progress-indicator">
-              Pair {currentPairIndex + 1} of {BUILDING_BLOCK_PAIRS.length}
+    <motion.div 
+      className="building-block-experience"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+    >
+      <div className="building-block-header">
+        <h2 className="phase-title">Choose Your Building Blocks</h2>
+        <p className="phase-subtitle">
+          Select the approach that best represents your natural preference in each pair
+        </p>
+        <div className="progress-info">
+          Question {currentPairIndex + 1} of {buildingBlockPairs.length}
+        </div>
+      </div>
+
+      {!isComplete ? (
+        <motion.div 
+          className="building-block-pair"
+          key={currentPair.id}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+        >
+          <div className="block-container">
+            <motion.div 
+              className="building-block left-block"
+              onClick={() => handleBlockSelect(currentPair.left)}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <h3 className="block-title">{currentPair.left.title}</h3>
+              <p className="block-description">{currentPair.left.description}</p>
+            </motion.div>
+
+            <div className="vs-divider">VS</div>
+
+            <motion.div 
+              className="building-block right-block"
+              onClick={() => handleBlockSelect(currentPair.right)}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <h3 className="block-title">{currentPair.right.title}</h3>
+              <p className="block-description">{currentPair.right.description}</p>
+            </motion.div>
+          </div>
+        </motion.div>
+      ) : (
+        <motion.div 
+          className="completion-section"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+        >
+          <h3>Building Blocks Complete!</h3>
+          <p>You've made all your building block selections.</p>
+          
+          <div className="selections-summary">
+            <h4>Your Foundation & Building Block Choices:</h4>
+            <div className="foundation-summary">
+              <strong>Foundation:</strong> {foundationSelections.length} stones selected
             </div>
-            
-            {BUILDING_BLOCK_PAIRS.map((pair, index) => (
-              <div 
-                key={pair.id}
-                className={`pair-slide ${index === currentPairIndex ? 'active' : 
-                  index < currentPairIndex ? 'previous' : 'next'}`}
-              >
-                <BuildingBlockPair
-                  pair={pair}
-                  selectedBlockId={getSelectedBlockId(pair.id)}
-                  onSelectBlock={index === currentPairIndex ? handleBlockSelect : null}
-                  animationDelay={0.2}
-                />
-              </div>
-            ))}
-            
-            <div className="building-progress-dots">
-              {BUILDING_BLOCK_PAIRS.map((_, index) => (
-                <div
-                  key={index}
-                  className={`progress-dot ${index === currentPairIndex ? 'active' : 
-                    index < currentPairIndex ? 'completed' : ''}`}
-                ></div>
-              ))}
+            <div className="blocks-summary">
+              <strong>Building Blocks:</strong> {selections.length} blocks selected
             </div>
-          </motion.div>
-        ) : (
-          <motion.div
-            key="completion"
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="completion-message"
+          </div>
+
+          <motion.button 
+            className="complete-button"
+            onClick={handleComplete}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
           >
-            <h3>Building Blocks Selected!</h3>
-            <p>You've selected all your building blocks. Moving to the next phase...</p>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
+            Continue to Color Palette
+          </motion.button>
+        </motion.div>
+      )}
+
+      {currentPairIndex > 0 && !isComplete && (
+        <motion.button 
+          className="back-button"
+          onClick={() => setCurrentPairIndex(currentPairIndex - 1)}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+        >
+          ← Previous
+        </motion.button>
+      )}
+    </motion.div>
   );
 };
 
