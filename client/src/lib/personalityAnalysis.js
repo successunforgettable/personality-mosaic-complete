@@ -142,6 +142,7 @@ export function determineInfluence(primaryType, blockSelections) {
   
   return {
     fullType: `${TYPE_DESCRIPTIONS[primaryType].name} ${influence}`,
+    wing: influence,
     influenceNumber: influence,
     strength: influenceStrength,
     description: `${TYPE_DESCRIPTIONS[primaryType].name} with ${influence} influence`
