@@ -198,64 +198,64 @@ const FoundationExperiencePage = () => {
               </div>
             </div>
 
-            {/* Wing and Arrows */}
+            {/* Influence and Mood Patterns */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
-              {personalityResults.wing && (
+              {personalityResults.influence && (
                 <div style={{ 
                   background: '#f0fdf4', 
                   border: '1px solid #10b981', 
                   borderRadius: '12px', 
                   padding: '1.5rem' 
                 }}>
-                  <h4 style={{ color: '#065f46', marginBottom: '0.5rem', fontSize: '1.2rem' }}>Wing</h4>
-                  <p style={{ color: '#047857', fontSize: '1rem', fontWeight: '600' }}>{personalityResults.wing.wing}</p>
-                  <p style={{ color: '#059669', fontSize: '0.9rem' }}>Strength: {personalityResults.wing.strength}</p>
+                  <h4 style={{ color: '#065f46', marginBottom: '0.5rem', fontSize: '1.2rem' }}>Type Influence</h4>
+                  <p style={{ color: '#047857', fontSize: '1rem', fontWeight: '600' }}>{personalityResults.influence.fullType}</p>
+                  <p style={{ color: '#059669', fontSize: '0.9rem' }}>Strength: {personalityResults.influence.strength}</p>
                 </div>
               )}
               
-              {personalityResults.arrows && (
+              {personalityResults.moodPatterns && (
                 <div style={{ 
                   background: '#fef3c7', 
                   border: '1px solid #f59e0b', 
                   borderRadius: '12px', 
                   padding: '1.5rem' 
                 }}>
-                  <h4 style={{ color: '#92400e', marginBottom: '0.5rem', fontSize: '1.2rem' }}>Growth Direction</h4>
+                  <h4 style={{ color: '#92400e', marginBottom: '0.5rem', fontSize: '1.2rem' }}>Mood Patterns</h4>
                   <p style={{ color: '#b45309', fontSize: '0.9rem', marginBottom: '0.5rem' }}>
-                    Integration → Type {personalityResults.arrows.integration.type}
+                    Good Mood → Type {personalityResults.moodPatterns.goodMood.type} qualities
                   </p>
                   <p style={{ color: '#b45309', fontSize: '0.9rem' }}>
-                    Stress → Type {personalityResults.arrows.disintegration.type}
+                    Bad Mood → Type {personalityResults.moodPatterns.badMood.type} qualities
                   </p>
                 </div>
               )}
             </div>
 
-            {/* States and Subtypes */}
+            {/* Heart Activation and Focus Areas */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
-              {personalityResults.states && (
+              {personalityResults.heartActivation && (
                 <div style={{ 
                   background: '#fef7ff', 
                   border: '1px solid #c084fc', 
                   borderRadius: '12px', 
                   padding: '1.5rem' 
                 }}>
-                  <h4 style={{ color: '#7c2d92', marginBottom: '0.5rem', fontSize: '1.2rem' }}>Current State</h4>
-                  <p style={{ color: '#8b5cf6', fontSize: '1rem', fontWeight: '600' }}>{personalityResults.states.dominantState}</p>
-                  <p style={{ color: '#9333ea', fontSize: '0.9rem' }}>{personalityResults.states.analysis}</p>
+                  <h4 style={{ color: '#7c2d92', marginBottom: '0.5rem', fontSize: '1.2rem' }}>Heart Activation</h4>
+                  <p style={{ color: '#8b5cf6', fontSize: '1rem', fontWeight: '600' }}>{personalityResults.heartActivation.dominantState}</p>
+                  <p style={{ color: '#9333ea', fontSize: '0.9rem' }}>{personalityResults.heartActivation.activationPercentage}% activation level</p>
                 </div>
               )}
               
-              {personalityResults.subtypes && (
+              {personalityResults.subtypeFocus && (
                 <div style={{ 
                   background: '#ecfdf5', 
                   border: '1px solid #34d399', 
                   borderRadius: '12px', 
                   padding: '1.5rem' 
                 }}>
-                  <h4 style={{ color: '#047857', marginBottom: '0.5rem', fontSize: '1.2rem' }}>Subtype Focus</h4>
-                  <p style={{ color: '#059669', fontSize: '1rem', fontWeight: '600' }}>{personalityResults.subtypes.dominantName}</p>
-                  <p style={{ color: '#10b981', fontSize: '0.9rem' }}>Stack: {personalityResults.subtypes.stack}</p>
+                  <h4 style={{ color: '#047857', marginBottom: '0.5rem', fontSize: '1.2rem' }}>Focus Areas</h4>
+                  <p style={{ color: '#059669', fontSize: '1rem', fontWeight: '600' }}>{personalityResults.subtypeFocus.dominantName} Primary</p>
+                  <p style={{ color: '#10b981', fontSize: '0.9rem' }}>Stack: {personalityResults.subtypeFocus.focusStack}</p>
                 </div>
               )}
             </div>
@@ -294,10 +294,10 @@ const FoundationExperiencePage = () => {
               <h4 style={{ color: '#1e293b', marginBottom: '1rem', fontSize: '1.2rem' }}>Assessment Summary</h4>
               <div style={{ color: '#475569', lineHeight: '1.6' }}>
                 <p><strong>Your Type:</strong> {personalityResults.summary.fullType}</p>
-                <p><strong>Dominant Subtype:</strong> {personalityResults.summary.dominantSubtype}</p>
-                <p><strong>Current State:</strong> {personalityResults.summary.dominantState}</p>
-                <p><strong>Growth Direction:</strong> Type {personalityResults.summary.integrationDirection}</p>
-                <p><strong>Stress Direction:</strong> Type {personalityResults.summary.stressDirection}</p>
+                <p><strong>Primary Focus:</strong> {personalityResults.summary.dominantFocus}</p>
+                <p><strong>Heart Activation:</strong> {personalityResults.summary.heartActivationLevel}%</p>
+                <p><strong>Good Mood Qualities:</strong> Type {personalityResults.summary.goodMoodType}</p>
+                <p><strong>Bad Mood Qualities:</strong> Type {personalityResults.summary.badMoodType}</p>
               </div>
             </div>
             
