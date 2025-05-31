@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import FoundationExperience from '../components/Foundation/FoundationExperience.jsx';
-import { useCustomAlert } from '../components/CustomAlert';
+import { useToast } from '@/hooks/use-toast';
 
 /**
  * FoundationExperiencePage - Page wrapper for the Foundation Experience
@@ -12,8 +12,8 @@ const FoundationExperiencePage = () => {
   const [currentPhase, setCurrentPhase] = useState('foundation');
   const [foundationSelections, setFoundationSelections] = useState([]);
   
-  // Alert hook for notifications
-  const { showAlert } = useCustomAlert();
+  // Toast hook for notifications
+  const { toast } = useToast();
   
   // Handle completion of foundation selection
   const handleFoundationComplete = (selections) => {
@@ -27,7 +27,10 @@ const FoundationExperiencePage = () => {
     setCurrentPhase('building');
     
     // Show confirmation
-    showAlert('Foundation phase complete! Moving to the next phase.', 'success');
+    toast({
+      title: "Foundation Complete",
+      description: "Foundation phase complete! Moving to the next phase.",
+    });
     
     // Log for debugging
     console.log('Foundation selections:', selections);
