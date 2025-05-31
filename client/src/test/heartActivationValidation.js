@@ -31,7 +31,7 @@ const HEART_ACTIVATION_TEST_PATTERNS = {
     stateDistribution: { healthy: 10, average: 30, unhealthy: 60 },
     expectedPrimary: 'unhealthy',
     expectedSecondary: 'average',
-    expectedDescription: /predominantly.*deceptive, hostile, and emotionally detached/i
+    expectedDescription: /often.*deceptive, hostile, and emotionally detached/i
   },
 
   balanced: {
@@ -40,7 +40,7 @@ const HEART_ACTIVATION_TEST_PATTERNS = {
     stateDistribution: { healthy: 35, average: 40, unhealthy: 25 },
     expectedPrimary: 'average',
     expectedSecondary: 'healthy',
-    expectedDescription: /often.*melancholic, envious, and self-absorbed/i
+    expectedDescription: /often.*melancholic, envious, and self-absorbed.*At times.*creative, emotionally honest, and self-aware/i
   },
 
   moderateHealthy: {
@@ -67,7 +67,7 @@ const HEART_ACTIVATION_TEST_PATTERNS = {
     stateDistribution: { healthy: 25, average: 65, unhealthy: 10 },
     expectedPrimary: 'average',
     expectedSecondary: 'healthy',
-    expectedDescription: /often.*scattered, escapist, and commitment-avoidant/i
+    expectedDescription: /often.*scattered, escapist, and commitment-avoidant.*At times.*joyful, focused, and deeply satisfied/i
   },
 
   type8Unhealthy: {
@@ -76,7 +76,7 @@ const HEART_ACTIVATION_TEST_PATTERNS = {
     stateDistribution: { healthy: 15, average: 25, unhealthy: 60 },
     expectedPrimary: 'unhealthy',
     expectedSecondary: 'average',
-    expectedDescription: /predominantly.*intimidating, destructive, and ruthless/i
+    expectedDescription: /often.*intimidating, destructive, and ruthless.*At times.*controlling, confrontational, and justice-obsessed/i
   },
 
   type9Balanced: {

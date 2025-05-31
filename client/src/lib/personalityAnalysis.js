@@ -411,15 +411,20 @@ function calculateStateImpact(stateDistribution, personalityType) {
 function determineSecondaryState(distribution) {
   const { healthy, average, unhealthy } = distribution;
   
-  // Create sorted array of states by percentage
+  // Determine primary state first
+  const primaryState = healthy >= 50 ? 'healthy' :
+                       unhealthy >= 50 ? 'unhealthy' : 'average';
+  
+  // Create array of non-primary states
   const states = [
     { name: 'healthy', value: healthy },
     { name: 'average', value: average },
     { name: 'unhealthy', value: unhealthy }
-  ].sort((a, b) => b.value - a.value);
+  ].filter(state => state.name !== primaryState)
+   .sort((a, b) => b.value - a.value);
   
-  // Return the second highest state
-  return states[1].name;
+  // Return the highest non-primary state
+  return states[0].name;
 }
 
 function generateStateDescription(distribution, typeDescriptions) {
