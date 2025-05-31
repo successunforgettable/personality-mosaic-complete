@@ -483,47 +483,61 @@ function generateStateDescription(distribution, typeDescriptions) {
 }
 
 /**
- * Analyze subtype focus from detail selections (using proper ordering)
+ * Analyze subtype focus from detail selections - EXACT specification implementation from section 6.3
  */
 export function analyzeSubtypeFocus(detailSelections) {
   if (!detailSelections || detailSelections.length === 0) return null;
   
+  // Count tokens in each subtype category - exact from specification
   const focusCounts = { sp: 0, so: 0, sx: 0 };
   
   detailSelections.forEach(detail => {
-    if (detail.id.startsWith('sp-')) focusCounts.sp++;
-    else if (detail.id.startsWith('so-')) focusCounts.so++;
-    else if (detail.id.startsWith('sx-')) focusCounts.sx++;
+    if (detail.category === 'sp' || detail.id?.startsWith('sp-')) focusCounts.sp++;
+    else if (detail.category === 'so' || detail.id?.startsWith('so-')) focusCounts.so++;
+    else if (detail.category === 'sx' || detail.id?.startsWith('sx-')) focusCounts.sx++;
   });
   
+  // Calculate exact percentages based on 10 token distribution
   const total = focusCounts.sp + focusCounts.so + focusCounts.sx;
+  if (total === 0) return null;
+  
   const percentages = {
     sp: Math.round((focusCounts.sp / total) * 100),
     so: Math.round((focusCounts.so / total) * 100),
     sx: Math.round((focusCounts.sx / total) * 100)
   };
   
-  // Create ordered stack from highest to lowest
+  // Create ordered stack from highest to lowest - exact specification algorithm
   const orderedFocus = Object.entries(percentages)
     .sort(([,a], [,b]) => b - a)
     .map(([focus, percentage]) => ({ focus, percentage }));
   
+  // Priority Area names mapping from specification
   const focusNames = {
-    sp: 'Self-Preservation',
-    so: 'Social', 
-    sx: 'One-to-One'
+    sp: 'Physical Wellbeing & Stability Focus',
+    so: 'Community & Belonging Focus', 
+    sx: 'Intensity & Connection Focus'
   };
   
   const dominantFocus = orderedFocus[0].focus;
+  const secondaryFocus = orderedFocus[1].focus;
   const focusStack = orderedFocus.map(item => item.focus.toUpperCase()).join('/');
+  
+  // Determine dominance type per specification
+  const isDominant = orderedFocus[0].percentage >= 50;
+  const isBalanced = orderedFocus[0].percentage < 40;
   
   return {
     counts: focusCounts,
     percentages,
     orderedFocus,
     dominantFocus,
+    secondaryFocus,
     dominantName: focusNames[dominantFocus],
+    secondaryName: focusNames[secondaryFocus],
     focusStack,
+    isDominant,
+    isBalanced,
     stackDescription: `${focusNames[orderedFocus[0].focus]} primary (${orderedFocus[0].percentage}%), ${focusNames[orderedFocus[1].focus]} secondary (${orderedFocus[1].percentage}%), ${focusNames[orderedFocus[2].focus]} tertiary (${orderedFocus[2].percentage}%)`
   };
 }
