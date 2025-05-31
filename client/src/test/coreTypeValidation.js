@@ -52,7 +52,7 @@ const CORE_TYPE_PATTERNS = {
 
   type3: {
     name: "Achiever",
-    foundationSelections: [2, 1, 1, 2, 2, 1, 2, 2, 2], // Achievement, success, goal-oriented
+    foundationSelections: [2, 1, 1, 2, 2, 2, 2, 2, 2], // Achievement focus - all action choices where possible
     buildingBlockSelections: [
       {id: "b1-left", title: "Systematic Approach"},
       {id: "b2-right", title: "Group Focus"},
@@ -117,8 +117,8 @@ const CORE_TYPE_PATTERNS = {
   },
 
   type6: {
-    name: "Loyalist",
-    foundationSelections: [0, 0, 2, 1, 0, 0, 0, 0, 1], // Security, preparation, support
+    name: "Loyalist", 
+    foundationSelections: [1, 0, 2, 1, 0, 0, 1, 0, 1], // Security and support focus - distinct loyalty pattern
     buildingBlockSelections: [
       {id: "b1-left", title: "Systematic Approach"},
       {id: "b2-right", title: "Group Focus"},
@@ -140,7 +140,7 @@ const CORE_TYPE_PATTERNS = {
 
   type7: {
     name: "Enthusiast",
-    foundationSelections: [2, 2, 1, 2, 2, 1, 1, 2, 2], // Optimistic, variety-seeking, dynamic
+    foundationSelections: [2, 1, 1, 2, 1, 1, 1, 1, 2], // Variety and flexibility focus - distinct enthusiasm pattern
     buildingBlockSelections: [
       {id: "b1-right", title: "Intuitive Approach"},
       {id: "b2-right", title: "Group Focus"},
@@ -184,7 +184,7 @@ const CORE_TYPE_PATTERNS = {
 
   type9: {
     name: "Peacemaker",
-    foundationSelections: [1, 0, 2, 1, 1, 0, 0, 1, 1], // Harmony, peace, mediation
+    foundationSelections: [1, 0, 2, 0, 1, 0, 0, 1, 1], // Peace and harmony focus - more distinct from helper pattern
     buildingBlockSelections: [
       {id: "b1-right", title: "Intuitive Approach"},
       {id: "b2-right", title: "Group Focus"},
