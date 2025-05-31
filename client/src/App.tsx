@@ -16,6 +16,7 @@ import ResetPassword from "@/pages/ResetPassword";
 import VerifyEmail from "@/pages/VerifyEmail";
 import SignUp from "@/pages/DirectRegisterForm"; // Alias for backward compatibility
 import FoundationExperiencePage from "./pages/FoundationExperiencePage.jsx";
+import ValidationPage from "./pages/ValidationPage.jsx";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { AssessmentProvider } from "./context/AssessmentContext";
@@ -71,6 +72,7 @@ function Router() {
             </ProtectedRoute>
           </Route>
           <Route path="/test/validation" component={PersonalitySystemValidator} />
+          <Route path="/algorithm/validation" component={ValidationPage} />
           <Route path="/:rest*" component={NotFound} />
         </Switch>
       </main>
