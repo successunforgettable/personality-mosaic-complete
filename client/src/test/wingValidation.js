@@ -69,7 +69,7 @@ const WING_PATTERNS = {
     name: "Achiever with Helper wing",
     foundationSelections: [2, 1, 1, 2, 2, 2, 2, 2, 2], // Exact Type 3 pattern from Section 1
     buildingBlockSelections: [
-      {id: "b1-left", title: "Systematic Approach"}, // Left = wing 2
+      {id: "b1-left", title: "Systematic Approach"}, // Left = wing 2 per spec algorithm
       {id: "b2-right", title: "Group Focus"},
       {id: "b3-right", title: "Big Picture"},
       {id: "b4-right", title: "Dynamic Pace"},
@@ -98,11 +98,11 @@ const WING_PATTERNS = {
     name: "Individualist with Achiever wing",
     foundationSelections: [1, 1, 0, 0, 1, 1, 0, 1, 0], // Exact Type 4 pattern from Section 1
     buildingBlockSelections: [
-      {id: "b1-left", title: "Systematic Approach"}, // Wing 3 influence
-      {id: "b2-right", title: "Group Focus"}, // Wing 3 influence
+      {id: "b1-left", title: "Systematic Approach"}, // Left = wing 3 per spec algorithm
+      {id: "b2-left", title: "Individual Focus"},
       {id: "b3-left", title: "Detail Oriented"},
-      {id: "b4-right", title: "Dynamic Pace"}, // Wing 3 influence
-      {id: "b5-right", title: "Practical"} // Wing 3 influence
+      {id: "b4-left", title: "Steady Pace"},
+      {id: "b5-left", title: "Theoretical"}
     ],
     expectedType: 4,
     expectedWing: 3
@@ -110,24 +110,24 @@ const WING_PATTERNS = {
 
   type4w5: {
     name: "Individualist with Investigator wing",
-    foundationSelections: [1, 1, 0, 0, 0, 1, 0, 1, 0], // Individualistic with investigative elements
+    foundationSelections: [1, 1, 0, 0, 1, 1, 0, 1, 0], // Exact Type 4 pattern from Section 1
     buildingBlockSelections: [
-      {id: "b1-left", title: "Systematic Approach"}, // Wing 5 influence
-      {id: "b2-left", title: "Individual Focus"}, // Wing 5 influence
-      {id: "b3-left", title: "Detail Oriented"}, // Wing 5 influence
+      {id: "b1-right", title: "Intuitive Approach"}, // Right = wing 5 per spec algorithm
+      {id: "b2-left", title: "Individual Focus"},
+      {id: "b3-left", title: "Detail Oriented"},
       {id: "b4-left", title: "Steady Pace"},
-      {id: "b5-left", title: "Theoretical"} // Wing 5 influence
+      {id: "b5-left", title: "Theoretical"}
     ],
     expectedType: 4,
     expectedWing: 5
   },
 
-  // Type 5 wings (5w4 and 5w6)
+  // Type 5 wings (5w4 and 5w6) - Using proven Type 5 foundation from Section 1
   type5w4: {
     name: "Investigator with Individualist wing",
-    foundationSelections: [0, 0, 0, 0, 1, 0, 0, 1, 0], // Investigative with individualistic elements
+    foundationSelections: [0, 0, 0, 0, 0, 0, 0, 0, 0], // Exact Type 5 pattern from Section 1
     buildingBlockSelections: [
-      {id: "b1-left", title: "Systematic Approach"},
+      {id: "b1-left", title: "Systematic Approach"}, // Left = wing 4 per spec algorithm
       {id: "b2-left", title: "Individual Focus"},
       {id: "b3-left", title: "Detail Oriented"},
       {id: "b4-left", title: "Steady Pace"},
@@ -139,13 +139,13 @@ const WING_PATTERNS = {
 
   type5w6: {
     name: "Investigator with Loyalist wing",
-    foundationSelections: [0, 0, 2, 0, 0, 0, 0, 0, 1], // Investigative with security elements
+    foundationSelections: [0, 0, 0, 0, 0, 0, 0, 0, 0], // Exact Type 5 pattern from Section 1
     buildingBlockSelections: [
-      {id: "b1-left", title: "Systematic Approach"},
-      {id: "b2-right", title: "Group Focus"}, // Wing 6 influence
+      {id: "b1-right", title: "Intuitive Approach"}, // Right = wing 6 per spec algorithm
+      {id: "b2-left", title: "Individual Focus"},
       {id: "b3-left", title: "Detail Oriented"},
       {id: "b4-left", title: "Steady Pace"},
-      {id: "b5-right", title: "Practical"} // Wing 6 influence
+      {id: "b5-left", title: "Theoretical"}
     ],
     expectedType: 5,
     expectedWing: 6
@@ -154,13 +154,13 @@ const WING_PATTERNS = {
   // Type 6 wings (6w5 and 6w7)
   type6w5: {
     name: "Loyalist with Investigator wing", 
-    foundationSelections: [1, 0, 2, 1, 0, 0, 1, 0, 1], // Clear loyalist pattern from Section 1
+    foundationSelections: [1, 0, 2, 1, 0, 0, 1, 0, 1], // Exact Type 6 pattern from Section 1
     buildingBlockSelections: [
-      {id: "b1-left", title: "Systematic Approach"}, // Wing 5 influence
-      {id: "b2-left", title: "Individual Focus"}, // Wing 5 influence
-      {id: "b3-left", title: "Detail Oriented"}, // Wing 5 influence
+      {id: "b1-left", title: "Systematic Approach"}, // Left = wing 5 per spec algorithm
+      {id: "b2-right", title: "Group Focus"},
+      {id: "b3-left", title: "Detail Oriented"},
       {id: "b4-left", title: "Steady Pace"},
-      {id: "b5-left", title: "Theoretical"} // Wing 5 influence
+      {id: "b5-right", title: "Practical"}
     ],
     expectedType: 6,
     expectedWing: 5
@@ -168,28 +168,28 @@ const WING_PATTERNS = {
 
   type6w7: {
     name: "Loyalist with Enthusiast wing",
-    foundationSelections: [1, 0, 2, 2, 1, 1, 1, 1, 1], // Security with enthusiastic elements
+    foundationSelections: [1, 0, 2, 1, 0, 0, 1, 0, 1], // Exact Type 6 pattern from Section 1
     buildingBlockSelections: [
-      {id: "b1-right", title: "Intuitive Approach"}, // Wing 7 influence
+      {id: "b1-right", title: "Intuitive Approach"}, // Right = wing 7 per spec algorithm
       {id: "b2-right", title: "Group Focus"},
-      {id: "b3-right", title: "Big Picture"}, // Wing 7 influence
-      {id: "b4-right", title: "Dynamic Pace"}, // Wing 7 influence
+      {id: "b3-left", title: "Detail Oriented"},
+      {id: "b4-left", title: "Steady Pace"},
       {id: "b5-right", title: "Practical"}
     ],
     expectedType: 6,
     expectedWing: 7
   },
 
-  // Type 7 wings (7w6 and 7w8)
+  // Type 7 wings (7w6 and 7w8) - Using proven Type 7 foundation from Section 1
   type7w6: {
     name: "Enthusiast with Loyalist wing",
-    foundationSelections: [2, 1, 1, 1, 1, 1, 1, 1, 1], // Enthusiastic with security elements
+    foundationSelections: [2, 1, 1, 2, 1, 1, 1, 1, 2], // Exact Type 7 pattern from Section 1
     buildingBlockSelections: [
-      {id: "b1-left", title: "Systematic Approach"}, // Wing 6 influence
-      {id: "b2-right", title: "Group Focus"}, // Wing 6 influence
+      {id: "b1-left", title: "Systematic Approach"}, // Left = wing 6 per spec algorithm
+      {id: "b2-right", title: "Group Focus"},
       {id: "b3-right", title: "Big Picture"},
-      {id: "b4-left", title: "Steady Pace"}, // Wing 6 influence
-      {id: "b5-right", title: "Practical"} // Wing 6 influence
+      {id: "b4-right", title: "Dynamic Pace"},
+      {id: "b5-right", title: "Practical"}
     ],
     expectedType: 7,
     expectedWing: 6
@@ -197,10 +197,10 @@ const WING_PATTERNS = {
 
   type7w8: {
     name: "Enthusiast with Challenger wing",
-    foundationSelections: [2, 1, 1, 2, 2, 1, 2, 2, 2], // Enthusiastic with challenger elements
+    foundationSelections: [2, 1, 1, 2, 1, 1, 1, 1, 2], // Exact Type 7 pattern from Section 1
     buildingBlockSelections: [
-      {id: "b1-right", title: "Intuitive Approach"},
-      {id: "b2-left", title: "Individual Focus"}, // Wing 8 influence
+      {id: "b1-right", title: "Intuitive Approach"}, // Right = wing 8 per spec algorithm
+      {id: "b2-right", title: "Group Focus"},
       {id: "b3-right", title: "Big Picture"},
       {id: "b4-right", title: "Dynamic Pace"},
       {id: "b5-right", title: "Practical"}
