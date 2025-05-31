@@ -209,14 +209,14 @@ const WING_PATTERNS = {
     expectedWing: 8
   },
 
-  // Type 8 wings (8w7 and 8w9)
+  // Type 8 wings (8w7 and 8w9) - Using proven Type 8 foundation from Section 1
   type8w7: {
     name: "Challenger with Enthusiast wing",
-    foundationSelections: [2, 2, 1, 2, 2, 1, 1, 2, 2], // Challenger with enthusiastic elements
+    foundationSelections: [2, 2, 2, 2, 2, 2, 2, 2, 2], // Exact Type 8 pattern from Section 1
     buildingBlockSelections: [
-      {id: "b1-right", title: "Intuitive Approach"}, // Wing 7 influence
-      {id: "b2-right", title: "Group Focus"}, // Wing 7 influence
-      {id: "b3-right", title: "Big Picture"}, // Wing 7 influence
+      {id: "b1-left", title: "Systematic Approach"}, // Left = wing 7 per spec algorithm
+      {id: "b2-left", title: "Individual Focus"},
+      {id: "b3-right", title: "Big Picture"},
       {id: "b4-right", title: "Dynamic Pace"},
       {id: "b5-right", title: "Practical"}
     ],
@@ -226,28 +226,28 @@ const WING_PATTERNS = {
 
   type8w9: {
     name: "Challenger with Peacemaker wing",
-    foundationSelections: [2, 2, 2, 1, 2, 2, 0, 2, 1], // Challenger with peaceful elements
+    foundationSelections: [2, 2, 2, 2, 2, 2, 2, 2, 2], // Exact Type 8 pattern from Section 1
     buildingBlockSelections: [
-      {id: "b1-right", title: "Intuitive Approach"},
-      {id: "b2-right", title: "Group Focus"}, // Wing 9 influence
+      {id: "b1-right", title: "Intuitive Approach"}, // Right = wing 9 per spec algorithm
+      {id: "b2-left", title: "Individual Focus"},
       {id: "b3-right", title: "Big Picture"},
-      {id: "b4-left", title: "Steady Pace"}, // Wing 9 influence
+      {id: "b4-right", title: "Dynamic Pace"},
       {id: "b5-right", title: "Practical"}
     ],
     expectedType: 8,
     expectedWing: 9
   },
 
-  // Type 9 wings (9w8 and 9w1)
+  // Type 9 wings (9w8 and 9w1) - Using proven Type 9 foundation from Section 1
   type9w8: {
     name: "Peacemaker with Challenger wing",
-    foundationSelections: [1, 0, 2, 2, 1, 0, 2, 1, 2], // Peaceful with challenger elements
+    foundationSelections: [1, 0, 2, 0, 1, 0, 0, 1, 1], // Exact Type 9 pattern from Section 1
     buildingBlockSelections: [
-      {id: "b1-right", title: "Intuitive Approach"}, // Wing 8 influence
+      {id: "b1-left", title: "Systematic Approach"}, // Left = wing 8 per spec algorithm
       {id: "b2-right", title: "Group Focus"},
-      {id: "b3-right", title: "Big Picture"}, // Wing 8 influence
-      {id: "b4-right", title: "Dynamic Pace"}, // Wing 8 influence
-      {id: "b5-right", title: "Practical"} // Wing 8 influence
+      {id: "b3-right", title: "Big Picture"},
+      {id: "b4-left", title: "Steady Pace"},
+      {id: "b5-right", title: "Practical"}
     ],
     expectedType: 9,
     expectedWing: 8
@@ -255,13 +255,13 @@ const WING_PATTERNS = {
 
   type9w1: {
     name: "Peacemaker with Perfectionist wing",
-    foundationSelections: [0, 0, 2, 0, 0, 0, 0, 0, 1], // Peaceful with systematic elements
+    foundationSelections: [1, 0, 2, 0, 1, 0, 0, 1, 1], // Exact Type 9 pattern from Section 1
     buildingBlockSelections: [
-      {id: "b1-left", title: "Systematic Approach"}, // Wing 1 influence
+      {id: "b1-right", title: "Intuitive Approach"}, // Right = wing 1 per spec algorithm
       {id: "b2-right", title: "Group Focus"},
-      {id: "b3-left", title: "Detail Oriented"}, // Wing 1 influence
+      {id: "b3-right", title: "Big Picture"},
       {id: "b4-left", title: "Steady Pace"},
-      {id: "b5-left", title: "Theoretical"} // Wing 1 influence
+      {id: "b5-right", title: "Practical"}
     ],
     expectedType: 9,
     expectedWing: 1
