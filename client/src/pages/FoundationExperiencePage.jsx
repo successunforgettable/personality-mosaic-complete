@@ -6,6 +6,7 @@ import ColorPaletteExperience from '../components/ColorPalette/ColorPaletteExper
 import DetailExperience from '../components/PhaseFour/DetailExperience.jsx';
 import { useToast } from '@/hooks/use-toast';
 import { generatePersonalityAnalysis } from '../lib/personalityAnalysis.js';
+import { generateComprehensiveReport } from '../lib/reportGeneration.js';
 
 /**
  * FoundationExperiencePage - Page wrapper for the Foundation Experience
@@ -19,6 +20,7 @@ const FoundationExperiencePage = () => {
   const [colorPaletteSelections, setColorPaletteSelections] = useState([]);
   const [detailSelections, setDetailSelections] = useState([]);
   const [personalityResults, setPersonalityResults] = useState(null);
+  const [comprehensiveReport, setComprehensiveReport] = useState(null);
   
   // Toast hook for notifications
   const { toast } = useToast();
@@ -97,7 +99,11 @@ const FoundationExperiencePage = () => {
       detailSelections: data.detailSelections
     });
     
+    // Generate comprehensive report
+    const fullReport = generateComprehensiveReport(analysisResults);
+    
     setPersonalityResults(analysisResults);
+    setComprehensiveReport(fullReport);
     
     // Move to results phase
     setCurrentPhase('results');
@@ -162,23 +168,23 @@ const FoundationExperiencePage = () => {
           />
         )}
         
-        {currentPhase === 'results' && personalityResults && (
+        {currentPhase === 'results' && personalityResults && comprehensiveReport && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            style={{ padding: '3rem', maxWidth: '1000px', margin: '0 auto' }}
+            style={{ padding: '2rem', maxWidth: '1200px', margin: '0 auto' }}
           >
             <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
               <h2 style={{ fontSize: '2.5rem', color: '#1e293b', marginBottom: '1rem' }}>
-                Your Personality Mosaic Results
+                Your Comprehensive Personality Report
               </h2>
               <p style={{ fontSize: '1.2rem', color: '#64748b' }}>
-                Discover your unique personality pattern and insights
+                Detailed insights into your core energy pattern and life domain impacts
               </p>
             </div>
 
-            {/* Primary Type Results */}
+            {/* Core Energy Pattern */}
             <div style={{ 
               background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)', 
               color: 'white',
@@ -188,14 +194,37 @@ const FoundationExperiencePage = () => {
               textAlign: 'center'
             }}>
               <h3 style={{ fontSize: '1.8rem', marginBottom: '0.5rem' }}>
-                Type {personalityResults.primaryType.number}: {personalityResults.primaryType.name}
+                {comprehensiveReport.corePattern.name}
               </h3>
               <p style={{ fontSize: '1.1rem', opacity: 0.9, marginBottom: '1rem' }}>
-                {personalityResults.primaryType.description}
+                {comprehensiveReport.corePattern.coreDriver}
               </p>
               <div style={{ fontSize: '0.9rem', opacity: 0.8 }}>
                 Confidence: {personalityResults.primaryType.confidence}%
               </div>
+            </div>
+
+            {/* Heart Activation Level */}
+            <div style={{ 
+              background: '#fef7ff', 
+              border: '1px solid #c084fc', 
+              borderRadius: '16px', 
+              padding: '2rem', 
+              marginBottom: '2rem',
+              textAlign: 'center'
+            }}>
+              <h3 style={{ color: '#7c2d92', fontSize: '1.6rem', marginBottom: '1rem' }}>
+                Heart Activation Profile
+              </h3>
+              <div style={{ fontSize: '2rem', fontWeight: 'bold', color: '#8b5cf6', marginBottom: '0.5rem' }}>
+                {comprehensiveReport.heartActivation.currentLevel}%
+              </div>
+              <p style={{ color: '#7c2d92', fontSize: '1.1rem', marginBottom: '1rem' }}>
+                {comprehensiveReport.heartActivation.stateName}
+              </p>
+              <p style={{ color: '#9333ea', fontSize: '0.95rem' }}>
+                {comprehensiveReport.heartActivation.stateDescription}
+              </p>
             </div>
 
             {/* Influence and Mood Patterns */}
@@ -231,33 +260,92 @@ const FoundationExperiencePage = () => {
               )}
             </div>
 
-            {/* Heart Activation and Focus Areas */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
-              {personalityResults.heartActivation && (
-                <div style={{ 
-                  background: '#fef7ff', 
-                  border: '1px solid #c084fc', 
-                  borderRadius: '12px', 
-                  padding: '1.5rem' 
-                }}>
-                  <h4 style={{ color: '#7c2d92', marginBottom: '0.5rem', fontSize: '1.2rem' }}>Heart Activation</h4>
-                  <p style={{ color: '#8b5cf6', fontSize: '1rem', fontWeight: '600' }}>{personalityResults.heartActivation.dominantState}</p>
-                  <p style={{ color: '#9333ea', fontSize: '0.9rem' }}>{personalityResults.heartActivation.activationPercentage}% activation level</p>
-                </div>
-              )}
+            {/* Priority Focus Area */}
+            <div style={{ 
+              background: '#ecfdf5', 
+              border: '1px solid #34d399', 
+              borderRadius: '16px', 
+              padding: '2rem', 
+              marginBottom: '2rem'
+            }}>
+              <h3 style={{ color: '#047857', fontSize: '1.6rem', marginBottom: '1rem' }}>
+                Priority Focus Area
+              </h3>
+              <h4 style={{ color: '#059669', fontSize: '1.3rem', marginBottom: '1rem' }}>
+                {comprehensiveReport.priorityArea.name}
+              </h4>
+              <p style={{ color: '#047857', fontSize: '1rem', marginBottom: '1rem' }}>
+                {comprehensiveReport.priorityArea.description}
+              </p>
+              <div style={{ color: '#10b981', fontSize: '0.9rem' }}>
+                <strong>Key Characteristics:</strong>
+                <ul style={{ marginTop: '0.5rem', paddingLeft: '1rem' }}>
+                  {comprehensiveReport.priorityArea.characteristics.map((char, index) => (
+                    <li key={index}>{char}</li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+
+            {/* Wheel of Life Analysis */}
+            <div style={{ 
+              background: '#f8fafc', 
+              border: '1px solid #e2e8f0', 
+              borderRadius: '16px', 
+              padding: '2rem', 
+              marginBottom: '2rem' 
+            }}>
+              <h3 style={{ color: '#1e293b', fontSize: '1.6rem', marginBottom: '1rem' }}>
+                Wheel of Life Domain Analysis
+              </h3>
+              <p style={{ color: '#64748b', fontSize: '1rem', marginBottom: '2rem' }}>
+                How your core energy pattern impacts each life domain
+              </p>
               
-              {personalityResults.subtypeFocus && (
-                <div style={{ 
-                  background: '#ecfdf5', 
-                  border: '1px solid #34d399', 
-                  borderRadius: '12px', 
-                  padding: '1.5rem' 
-                }}>
-                  <h4 style={{ color: '#047857', marginBottom: '0.5rem', fontSize: '1.2rem' }}>Focus Areas</h4>
-                  <p style={{ color: '#059669', fontSize: '1rem', fontWeight: '600' }}>{personalityResults.subtypeFocus.dominantName} Primary</p>
-                  <p style={{ color: '#10b981', fontSize: '0.9rem' }}>Stack: {personalityResults.subtypeFocus.focusStack}</p>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '1.5rem' }}>
+                {comprehensiveReport.wheelOfLife.domains.map((domain) => (
+                  <div key={domain.domainId} style={{ 
+                    background: 'white',
+                    border: '1px solid #e2e8f0',
+                    borderRadius: '12px',
+                    padding: '1.5rem'
+                  }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                      <h4 style={{ color: '#1e293b', fontSize: '1.1rem', fontWeight: '600' }}>
+                        {domain.domainName}
+                      </h4>
+                      <div style={{ 
+                        background: domain.activationScore >= 60 ? '#10b981' : '#f59e0b',
+                        color: 'white',
+                        borderRadius: '20px',
+                        padding: '0.25rem 0.75rem',
+                        fontSize: '0.8rem',
+                        fontWeight: '600'
+                      }}>
+                        {domain.activationScore}%
+                      </div>
+                    </div>
+                    <p style={{ color: '#64748b', fontSize: '0.9rem', marginBottom: '1rem' }}>
+                      {domain.currentImpact}
+                    </p>
+                    <div style={{ color: '#94a3b8', fontSize: '0.8rem' }}>
+                      <strong>3-Year Outlook:</strong> {domain.longTermProjection}
+                    </div>
+                  </div>
+                ))}
+              </div>
+              
+              <div style={{ 
+                textAlign: 'center', 
+                marginTop: '2rem',
+                padding: '1rem',
+                background: 'linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%)',
+                borderRadius: '12px'
+              }}>
+                <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#0369a1' }}>
+                  Overall Life Activation: {comprehensiveReport.wheelOfLife.overallActivation}%
                 </div>
-              )}
+              </div>
             </div>
 
             {/* Type Scores */}
@@ -283,22 +371,74 @@ const FoundationExperiencePage = () => {
               </div>
             </div>
 
-            {/* Summary */}
+            {/* Growth Recommendations */}
             <div style={{ 
-              background: '#f1f5f9', 
-              borderRadius: '12px', 
+              background: '#fff7ed', 
+              border: '1px solid #fed7aa', 
+              borderRadius: '16px', 
+              padding: '2rem', 
+              marginBottom: '2rem'
+            }}>
+              <h3 style={{ color: '#9a3412', fontSize: '1.6rem', marginBottom: '1rem' }}>
+                Growth Recommendations
+              </h3>
+              <div style={{ color: '#c2410c' }}>
+                {comprehensiveReport.growthRecommendations.map((recommendation, index) => (
+                  <div key={index} style={{ 
+                    background: 'white',
+                    border: '1px solid #fed7aa',
+                    borderRadius: '8px',
+                    padding: '1rem',
+                    marginBottom: '1rem',
+                    borderLeft: '4px solid #ea580c'
+                  }}>
+                    {recommendation}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Coaching Opportunities */}
+            <div style={{ 
+              background: 'linear-gradient(135deg, #fee2e2 0%, #fecaca 100%)', 
+              border: '1px solid #f87171', 
+              borderRadius: '16px', 
               padding: '2rem', 
               marginBottom: '2rem',
               textAlign: 'center'
             }}>
-              <h4 style={{ color: '#1e293b', marginBottom: '1rem', fontSize: '1.2rem' }}>Assessment Summary</h4>
-              <div style={{ color: '#475569', lineHeight: '1.6' }}>
-                <p><strong>Your Type:</strong> {personalityResults.summary.fullType}</p>
-                <p><strong>Primary Focus:</strong> {personalityResults.summary.dominantFocus}</p>
-                <p><strong>Heart Activation:</strong> {personalityResults.summary.heartActivationLevel}%</p>
-                <p><strong>Good Mood Qualities:</strong> Type {personalityResults.summary.goodMoodType}</p>
-                <p><strong>Bad Mood Qualities:</strong> Type {personalityResults.summary.badMoodType}</p>
+              <h3 style={{ color: '#991b1b', fontSize: '1.6rem', marginBottom: '1rem' }}>
+                Unlock Your Full Potential
+              </h3>
+              <p style={{ color: '#dc2626', fontSize: '1.1rem', marginBottom: '1.5rem' }}>
+                Ready to maximize your {comprehensiveReport.heartActivation.currentLevel}% heart activation and optimize all life domains?
+              </p>
+              <div style={{ color: '#b91c1c', marginBottom: '1.5rem' }}>
+                {comprehensiveReport.coachingOpportunities.map((opportunity, index) => (
+                  <div key={index} style={{ 
+                    background: 'white',
+                    border: '1px solid #f87171',
+                    borderRadius: '8px',
+                    padding: '1rem',
+                    marginBottom: '1rem'
+                  }}>
+                    {opportunity}
+                  </div>
+                ))}
               </div>
+              <button style={{
+                background: 'linear-gradient(135deg, #dc2626 0%, #991b1b 100%)',
+                color: 'white',
+                border: 'none',
+                borderRadius: '8px',
+                padding: '1rem 2rem',
+                fontSize: '1.1rem',
+                fontWeight: '600',
+                cursor: 'pointer',
+                boxShadow: '0 4px 6px rgba(220, 38, 38, 0.25)'
+              }}>
+                Start Your Transformation Journey
+              </button>
             </div>
             
             <div style={{ 
