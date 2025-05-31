@@ -6,49 +6,49 @@
 // Type mapping weights from Foundation Stones (content_spec.md Section 2.1)
 const TYPE_WEIGHTS = {
   0: { // Stone Set 1: Decision-Making Center
-    0: { 5: 3, 6: 3, 7: 3, 1: 2, 3: 2 }, // Thinking/Analysis/Logic
-    1: { 2: 3, 3: 3, 4: 3, 6: 2, 9: 2 }, // Feeling/Emotion/Connection
-    2: { 8: 3, 1: 3, 9: 3, 3: 2, 7: 2 }  // Action/Instinct/Physicality
+    0: { 1: 6, 5: 5, 6: 4 }, // Thinking/Analysis/Logic -> Perfectionist, Investigator, Loyalist
+    1: { 2: 6, 4: 5, 9: 4 }, // Feeling/Emotion/Connection -> Helper, Individualist, Peacemaker  
+    2: { 7: 6, 8: 5, 3: 4 }  // Action/Instinct/Physicality -> Enthusiast (energy), Challenger, Achiever
   },
-  1: { // Stone Set 2: Core Motivations
-    0: { 5: 3, 6: 3, 1: 2, 9: 2 }, // Preparation/Certainty/Security
-    1: { 2: 3, 3: 3, 4: 3, 7: 2, 8: 2 }, // Authenticity/Image/Recognition
-    2: { 1: 3, 8: 3, 3: 2, 6: 2 }  // Justice/Control/Strength
+  1: { // Stone Set 2: Core Motivations  
+    0: { 1: 6, 6: 5, 5: 4 }, // Preparation/Certainty/Security -> Perfectionist (order), Loyalist (security), Investigator (preparation)
+    1: { 3: 6, 4: 5, 2: 4 }, // Authenticity/Image/Recognition -> Achiever (image), Individualist (authenticity), Helper (recognition)
+    2: { 8: 6, 1: 4, 6: 3 }  // Justice/Control/Strength -> Challenger (control/justice), Perfectionist (justice), Loyalist (strength)
   },
   2: { // Stone Set 3: Energy Direction
-    0: { 4: 3, 5: 3, 9: 3, 1: 2, 6: 2 }, // Reflection/Depth/Privacy
-    1: { 3: 3, 7: 3, 8: 3, 1: 2, 2: 2 }, // Achievement/Influence/Impact
-    2: { 1: 3, 2: 3, 6: 3, 9: 3, 3: 2, 5: 2 } // Structure/Support/Harmony
+    0: { 5: 6, 4: 5, 9: 4 }, // Reflection/Depth/Privacy -> Investigator, Individualist, Peacemaker
+    1: { 7: 7, 3: 5, 8: 3 }, // Achievement/Influence/Impact -> Enthusiast (strong), Achiever, Challenger (reduced)
+    2: { 1: 6, 9: 5, 2: 4 }  // Structure/Support/Harmony -> Perfectionist, Peacemaker, Helper
   },
   3: { // Stone Set 4: Social Approach
-    0: { 5: 3, 9: 3, 4: 2, 1: 2 }, // Objectivity/Perspective/Space
-    1: { 2: 3, 6: 3, 4: 2, 9: 2 }, // Closeness/Intimacy/Bonding
-    2: { 4: 3, 8: 3, 5: 2, 7: 2 }  // Independence/Self-reliance/Freedom
+    0: { 5: 6, 1: 4, 4: 4 }, // Objectivity/Perspective/Space -> Investigator (objectivity), Perfectionist (perspective), Individualist (space)
+    1: { 2: 6, 6: 4, 9: 4 }, // Closeness/Intimacy/Bonding -> Helper (closeness), Loyalist (bonding), Peacemaker (intimacy)
+    2: { 7: 6, 8: 5, 3: 4 }  // Independence/Self-reliance/Freedom -> Enthusiast (freedom), Challenger, Achiever
   },
   4: { // Stone Set 5: Processing Style
-    0: { 5: 3, 6: 3, 1: 3, 7: 2, 3: 2 }, // Systems/Concepts/Ideas
-    1: { 4: 3, 2: 3, 7: 2, 9: 2 }, // Expression/Mood/Feeling
-    2: { 3: 3, 8: 3, 1: 2, 7: 2 }  // Results/Efficiency/Utility
+    0: { 1: 6, 5: 5, 3: 4 }, // Systems/Concepts/Ideas -> Perfectionist (systems), Investigator (concepts), Achiever (ideas)
+    1: { 4: 6, 7: 4, 2: 4 }, // Expression/Mood/Feeling -> Individualist (expression/mood), Enthusiast (expression), Helper (feeling)
+    2: { 3: 6, 8: 5, 1: 4 }  // Results/Efficiency/Utility -> Achiever (results/efficiency), Challenger (results), Perfectionist (efficiency)
   },
   5: { // Stone Set 6: Stress Reaction
-    0: { 5: 3, 6: 3, 1: 2, 9: 2 }, // Vigilance/Analysis/Foresight
-    1: { 2: 3, 3: 3, 4: 3, 7: 2, 8: 2 }, // Recognition/Identity/Uniqueness
-    2: { 1: 3, 8: 3, 3: 2, 6: 2 }  // Authority/Power/Direction
+    0: { 1: 6, 6: 5, 5: 4 }, // Vigilance/Analysis/Foresight -> Perfectionist (vigilance), Loyalist (foresight), Investigator (analysis)
+    1: { 4: 6, 7: 4, 3: 4 }, // Recognition/Identity/Uniqueness -> Individualist (identity/uniqueness), Enthusiast (recognition), Achiever (recognition)
+    2: { 8: 6, 1: 4, 3: 4 }  // Authority/Power/Direction -> Challenger (power/authority), Perfectionist (direction), Achiever (authority)
   },
   6: { // Stone Set 7: Conflict Style
-    0: { 9: 3, 2: 3, 4: 2, 6: 2 }, // Peace/Mediation/Compromise
-    1: { 2: 3, 7: 3, 9: 2, 3: 2 }, // Support/Flexibility/Adaptation
-    2: { 8: 3, 1: 3, 3: 2, 6: 2 }  // Directness/Challenge/Honesty
+    0: { 9: 6, 2: 4, 5: 4 }, // Peace/Mediation/Compromise -> Peacemaker (peace/mediation), Helper (mediation), Investigator (compromise)
+    1: { 7: 6, 3: 4, 2: 4 }, // Support/Flexibility/Adaptation -> Enthusiast (flexibility), Achiever (adaptation), Helper (support)
+    2: { 8: 6, 1: 5, 6: 3 }  // Directness/Challenge/Honesty -> Challenger (directness/challenge), Perfectionist (honesty), Loyalist (directness)
   },
   7: { // Stone Set 8: Success Definition
-    0: { 1: 3, 5: 3, 3: 2, 6: 2 }, // Accuracy/Principles/Improvement
-    1: { 2: 3, 4: 3, 7: 2, 9: 2 }, // Connection/Acknowledgment/Appreciation
-    2: { 3: 3, 8: 3, 1: 2, 7: 2 }  // Mastery/Achievement/Capability
+    0: { 1: 6, 5: 4, 6: 4 }, // Accuracy/Principles/Improvement -> Perfectionist (accuracy/principles/improvement), Investigator (accuracy), Loyalist (principles)
+    1: { 2: 6, 7: 4, 4: 4 }, // Connection/Acknowledgment/Appreciation -> Helper (connection), Enthusiast (acknowledgment), Individualist (appreciation)
+    2: { 3: 6, 8: 5, 7: 4 }  // Mastery/Achievement/Capability -> Achiever (achievement/mastery), Challenger (capability), Enthusiast (mastery)
   },
   8: { // Stone Set 9: Relationship Priority
-    0: { 4: 3, 5: 3, 8: 3, 1: 2, 7: 2 }, // Autonomy/Self-sufficiency/Space
-    1: { 2: 3, 6: 3, 9: 3, 3: 2, 7: 2 }, // Mutuality/Sharing/Reciprocity
-    2: { 1: 3, 3: 3, 8: 3, 2: 2, 6: 2 }  // Leadership/Mentorship/Direction
+    0: { 5: 6, 4: 5, 1: 4 }, // Autonomy/Self-sufficiency/Space -> Investigator (autonomy), Individualist (self-sufficiency), Perfectionist (space)
+    1: { 2: 6, 9: 5, 6: 4 }, // Mutuality/Sharing/Reciprocity -> Helper (mutuality/sharing), Peacemaker (reciprocity), Loyalist (mutuality)
+    2: { 8: 6, 3: 4, 1: 4 }  // Leadership/Mentorship/Direction -> Challenger (leadership), Achiever (mentorship), Perfectionist (direction)
   }
 };
 
