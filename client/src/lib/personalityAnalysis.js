@@ -44,7 +44,7 @@ function calculatePersonalityScores(foundationSelections) {
     typeScores.type9 += 2 * setWeights[1];
   }
 
-  // Set 3: Behavioral Response (implementing the missing logic based on pattern)
+  // Set 3: Behavioral Response
   if (foundationSelections[2] === 0) { // Stone A (Withdrawn)
     typeScores.type4 += 3 * setWeights[2];
     typeScores.type5 += 2 * setWeights[2];
@@ -59,23 +59,18 @@ function calculatePersonalityScores(foundationSelections) {
     typeScores.type6 += 3 * setWeights[2];
   }
 
-  // Sets 4-9: Apply remaining weights (simplified for missing specification details)
+  // Sets 4-9: Use legacy weights for compatibility until full specification is available
+  const legacyWeights = TYPE_WEIGHTS;
   for (let i = 3; i < foundationSelections.length && i < 9; i++) {
     const selection = foundationSelections[i];
-    const weight = setWeights[i];
-    
-    if (selection === 0) {
-      typeScores.type5 += 1 * weight;
-      typeScores.type4 += 1 * weight;
-      typeScores.type1 += 1 * weight;
-    } else if (selection === 1) {
-      typeScores.type2 += 1 * weight;
-      typeScores.type7 += 1 * weight;
-      typeScores.type9 += 1 * weight;
-    } else if (selection === 2) {
-      typeScores.type3 += 1 * weight;
-      typeScores.type6 += 1 * weight;
-      typeScores.type8 += 1 * weight;
+    const weights = legacyWeights[i];
+    if (weights && weights[selection]) {
+      Object.entries(weights[selection]).forEach(([type, weight]) => {
+        const typeKey = `type${type}`;
+        if (typeScores[typeKey] !== undefined) {
+          typeScores[typeKey] += weight;
+        }
+      });
     }
   }
 
