@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import FoundationExperience from '../components/Foundation/FoundationExperience.jsx';
 import BuildingBlockExperience from '../components/BuildingBlocks/BuildingBlockExperience.jsx';
 import ColorPaletteExperience from '../components/ColorPalette/ColorPaletteExperience.jsx';
+import DetailExperience from '../components/PhaseFour/DetailExperience.jsx';
 import { useToast } from '@/hooks/use-toast';
 
 /**
@@ -15,6 +16,7 @@ const FoundationExperiencePage = () => {
   const [foundationSelections, setFoundationSelections] = useState([]);
   const [buildingBlockSelections, setBuildingBlockSelections] = useState([]);
   const [colorPaletteSelections, setColorPaletteSelections] = useState([]);
+  const [detailSelections, setDetailSelections] = useState([]);
   
   // Toast hook for notifications
   const { toast } = useToast();
@@ -66,6 +68,25 @@ const FoundationExperiencePage = () => {
     // Save to localStorage for persistence
     localStorage.setItem('personality_color_palette', JSON.stringify(data.colorPaletteSelections));
     
+    // Move to detail phase
+    setCurrentPhase('details');
+    
+    // Show confirmation
+    toast({
+      title: "Color Palette Complete",
+      description: "Color palette phase complete! Moving to detail selection.",
+    });
+    
+    console.log('Color palette selections:', data.colorPaletteSelections);
+  };
+
+  // Handle completion of detail selection
+  const handleDetailComplete = (data) => {
+    setDetailSelections(data.detailSelections);
+    
+    // Save to localStorage for persistence
+    localStorage.setItem('personality_details', JSON.stringify(data.detailSelections));
+    
     // Move to results phase
     setCurrentPhase('results');
     
@@ -78,7 +99,8 @@ const FoundationExperiencePage = () => {
     console.log('Complete assessment data:', {
       foundation: data.foundationSelections,
       buildingBlocks: data.buildingBlockSelections,
-      colors: data.colorPaletteSelections
+      colors: data.colorPaletteSelections,
+      details: data.detailSelections
     });
   };
   
@@ -124,6 +146,15 @@ const FoundationExperiencePage = () => {
           />
         )}
         
+        {currentPhase === 'details' && (
+          <DetailExperience 
+            onComplete={handleDetailComplete}
+            foundationSelections={foundationSelections}
+            buildingBlockSelections={buildingBlockSelections}
+            colorPaletteSelections={colorPaletteSelections}
+          />
+        )}
+        
         {currentPhase === 'results' && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -153,8 +184,11 @@ const FoundationExperiencePage = () => {
               <div style={{ marginBottom: '1rem' }}>
                 <strong>Building Blocks:</strong> {buildingBlockSelections.length} preference choices
               </div>
-              <div>
+              <div style={{ marginBottom: '1rem' }}>
                 <strong>Color Palette:</strong> {colorPaletteSelections.length} colors selected
+              </div>
+              <div>
+                <strong>Detail Elements:</strong> {detailSelections.length} finishing details chosen
               </div>
             </div>
             
