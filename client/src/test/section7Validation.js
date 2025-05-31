@@ -47,7 +47,7 @@ const SECTION_7_TEST_PATTERNS = {
       towerVisualization: {
         dimensions: { width: 400, height: 600 },
         foundationStones: 9,
-        selectedStones: 6, // Stones with selection > 0
+        selectedStones: 5, // Stones with selection > 0: [2,2,2,0,0,0,2,0,2] = 5 selected
         buildingBlocks: 4,
         hasColorScheme: true,
         hasDetailPatterns: true,
@@ -107,7 +107,7 @@ const SECTION_7_TEST_PATTERNS = {
       towerVisualization: {
         dimensions: { width: 400, height: 600 },
         foundationStones: 9,
-        selectedStones: 5,
+        selectedStones: 4, // Stones with selection > 0: [2,0,0,0,1,0,0,1,1] = 4 selected
         buildingBlocks: 4,
         hasColorScheme: true,
         hasDetailPatterns: true,

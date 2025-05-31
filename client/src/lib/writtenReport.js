@@ -144,8 +144,51 @@ function generateInfluenceProfile(primaryType, wingInfluence) {
         'Use your reform energy to serve and support others'
       ],
       summary: 'This influence helps you channel your perfectionism into service while maintaining strong relationships and emotional connection.'
+    },
+    '8w7': {
+      title: 'Challenger 7 (The Maverick)',
+      description: 'The Challenger 7 influence brings enthusiasm and forward-thinking energy to your powerful nature. This makes you more optimistic, visionary, and able to inspire others with exciting possibilities.',
+      traits: [
+        'Lead with energy and enthusiasm that motivates others',
+        'Balance your intensity with optimism and future focus',
+        'Are more open to new experiences and innovative approaches',
+        'Use your strength to create exciting opportunities for growth'
+      ],
+      summary: 'This influence helps you channel your power into visionary leadership while maintaining your natural strength and decisiveness.'
+    },
+    '8w9': {
+      title: 'Challenger 9 (The Bear)',
+      description: 'The Challenger 9 influence brings calm strength and steady presence to your powerful nature. This makes you more patient, grounded, and able to use your strength in measured ways.',
+      traits: [
+        'Use your strength calmly and steadily without overwhelming others',
+        'Balance your intensity with patience and acceptance',
+        'Are more diplomatic while still maintaining your directness',
+        'Assert yourself when necessary while still valuing harmony'
+      ],
+      summary: 'This influence helps you express your power through steady, calm leadership while maintaining your protective instincts.'
+    },
+    '9w1': {
+      title: 'Peacemaker 1 (The Dreamer)',
+      description: 'The Peacemaker 1 influence brings structure and clarity to your harmonious nature. This makes you more organized, principled, and discerning while maintaining your peaceful approach.',
+      traits: [
+        'Balance acceptance with appropriate standards and boundaries',
+        'Have a clear sense of right and wrong that guides your diplomacy',
+        'Are more organized and methodical than other Peacemakers',
+        'Put extra effort into making sure things are done correctly'
+      ],
+      summary: 'This influence helps you take more decisive action while maintaining your fundamental desire for harmony and peace.'
+    },
+    '9w8': {
+      title: 'Peacemaker 8 (The Referee)',
+      description: 'The Peacemaker 8 influence brings strength and assertiveness to your harmonious nature. This makes you more willing to take action and stand up for what matters while still seeking peace.',
+      traits: [
+        'Assert yourself when necessary while still valuing harmony',
+        'Balance your desire for peace with willingness to confront problems',
+        'Are more decisive and action-oriented than other Peacemakers',
+        'Use your strength to protect others and maintain fairness'
+      ],
+      summary: 'This influence helps you stand up for peace actively rather than avoiding conflict, while maintaining your natural diplomatic skills.'
     }
-    // Add other wing combinations as needed
   };
 
   const wingKey = `${primaryType.number}w${wingInfluence.secondaryType || wingInfluence.wing}`;
