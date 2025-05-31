@@ -21,9 +21,12 @@ const VALIDATION_PATTERNS = {
       {id: "b5-left", title: "Theoretical"}
     ],
     colorPaletteSelections: [
-      {id: "blue", category: 0}, {id: "green", category: 0},
-      {id: "teal", category: 1}, {id: "navy", category: 1},
-      {id: "gray", category: 2}, {id: "silver", category: 2}
+      {id: "blue", name: "Deep Blue", hex: "#2563eb", description: "Thoughtful • Stable • Analytical", category: 0}, 
+      {id: "green", name: "Natural Green", hex: "#059669", description: "Balanced • Growing • Harmonious", category: 0},
+      {id: "teal", name: "Calm Teal", hex: "#0d9488", description: "Peaceful • Refreshing • Clear", category: 1}, 
+      {id: "navy", name: "Deep Navy", hex: "#1e40af", description: "Professional • Reliable • Structured", category: 1},
+      {id: "gray", name: "Sophisticated Gray", hex: "#6b7280", description: "Neutral • Balanced • Steady", category: 2}, 
+      {id: "silver", name: "Modern Silver", hex: "#64748b", description: "Sleek • Contemporary • Sophisticated", category: 2}
     ],
     detailSelections: [
       {category: "sp"}, {category: "sp"}, {category: "so"},
@@ -46,9 +49,12 @@ const VALIDATION_PATTERNS = {
       {id: "b5-right", title: "Practical"}
     ],
     colorPaletteSelections: [
-      {id: "orange", category: 0}, {id: "yellow", category: 0},
-      {id: "coral", category: 1}, {id: "amber", category: 1},
-      {id: "gold", category: 2}, {id: "bright", category: 2}
+      {id: "orange", name: "Vibrant Orange", hex: "#ea580c", description: "Enthusiastic • Social • Energetic", category: 0}, 
+      {id: "yellow", name: "Bright Yellow", hex: "#ca8a04", description: "Optimistic • Joyful • Inspiring", category: 0},
+      {id: "coral", name: "Living Coral", hex: "#f97316", description: "Playful • Lively • Expressive", category: 1}, 
+      {id: "amber", name: "Golden Amber", hex: "#d97706", description: "Warm • Confident • Radiant", category: 1},
+      {id: "gold", name: "Bright Gold", hex: "#f59e0b", description: "Luxurious • Successful • Bold", category: 2}, 
+      {id: "lime", name: "Electric Lime", hex: "#84cc16", description: "Dynamic • Fresh • Energizing", category: 2}
     ],
     detailSelections: [
       {category: "so"}, {category: "so"}, {category: "sx"},
@@ -71,9 +77,12 @@ const VALIDATION_PATTERNS = {
       {id: "b5-left", title: "Theoretical"}
     ],
     colorPaletteSelections: [
-      {id: "purple", category: 0}, {id: "indigo", category: 0},
-      {id: "rose", category: 1}, {id: "burgundy", category: 1},
-      {id: "crimson", category: 2}, {id: "deep", category: 2}
+      {id: "purple", name: "Creative Purple", hex: "#7c3aed", description: "Intuitive • Imaginative • Transformative", category: 0}, 
+      {id: "indigo", name: "Deep Indigo", hex: "#4338ca", description: "Mystical • Wise • Introspective", category: 0},
+      {id: "rose", name: "Warm Rose", hex: "#e11d48", description: "Nurturing • Compassionate • Gentle", category: 1}, 
+      {id: "burgundy", name: "Rich Burgundy", hex: "#991b1b", description: "Sophisticated • Deep • Intense", category: 1},
+      {id: "crimson", name: "Deep Crimson", hex: "#b91c1c", description: "Intense • Passionate • Strong", category: 2}, 
+      {id: "violet", name: "Royal Violet", hex: "#6d28d9", description: "Regal • Mysterious • Creative", category: 2}
     ],
     detailSelections: [
       {category: "sx"}, {category: "sx"}, {category: "sx"},
@@ -96,9 +105,12 @@ const VALIDATION_PATTERNS = {
       {id: "b5-right", title: "Practical"}
     ],
     colorPaletteSelections: [
-      {id: "green", category: 0}, {id: "blue", category: 0},
-      {id: "teal", category: 1}, {id: "sage", category: 1},
-      {id: "mint", category: 2}, {id: "soft", category: 2}
+      {id: "green", name: "Natural Green", hex: "#059669", description: "Balanced • Growing • Harmonious", category: 0}, 
+      {id: "blue", name: "Deep Blue", hex: "#2563eb", description: "Thoughtful • Stable • Analytical", category: 0},
+      {id: "teal", name: "Calm Teal", hex: "#0d9488", description: "Peaceful • Refreshing • Clear", category: 1}, 
+      {id: "sage", name: "Soft Sage", hex: "#84cc16", description: "Gentle • Natural • Calming", category: 1},
+      {id: "mint", name: "Fresh Mint", hex: "#10b981", description: "Clean • Fresh • Rejuvenating", category: 2}, 
+      {id: "seafoam", name: "Gentle Seafoam", hex: "#34d399", description: "Soothing • Peaceful • Harmonious", category: 2}
     ],
     detailSelections: [
       {category: "sp"}, {category: "sp"}, {category: "so"},
