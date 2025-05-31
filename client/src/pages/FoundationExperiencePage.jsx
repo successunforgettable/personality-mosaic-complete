@@ -302,7 +302,7 @@ const FoundationExperiencePage = () => {
                 How your core energy pattern impacts each life domain
               </p>
               
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '1.5rem' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '1.5rem' }}>
                 {comprehensiveReport.wheelOfLife.domains.map((domain) => (
                   <div key={domain.domainId} style={{ 
                     background: 'white',
@@ -315,7 +315,7 @@ const FoundationExperiencePage = () => {
                         {domain.domainName}
                       </h4>
                       <div style={{ 
-                        background: domain.activationScore >= 60 ? '#10b981' : '#f59e0b',
+                        background: domain.activationScore >= 60 ? '#10b981' : domain.activationScore >= 40 ? '#f59e0b' : '#ef4444',
                         color: 'white',
                         borderRadius: '20px',
                         padding: '0.25rem 0.75rem',
@@ -325,11 +325,58 @@ const FoundationExperiencePage = () => {
                         {domain.activationScore}%
                       </div>
                     </div>
-                    <p style={{ color: '#64748b', fontSize: '0.9rem', marginBottom: '1rem' }}>
-                      {domain.currentImpact}
-                    </p>
-                    <div style={{ color: '#94a3b8', fontSize: '0.8rem' }}>
-                      <strong>3-Year Outlook:</strong> {domain.longTermProjection}
+                    
+                    <div style={{ marginBottom: '1rem' }}>
+                      <h5 style={{ color: '#374151', fontSize: '0.9rem', fontWeight: '600', marginBottom: '0.5rem' }}>
+                        Current State:
+                      </h5>
+                      <p style={{ color: '#64748b', fontSize: '0.85rem', marginBottom: '0.75rem' }}>
+                        {domain.currentState}
+                      </p>
+                    </div>
+
+                    {domain.indicators && domain.indicators.length > 0 && (
+                      <div style={{ marginBottom: '1rem' }}>
+                        <h5 style={{ color: '#374151', fontSize: '0.9rem', fontWeight: '600', marginBottom: '0.5rem' }}>
+                          Key Indicators:
+                        </h5>
+                        <div style={{ color: '#6b7280', fontSize: '0.8rem' }}>
+                          {domain.indicators.map((indicator, index) => (
+                            <div key={index} style={{ 
+                              display: 'flex', 
+                              alignItems: 'center', 
+                              marginBottom: '0.25rem',
+                              paddingLeft: '0.5rem'
+                            }}>
+                              <span style={{ 
+                                width: '4px', 
+                                height: '4px', 
+                                borderRadius: '50%', 
+                                background: domain.activationScore >= 60 ? '#10b981' : '#f59e0b',
+                                marginRight: '0.5rem'
+                              }}></span>
+                              {indicator}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    <div style={{ background: '#f8fafc', borderRadius: '8px', padding: '1rem' }}>
+                      <h5 style={{ color: '#374151', fontSize: '0.9rem', fontWeight: '600', marginBottom: '0.5rem' }}>
+                        Trajectory Without Change:
+                      </h5>
+                      <div style={{ fontSize: '0.8rem', color: '#64748b' }}>
+                        <div style={{ marginBottom: '0.5rem' }}>
+                          <strong>3 months:</strong> {domain.shortTermProjection}
+                        </div>
+                        <div style={{ marginBottom: '0.5rem' }}>
+                          <strong>1 year:</strong> {domain.mediumTermProjection}
+                        </div>
+                        <div>
+                          <strong>3+ years:</strong> {domain.longTermProjection}
+                        </div>
+                      </div>
                     </div>
                   </div>
                 ))}
