@@ -5,10 +5,11 @@
 
 import { generatePersonalityAnalysis } from '../lib/personalityAnalysis.js';
 
+// Extract patterns directly from spec's Stone-to-Type Mapping Table
 const CORE_TYPE_PATTERNS = {
   type1: {
-    name: "Perfectionist",
-    foundationSelections: [0, 0, 2, 0, 0, 0, 2, 0, 2], // Systematic, structured, principled
+    name: "Perfectionist", 
+    foundationSelections: [2, 2, 2, 0, 0, 0, 2, 0, 2], // C (Body) | C (Anger) | C (Compliant) - HIGH confidence per spec line 2813
     buildingBlockSelections: [
       {id: "b1-left", title: "Systematic Approach"},
       {id: "b2-left", title: "Individual Focus"},
@@ -30,7 +31,7 @@ const CORE_TYPE_PATTERNS = {
 
   type2: {
     name: "Helper",
-    foundationSelections: [1, 1, 2, 1, 1, 1, 1, 1, 1], // Feeling, caring, supportive
+    foundationSelections: [1, 1, 2, 1, 1, 1, 1, 1, 1], // B (Heart) | B (Shame) | C (Compliant) - MEDIUM confidence per spec line 2801
     buildingBlockSelections: [
       {id: "b1-right", title: "Intuitive Approach"},
       {id: "b2-right", title: "Group Focus"},
@@ -52,7 +53,7 @@ const CORE_TYPE_PATTERNS = {
 
   type3: {
     name: "Achiever",
-    foundationSelections: [2, 1, 1, 2, 2, 2, 2, 2, 2], // Achievement focus - all action choices where possible
+    foundationSelections: [1, 1, 1, 2, 2, 2, 2, 2, 2], // B (Heart) | B (Shame) | B (Assertive) - HIGH confidence per spec line 2800
     buildingBlockSelections: [
       {id: "b1-left", title: "Systematic Approach"},
       {id: "b2-right", title: "Group Focus"},
@@ -74,7 +75,7 @@ const CORE_TYPE_PATTERNS = {
 
   type4: {
     name: "Individualist",
-    foundationSelections: [1, 1, 0, 0, 1, 1, 0, 1, 0], // Feeling, authentic, unique
+    foundationSelections: [1, 1, 0, 0, 1, 1, 0, 1, 0], // B (Heart) | B (Shame) | A (Withdrawn) - HIGH confidence per spec line 2799
     buildingBlockSelections: [
       {id: "b1-right", title: "Intuitive Approach"},
       {id: "b2-left", title: "Individual Focus"},
@@ -96,7 +97,7 @@ const CORE_TYPE_PATTERNS = {
 
   type5: {
     name: "Investigator",
-    foundationSelections: [0, 0, 0, 0, 0, 0, 0, 0, 0], // Thinking, observing, knowledge-seeking
+    foundationSelections: [0, 0, 0, 0, 0, 0, 0, 0, 0], // A (Head) | A (Fear) | A (Withdrawn) - HIGH confidence per spec line 2787
     buildingBlockSelections: [
       {id: "b1-left", title: "Systematic Approach"},
       {id: "b2-left", title: "Individual Focus"},
@@ -118,7 +119,7 @@ const CORE_TYPE_PATTERNS = {
 
   type6: {
     name: "Loyalist", 
-    foundationSelections: [1, 0, 2, 1, 0, 0, 1, 0, 1], // Security and support focus - distinct loyalty pattern
+    foundationSelections: [0, 0, 2, 1, 0, 0, 1, 0, 1], // A (Head) | A (Fear) | C (Compliant) - HIGH confidence per spec line 2789
     buildingBlockSelections: [
       {id: "b1-left", title: "Systematic Approach"},
       {id: "b2-right", title: "Group Focus"},
@@ -140,7 +141,7 @@ const CORE_TYPE_PATTERNS = {
 
   type7: {
     name: "Enthusiast",
-    foundationSelections: [2, 1, 1, 2, 1, 1, 1, 1, 2], // Variety and flexibility focus - distinct enthusiasm pattern
+    foundationSelections: [0, 0, 1, 2, 1, 1, 1, 1, 2], // A (Head) | A (Fear) | B (Assertive) - MEDIUM confidence per spec line 2788
     buildingBlockSelections: [
       {id: "b1-right", title: "Intuitive Approach"},
       {id: "b2-right", title: "Group Focus"},
