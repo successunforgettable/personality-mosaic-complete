@@ -6,24 +6,24 @@
 // Type mapping weights from Foundation Stones (content_spec.md Section 2.1)
 const TYPE_WEIGHTS = {
   0: { // Stone Set 1: Decision-Making Center
-    0: { 1: 6, 5: 5, 6: 4 }, // Thinking/Analysis/Logic -> Perfectionist, Investigator, Loyalist
-    1: { 2: 6, 4: 5, 9: 4 }, // Feeling/Emotion/Connection -> Helper, Individualist, Peacemaker  
-    2: { 7: 6, 8: 5, 3: 4 }  // Action/Instinct/Physicality -> Enthusiast (energy), Challenger, Achiever
+    0: { 1: 7, 5: 5, 6: 3 }, // Thinking/Analysis/Logic -> Perfectionist (strong), Investigator, Loyalist (reduced)
+    1: { 9: 6, 2: 5, 4: 5 }, // Feeling/Emotion/Connection -> Peacemaker (harmony), Helper, Individualist  
+    2: { 3: 6, 7: 5, 8: 5 }  // Action/Instinct/Physicality -> Achiever (action), Enthusiast (energy), Challenger
   },
   1: { // Stone Set 2: Core Motivations  
-    0: { 6: 6, 1: 4, 5: 4 }, // Preparation/Certainty/Security -> Loyalist (security), Perfectionist (order), Investigator (preparation)
+    0: { 6: 7, 1: 3, 5: 4 }, // Preparation/Certainty/Security -> Loyalist (security focus), Perfectionist (reduced), Investigator (preparation)
     1: { 3: 6, 7: 4, 4: 4, 2: 3 }, // Authenticity/Image/Recognition -> Achiever (image/success), Enthusiast (recognition), Individualist (authenticity), Helper (recognition)
     2: { 8: 6, 1: 4, 6: 3 }  // Justice/Control/Strength -> Challenger (control/justice), Perfectionist (justice), Loyalist (strength)
   },
   2: { // Stone Set 3: Energy Direction
     0: { 5: 6, 4: 5, 9: 4 }, // Reflection/Depth/Privacy -> Investigator, Individualist, Peacemaker
-    1: { 3: 6, 7: 5, 8: 3 }, // Achievement/Influence/Impact -> Achiever (achievement focus), Enthusiast, Challenger
-    2: { 9: 6, 1: 5, 2: 4 }  // Structure/Support/Harmony -> Peacemaker (harmony), Perfectionist, Helper
+    1: { 7: 6, 3: 5, 8: 3 }, // Achievement/Influence/Impact -> Enthusiast (variety/energy), Achiever (achievement focus), Challenger
+    2: { 9: 7, 1: 4, 2: 3 }  // Structure/Support/Harmony -> Peacemaker (harmony focus), Perfectionist (reduced), Helper (reduced)
   },
   3: { // Stone Set 4: Social Approach
     0: { 5: 6, 1: 4, 4: 4 }, // Objectivity/Perspective/Space -> Investigator (objectivity), Perfectionist (perspective), Individualist (space)
-    1: { 6: 6, 2: 5, 9: 4 }, // Closeness/Intimacy/Bonding -> Loyalist (bonding/trust), Helper (closeness), Peacemaker (intimacy)
-    2: { 3: 6, 7: 5, 8: 4 }  // Independence/Self-reliance/Freedom -> Achiever (independence), Enthusiast (freedom), Challenger
+    1: { 6: 7, 9: 5, 2: 4 }, // Closeness/Intimacy/Bonding -> Loyalist (bonding/trust), Peacemaker (intimacy/peace), Helper (closeness)
+    2: { 7: 6, 3: 5, 8: 4 }  // Independence/Self-reliance/Freedom -> Enthusiast (freedom), Achiever (independence), Challenger
   },
   4: { // Stone Set 5: Processing Style
     0: { 1: 6, 5: 5, 3: 4 }, // Systems/Concepts/Ideas -> Perfectionist (systems), Investigator (concepts), Achiever (ideas)
