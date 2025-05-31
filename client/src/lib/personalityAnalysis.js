@@ -305,52 +305,176 @@ export function determineMoodPatterns(primaryType, blockSelections) {
 }
 
 /**
- * Analyze heart activation from color selections (using approved terminology)
+ * Analyze heart activation from color selections - EXACT specification implementation from section 5.5
  */
 export function analyzeHeartActivation(colorSelections, primaryType) {
   if (!colorSelections || colorSelections.length === 0) return null;
   
-  // Map color categories to heart activation levels
-  const activationMap = {
-    0: { level: 1, name: 'Engaged Heart State' }, // Primary Energy Colors
-    1: { level: 2, name: 'Partially Activated Heart State' }, // Secondary Mood Colors  
-    2: { level: 0, name: 'Fully Activated Heart State' }   // Accent Colors
-  };
+  // Calculate state distribution from color selections
+  const stateDistribution = calculateStateDistributionFromColors(colorSelections);
   
-  const activationDistribution = {};
-  let totalActivation = 0;
-  let colorCount = 0;
+  // Apply state impact algorithm from specification
+  const stateAnalysis = calculateStateImpact(stateDistribution, primaryType);
   
-  colorSelections.forEach(color => {
-    const activation = activationMap[color.category];
-    if (!activationDistribution[activation.name]) {
-      activationDistribution[activation.name] = [];
-    }
-    activationDistribution[activation.name].push(color);
-    totalActivation += (2 - activation.level); // Higher number = better activation
-    colorCount++;
-  });
-  
-  // Calculate average activation percentage
-  const activationPercentage = Math.round((totalActivation / (colorCount * 2)) * 100);
-  
-  // Determine dominant activation state
-  const dominantState = Object.keys(activationDistribution)
-    .reduce((a, b) => activationDistribution[a].length > activationDistribution[b].length ? a : b);
-  
-  // Get state details from mapping
-  const stateDetails = Object.values(HEART_ACTIVATION_STATES).find(state => 
-    state.name === dominantState
-  ) || HEART_ACTIVATION_STATES[1];
+  // Calculate activation percentage for legacy compatibility
+  const activationPercentage = Math.round(stateDistribution.healthy + (stateDistribution.average * 0.5));
   
   return {
-    distribution: activationDistribution,
-    dominantState,
+    stateDistribution,
+    stateAnalysis,
     activationPercentage,
     stateColors: colorSelections,
-    stateDetails,
-    analysis: `Your heart activation level is at ${activationPercentage}% - ${stateDetails.description}`
+    analysis: stateAnalysis.description
   };
+}
+
+// Helper function to convert color selections to state distribution
+function calculateStateDistributionFromColors(colorSelections) {
+  let healthy = 0, average = 0, unhealthy = 0;
+  
+  colorSelections.forEach(color => {
+    if (color.category === 0) healthy++; // Green/vibrant colors = healthy
+    else if (color.category === 1) average++; // Amber/medium colors = average  
+    else if (color.category === 2) unhealthy++; // Red/dark colors = unhealthy
+  });
+  
+  const total = colorSelections.length;
+  return {
+    healthy: Math.round((healthy / total) * 100),
+    average: Math.round((average / total) * 100), 
+    unhealthy: Math.round((unhealthy / total) * 100)
+  };
+}
+
+// EXACT implementation from specification section 5.5
+function calculateStateImpact(stateDistribution, personalityType) {
+  // Base state descriptions for each type - EXACT from specification
+  const typeStateDescriptions = {
+    '1': {
+      healthy: "principled, accepting, and balanced",
+      average: "critical, perfectionistic, and controlled",
+      unhealthy: "judgmental, rigid, and self-righteous"
+    },
+    '2': {
+      healthy: "genuinely helpful, empathetic, and supportive",
+      average: "people-pleasing, approval-seeking, and prideful",
+      unhealthy: "manipulative, possessive, and self-victimizing"
+    },
+    '3': {
+      healthy: "authentic, self-accepting, and purpose-driven",
+      average: "image-focused, competitive, and validation-seeking",
+      unhealthy: "deceptive, hostile, and emotionally detached"
+    },
+    '4': {
+      healthy: "creative, emotionally honest, and self-aware",
+      average: "melancholic, envious, and self-absorbed",
+      unhealthy: "self-destructive, alienating, and emotionally volatile"
+    },
+    '5': {
+      healthy: "insightful, engaged, and intellectually generous",
+      average: "detached, private, and intellectually stingy",
+      unhealthy: "isolated, nihilistic, and mentally scattered"
+    },
+    '6': {
+      healthy: "courageous, cooperative, and committed",
+      average: "anxious, suspicious, and authority-reactive",
+      unhealthy: "paranoid, accusatory, and self-defeating"
+    },
+    '7': {
+      healthy: "joyful, focused, and deeply satisfied",
+      average: "scattered, escapist, and commitment-avoidant",
+      unhealthy: "impulsive, excessive, and painfully unfulfilled"
+    },
+    '8': {
+      healthy: "protective, empowering, and emotionally vulnerable",
+      average: "controlling, confrontational, and justice-obsessed",
+      unhealthy: "intimidating, destructive, and ruthless"
+    },
+    '9': {
+      healthy: "engaged, present, and purposefully decisive",
+      average: "conflict-avoidant, complacent, and self-forgetting",
+      unhealthy: "disengaged, stubborn, and neglectful"
+    }
+  };
+
+  // Calculate weighted description based on distribution
+  const description = {
+    primary: stateDistribution.healthy >= 50 ? 'healthy' :
+             stateDistribution.unhealthy >= 50 ? 'unhealthy' : 'average',
+    secondary: determineSecondaryState(stateDistribution),
+    description: generateStateDescription(stateDistribution, typeStateDescriptions[personalityType])
+  };
+
+  return description;
+}
+
+function determineSecondaryState(distribution) {
+  const { healthy, average, unhealthy } = distribution;
+  
+  // Create sorted array of states by percentage
+  const states = [
+    { name: 'healthy', value: healthy },
+    { name: 'average', value: average },
+    { name: 'unhealthy', value: unhealthy }
+  ].sort((a, b) => b.value - a.value);
+  
+  // Return the second highest state
+  return states[1].name;
+}
+
+function generateStateDescription(distribution, typeDescriptions) {
+  const { healthy, average, unhealthy } = distribution;
+  const total = healthy + average + unhealthy;
+  
+  // Calculate normalized weights
+  const healthyWeight = healthy / total;
+  const averageWeight = average / total;
+  const unhealthyWeight = unhealthy / total;
+  
+  // Create blended description based on weights
+  let description = "";
+  
+  // Add primary state description
+  const primaryState = healthyWeight >= 0.5 ? "healthy" : 
+                       unhealthyWeight >= 0.5 ? "unhealthy" : "average";
+  
+  const primaryThreshold = Math.max(healthyWeight, averageWeight, unhealthyWeight);
+  
+  // Primary state description
+  if (primaryThreshold >= 0.7) {
+    // Strong primary state (>70%)
+    description += `You are predominantly ${typeDescriptions[primaryState]}. `;
+  } else {
+    // Moderate primary state
+    description += `You are often ${typeDescriptions[primaryState]}. `;
+  }
+  
+  // Add secondary state influence if significant
+  const secondaryStates = [
+    { name: "healthy", weight: healthyWeight },
+    { name: "average", weight: averageWeight },
+    { name: "unhealthy", weight: unhealthyWeight }
+  ].sort((a, b) => b.weight - a.weight);
+  
+  // Remove primary state from consideration
+  const secondaryState = secondaryStates[0].name === primaryState ? 
+                         secondaryStates[1] : secondaryStates[0];
+  
+  // Only add secondary description if it has significant weight (>20%)
+  if (secondaryState.weight >= 0.2) {
+    description += `At times, you can be ${typeDescriptions[secondaryState.name]}. `;
+  }
+  
+  // Add growth direction guidance
+  if (unhealthyWeight > 0.3) {
+    description += `Focus on developing greater self-awareness and support systems to move toward healthier patterns. `;
+  } else if (averageWeight > 0.5) {
+    description += `Greater mindfulness of your patterns can help you shift toward your healthier traits. `;
+  } else if (healthyWeight > 0.6) {
+    description += `Continue nurturing the practices that support your well-being and growth. `;
+  }
+  
+  return description;
 }
 
 /**
