@@ -28,7 +28,7 @@ const TYPE_WEIGHTS = {
   4: { // Stone Set 5: Processing Style
     0: { 1: 6, 5: 5, 3: 4 }, // Systems/Concepts/Ideas -> Perfectionist (systems), Investigator (concepts), Achiever (ideas)
     1: { 7: 6, 4: 5, 2: 4 }, // Expression/Mood/Feeling -> Enthusiast (expression/optimism), Individualist (expression/mood), Helper (feeling)
-    2: { 3: 6, 8: 5, 1: 4 }  // Results/Efficiency/Utility -> Achiever (results/efficiency), Challenger (results), Perfectionist (efficiency)
+    2: { 7: 6, 3: 5, 8: 3, 1: 4 }  // Results/Efficiency/Utility -> Enthusiast (results from variety), Achiever (results/efficiency), Challenger (reduced), Perfectionist (efficiency)
   },
   5: { // Stone Set 6: Stress Reaction
     0: { 1: 6, 6: 5, 5: 4 }, // Vigilance/Analysis/Foresight -> Perfectionist (vigilance), Loyalist (foresight), Investigator (analysis)
@@ -38,17 +38,17 @@ const TYPE_WEIGHTS = {
   6: { // Stone Set 7: Conflict Style
     0: { 9: 6, 2: 4, 5: 4 }, // Peace/Mediation/Compromise -> Peacemaker (peace/mediation), Helper (mediation), Investigator (compromise)
     1: { 7: 6, 3: 4, 2: 4 }, // Support/Flexibility/Adaptation -> Enthusiast (flexibility), Achiever (adaptation), Helper (support)
-    2: { 8: 6, 1: 5, 6: 3 }  // Directness/Challenge/Honesty -> Challenger (directness/challenge), Perfectionist (honesty), Loyalist (directness)
+    2: { 7: 6, 8: 5, 1: 4, 6: 3 }  // Directness/Challenge/Honesty -> Enthusiast (directness from enthusiasm), Challenger (directness/challenge), Perfectionist (honesty), Loyalist (directness)
   },
   7: { // Stone Set 8: Success Definition
     0: { 1: 6, 5: 4, 6: 4 }, // Accuracy/Principles/Improvement -> Perfectionist (accuracy/principles/improvement), Investigator (accuracy), Loyalist (principles)
     1: { 2: 6, 7: 4, 4: 4 }, // Connection/Acknowledgment/Appreciation -> Helper (connection), Enthusiast (acknowledgment), Individualist (appreciation)
-    2: { 3: 6, 8: 5, 7: 4 }  // Mastery/Achievement/Capability -> Achiever (achievement/mastery), Challenger (capability), Enthusiast (mastery)
+    2: { 7: 6, 3: 5, 8: 4 }  // Mastery/Achievement/Capability -> Enthusiast (mastery through experiences), Achiever (achievement/mastery), Challenger (capability)
   },
   8: { // Stone Set 9: Relationship Priority
     0: { 5: 6, 4: 5, 1: 4 }, // Autonomy/Self-sufficiency/Space -> Investigator (autonomy), Individualist (self-sufficiency), Perfectionist (space)
     1: { 2: 6, 9: 5, 6: 4 }, // Mutuality/Sharing/Reciprocity -> Helper (mutuality/sharing), Peacemaker (reciprocity), Loyalist (mutuality)
-    2: { 8: 6, 3: 4, 1: 4 }  // Leadership/Mentorship/Direction -> Challenger (leadership), Achiever (mentorship), Perfectionist (direction)
+    2: { 7: 6, 8: 5, 3: 4, 1: 3 }  // Leadership/Mentorship/Direction -> Enthusiast (leadership through inspiration), Challenger (leadership), Achiever (mentorship), Perfectionist (direction)
   }
 };
 
