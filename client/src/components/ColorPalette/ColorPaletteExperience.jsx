@@ -1,167 +1,202 @@
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import ColorPaletteSelector from './ColorPaletteSelector';
-import StateDistributionSlider from './StateDistributionSlider';
-import { STATE_COLORS } from './ColorPaletteData';
+import React, { useState } from 'react';
+import { motion } from 'framer-motion';
 import './ColorPaletteExperience.css';
 
 /**
- * ColorPaletteExperience Component - The full Phase 3 experience
+ * ColorPaletteExperience - Phase 3 of the Personality Mosaic Assessment
+ * Handles the color palette selection experience
  */
-const ColorPaletteExperience = ({ 
-  onComplete,
-  personalityType 
-}) => {
-  // Selected state palettes
-  const [selectedStates, setSelectedStates] = useState([]);
-  
-  // Distribution between states (percentages)
-  const [stateDistribution, setStateDistribution] = useState({});
-  
-  // Whether the experience is completed
-  const [isCompleted, setIsCompleted] = useState(false);
-  
-  // Handle state palette selection/deselection
-  const handleSelectState = (stateKey) => {
-    let updatedStates;
+const ColorPaletteExperience = ({ onComplete, foundationSelections = [], buildingBlockSelections = [] }) => {
+  const [selectedColors, setSelectedColors] = useState([]);
+  const [currentCategory, setCurrentCategory] = useState(0);
+
+  // Color categories and options
+  const colorCategories = [
+    {
+      title: "Primary Energy Colors",
+      subtitle: "Choose colors that represent your core energy",
+      colors: [
+        { id: 'red', name: 'Passion Red', hex: '#dc2626', description: 'Dynamic • Powerful • Action-oriented' },
+        { id: 'blue', name: 'Deep Blue', hex: '#2563eb', description: 'Thoughtful • Stable • Analytical' },
+        { id: 'green', name: 'Natural Green', hex: '#059669', description: 'Balanced • Growing • Harmonious' },
+        { id: 'purple', name: 'Creative Purple', hex: '#7c3aed', description: 'Intuitive • Imaginative • Transformative' },
+        { id: 'orange', name: 'Vibrant Orange', hex: '#ea580c', description: 'Enthusiastic • Social • Energetic' },
+        { id: 'yellow', name: 'Bright Yellow', hex: '#ca8a04', description: 'Optimistic • Joyful • Inspiring' }
+      ]
+    },
+    {
+      title: "Secondary Mood Colors",
+      subtitle: "Choose colors that reflect your emotional landscape",
+      colors: [
+        { id: 'teal', name: 'Calm Teal', hex: '#0d9488', description: 'Peaceful • Refreshing • Clear' },
+        { id: 'rose', name: 'Warm Rose', hex: '#e11d48', description: 'Nurturing • Compassionate • Gentle' },
+        { id: 'indigo', name: 'Deep Indigo', hex: '#4338ca', description: 'Mystical • Wise • Introspective' },
+        { id: 'amber', name: 'Golden Amber', hex: '#d97706', description: 'Warm • Confident • Radiant' },
+        { id: 'emerald', name: 'Rich Emerald', hex: '#047857', description: 'Abundant • Luxurious • Grounded' },
+        { id: 'slate', name: 'Sophisticated Slate', hex: '#475569', description: 'Elegant • Timeless • Refined' }
+      ]
+    },
+    {
+      title: "Accent Colors",
+      subtitle: "Choose colors that add personality to your palette",
+      colors: [
+        { id: 'coral', name: 'Living Coral', hex: '#f97316', description: 'Playful • Lively • Expressive' },
+        { id: 'lavender', name: 'Soft Lavender', hex: '#8b5cf6', description: 'Dreamy • Gentle • Romantic' },
+        { id: 'mint', name: 'Fresh Mint', hex: '#10b981', description: 'Clean • Fresh • Rejuvenating' },
+        { id: 'gold', name: 'Bright Gold', hex: '#f59e0b', description: 'Luxurious • Successful • Bold' },
+        { id: 'silver', name: 'Modern Silver', hex: '#64748b', description: 'Sleek • Contemporary • Sophisticated' },
+        { id: 'crimson', name: 'Deep Crimson', hex: '#b91c1c', description: 'Intense • Passionate • Strong' }
+      ]
+    }
+  ];
+
+  const currentCategoryData = colorCategories[currentCategory];
+  const maxSelections = 2; // Allow 2 colors per category
+  const categorySelections = selectedColors.filter(color => 
+    currentCategoryData.colors.some(c => c.id === color.id)
+  );
+
+  const handleColorSelect = (color) => {
+    const isSelected = selectedColors.some(c => c.id === color.id);
     
-    // If already selected, deselect it
-    if (selectedStates.includes(stateKey)) {
-      updatedStates = selectedStates.filter(state => state !== stateKey);
-    } 
-    // If not selected and we have less than 2 selections, add it
-    else if (selectedStates.length < 2) {
-      updatedStates = [...selectedStates, stateKey];
-    } 
-    // Otherwise, we already have 2 selections - replace the last one
-    else {
-      updatedStates = [selectedStates[0], stateKey];
-    }
-    
-    setSelectedStates(updatedStates);
-  };
-  
-  // Update distribution between selected states
-  const handleUpdateDistribution = (newDistribution) => {
-    setStateDistribution(newDistribution);
-  };
-  
-  // Handle proceeding to the next phase
-  const handleContinue = () => {
-    // Only allow completion if we have 2 states selected and a valid distribution
-    if (selectedStates.length === 2 && 
-        stateDistribution[selectedStates[0]] !== undefined &&
-        stateDistribution[selectedStates[1]] !== undefined) {
-      
-      setIsCompleted(true);
-      
-      // Notify parent component
-      if (onComplete) {
-        setTimeout(() => {
-          onComplete({
-            selectedStates,
-            stateDistribution
-          });
-        }, 1000); // Short delay for animation
-      }
+    if (isSelected) {
+      // Remove color
+      setSelectedColors(selectedColors.filter(c => c.id !== color.id));
+    } else if (categorySelections.length < maxSelections) {
+      // Add color if under limit
+      setSelectedColors([...selectedColors, { ...color, category: currentCategory }]);
     }
   };
-  
-  // Set initial 50/50 distribution when two states are selected
-  useEffect(() => {
-    if (selectedStates.length === 2) {
-      if (!stateDistribution[selectedStates[0]]) {
-        // Default to 50/50 distribution
-        setStateDistribution({
-          [selectedStates[0]]: 50,
-          [selectedStates[1]]: 50
-        });
-      }
-    } else {
-      // Reset distribution if we don't have 2 states
-      setStateDistribution({});
+
+  const canContinue = categorySelections.length > 0;
+  const isLastCategory = currentCategory === colorCategories.length - 1;
+  const isComplete = currentCategory === colorCategories.length - 1 && canContinue;
+
+  const handleNext = () => {
+    if (isComplete) {
+      handleComplete();
+    } else if (canContinue) {
+      setCurrentCategory(currentCategory + 1);
     }
-  }, [selectedStates]);
-  
+  };
+
+  const handleBack = () => {
+    if (currentCategory > 0) {
+      setCurrentCategory(currentCategory - 1);
+    }
+  };
+
+  const handleComplete = () => {
+    if (onComplete) {
+      onComplete({
+        foundationSelections,
+        buildingBlockSelections,
+        colorPaletteSelections: selectedColors
+      });
+    }
+  };
+
   return (
-    <div className="color-palette-experience">
-      <AnimatePresence mode="wait">
-        {!isCompleted ? (
-          <motion.div
-            key="palette-selection"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-          >
-            <h2 className="phase-title">Choose Your State Palettes</h2>
-            <p className="phase-description">
-              Select two states that represent how you typically operate. These will color your personality tower.
-            </p>
+    <motion.div 
+      className="color-palette-experience"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+    >
+      <div className="color-palette-header">
+        <h2 className="phase-title">Create Your Color Palette</h2>
+        <p className="phase-subtitle">
+          Select colors that resonate with your personality and energy
+        </p>
+        <div className="progress-info">
+          Step {currentCategory + 1} of {colorCategories.length}
+        </div>
+      </div>
+
+      <motion.div 
+        className="color-category"
+        key={currentCategory}
+        initial={{ opacity: 0, x: 20 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.4 }}
+      >
+        <div className="category-header">
+          <h3 className="category-title">{currentCategoryData.title}</h3>
+          <p className="category-subtitle">{currentCategoryData.subtitle}</p>
+          <p className="selection-info">
+            Select up to {maxSelections} colors ({categorySelections.length}/{maxSelections})
+          </p>
+        </div>
+
+        <div className="color-grid">
+          {currentCategoryData.colors.map((color) => {
+            const isSelected = selectedColors.some(c => c.id === color.id);
+            const canSelect = !isSelected && categorySelections.length < maxSelections;
             
-            {/* Color palette selection */}
-            <div className="palette-section">
-              <ColorPaletteSelector
-                selectedStates={selectedStates}
-                onSelectState={handleSelectState}
-                personalityType={personalityType}
-              />
-            </div>
-            
-            {/* State distribution slider - only shown when 2 states are selected */}
-            {selectedStates.length === 2 && (
+            return (
               <motion.div
-                className="distribution-section"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 }}
+                key={color.id}
+                className={`color-option ${isSelected ? 'selected' : ''} ${!canSelect && !isSelected ? 'disabled' : ''}`}
+                onClick={() => (canSelect || isSelected) && handleColorSelect(color)}
+                whileHover={canSelect || isSelected ? { scale: 1.05 } : {}}
+                whileTap={canSelect || isSelected ? { scale: 0.95 } : {}}
               >
-                <StateDistributionSlider
-                  selectedStates={selectedStates}
-                  stateDistribution={stateDistribution}
-                  onUpdateDistribution={handleUpdateDistribution}
+                <div 
+                  className="color-circle"
+                  style={{ backgroundColor: color.hex }}
                 />
-                
-                <div className="buttons-container">
-                  <button 
-                    className="continue-button"
-                    onClick={handleContinue}
-                  >
-                    Continue to Next Phase
-                  </button>
-                </div>
+                <h4 className="color-name">{color.name}</h4>
+                <p className="color-description">{color.description}</p>
+                {isSelected && <div className="selection-check">✓</div>}
               </motion.div>
-            )}
-          </motion.div>
-        ) : (
-          <motion.div
-            key="completion"
+            );
+          })}
+        </div>
+      </motion.div>
+
+      <div className="navigation-controls">
+        {currentCategory > 0 && (
+          <motion.button 
+            className="back-button"
+            onClick={handleBack}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="completion-message"
           >
-            <h3>Your Tower Has Been Painted!</h3>
-            <div className="completion-colors">
-              {selectedStates.map((stateKey) => {
-                const stateColor = STATE_COLORS[stateKey];
-                return (
-                  <div key={stateKey} className="color-sample">
-                    <div 
-                      className="color-swatch" 
-                      style={{ backgroundColor: stateColor.primary }}
-                    ></div>
-                    <div className="color-label">
-                      <span className="state-name">{stateColor.name}</span>
-                      <span className="state-percentage">{stateDistribution[stateKey]}%</span>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-            <p>Moving to the next phase...</p>
-          </motion.div>
+            ← Back
+          </motion.button>
         )}
-      </AnimatePresence>
-    </div>
+        
+        <motion.button 
+          className={`continue-button ${!canContinue ? 'disabled' : ''}`}
+          onClick={handleNext}
+          disabled={!canContinue}
+          whileHover={canContinue ? { scale: 1.05 } : {}}
+          whileTap={canContinue ? { scale: 0.95 } : {}}
+        >
+          {isComplete ? 'Complete Assessment' : 'Continue'}
+        </motion.button>
+      </div>
+
+      {selectedColors.length > 0 && (
+        <motion.div 
+          className="selected-palette"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+        >
+          <h4>Your Selected Colors:</h4>
+          <div className="palette-preview">
+            {selectedColors.map((color) => (
+              <div
+                key={color.id}
+                className="palette-color"
+                style={{ backgroundColor: color.hex }}
+                title={color.name}
+              />
+            ))}
+          </div>
+        </motion.div>
+      )}
+    </motion.div>
   );
 };
 
