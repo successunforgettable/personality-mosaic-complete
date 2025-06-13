@@ -1,6 +1,6 @@
 /**
  * Assessment Types
- * Contains all type definitions for the Personality Mosaic Assessment system
+ * Contains all type definitions for the Inner DNA Assessment system
  */
 
 // Foundation Stone type

@@ -1,7 +1,7 @@
-# Personality Mosaic Assessment Home Page UI/UX Design
+# Inner DNA Assessment Home Page UI/UX Design
 
 ## Overview
-The Home Page serves as the entry point to the Personality Mosaic Assessment System, introducing users to the concept of building their personality tower while encouraging them to begin the assessment journey. The page combines engaging visuals, clear information, and strategic calls-to-action to maximize user engagement and conversion.
+The Home Page serves as the entry point to the Inner DNA Assessment System, introducing users to the concept of building their personality tower while encouraging them to begin the assessment journey. The page combines engaging visuals, clear information, and strategic calls-to-action to maximize user engagement and conversion.
 
 ## Visual Layout and Structure
 
@@ -22,7 +22,7 @@ The Home Page serves as the entry point to the Personality Mosaic Assessment Sys
 - **Background:** White (#ffffff)
 - **Content:**
   - Section header: "A New Way to Understand Yourself" (Inter SemiBold, 32px)
-  - 2-3 paragraphs explaining the Personality Mosaic concept
+  - 2-3 paragraphs explaining the Inner DNA concept
   - Key benefits highlighted in 3 columns:
     1. "Visual Understanding" (with icon)
     2. "Personalized Insights" (with icon)
@@ -208,4 +208,4 @@ The Home Page serves as the entry point to the Personality Mosaic Assessment Sys
 - **Visual Appeal:** High user satisfaction with design (survey metric)
 - **Clarity:** High understanding of concept before starting (survey metric)
 
-The Home Page sets the tone for the entire Personality Mosaic experience, establishing the building metaphor, creating interest through visual examples, and providing clear pathways to begin the assessment journey. The design balances information with engagement to maximize both user understanding and conversion.
+The Home Page sets the tone for the entire Inner DNA experience, establishing the building metaphor, creating interest through visual examples, and providing clear pathways to begin the assessment journey. The design balances information with engagement to maximize both user understanding and conversion.

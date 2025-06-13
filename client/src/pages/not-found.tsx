@@ -9,7 +9,7 @@ export default function NotFound() {
   
   // Set page title for SEO
   useEffect(() => {
-    document.title = "404 - Page Not Found | Personality Mosaic";
+    document.title = "404 - Page Not Found | Inner DNA";
     
     // Log the navigation to a non-existent page
     console.error(`Attempted navigation to non-existent page: ${location}`);

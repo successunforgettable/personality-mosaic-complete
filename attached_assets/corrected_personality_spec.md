@@ -1,10 +1,10 @@
-# **Comprehensive Technical Specification: Personality Mosaic Assessment System (CORRECTED)**
+# **Comprehensive Technical Specification: Inner DNA Assessment System (CORRECTED)**
 
 **0. Document Control**
 
 - **Version:** v18.2 (CORRECTED)
 - **Date:** May 25, 2025
-- **Purpose:** Complete technical specification for the Personality Mosaic Assessment System React application including Modular Report Generation System
+- **Purpose:** Complete technical specification for the Inner DNA Assessment System React application including Modular Report Generation System
 - **Target Audience:** Replit AI / React Developers
 - **CRITICAL INSTRUCTION:** Replit must refer to this specification before implementing ANY component or feature. All implementations must be verified against this document.
 
@@ -12,7 +12,7 @@
 
 **0.1.1 Purpose and Goals**
 
-The Welcome Screen serves as the entry point to the Personality Mosaic Assessment System, introducing users to the building metaphor and setting expectations for their personality discovery journey.
+The Welcome Screen serves as the entry point to the Inner DNA Assessment System, introducing users to the building metaphor and setting expectations for their personality discovery journey.
 
 **0.1.2 Visual Design Specifications**
 
@@ -23,7 +23,7 @@ The Welcome Screen serves as the entry point to the Personality Mosaic Assessmen
 - **Mobile:** Single column, full width with 16px padding
 
 **Header Section:**
-- **Logo/Title:** "Personality Mosaic" (Inter Bold, 48px desktop / 36px mobile)
+- **Logo/Title:** "Inner DNA" (Inter Bold, 48px desktop / 36px mobile)
 - **Subtitle:** "Build Your Personality Tower" (Inter Regular, 24px desktop / 18px mobile)
 - **Color:** Primary text (#1e293b), subtle text (#64748b)
 
@@ -45,7 +45,7 @@ The Welcome Screen serves as the entry point to the Personality Mosaic Assessmen
 
 **0.1.3 Content Specifications**
 
-**Main Headline:** "Discover Your Unique Personality Mosaic"
+**Main Headline:** "Discover Your Unique Inner DNA"
 
 **Subheadline:** "Build a personalized tower that reveals your personality type, motivations, and growth path"
 
@@ -1334,7 +1334,7 @@ export default DetailPhase;
 
 **6.3 Sample Complete Report (Type 1 Example)**
 
-**Your Personality Mosaic: The Integrity-Driven Excellence Pattern**
+**Your Inner DNA: The Integrity-Driven Excellence Pattern**
 
 **Executive Summary**
 
@@ -1828,7 +1828,7 @@ const useAssessmentStore = create(
       }
     }),
     {
-      name: 'personality-assessment',
+      name: 'inner-dna-assessment', // UPDATED from personality-assessment
       version: 1,
       // Only persist essential data, not UI state
       partialize: (state) => ({
@@ -2993,13 +2993,13 @@ const config = {
     ERROR_REPORTING: false
   },
   staging: {
-    API_URL: 'https://staging-api.personalitymosaic.com',
+    API_URL: 'https://staging-api.inner-dna.com', // UPDATED
     DEBUG: false,
     ANALYTICS_ENABLED: true,
     ERROR_REPORTING: true
   },
   production: {
-    API_URL: 'https://api.personalitymosaic.com',
+    API_URL: 'https://api.inner-dna.com', // UPDATED
     DEBUG: false,
     ANALYTICS_ENABLED: true,
     ERROR_REPORTING: true

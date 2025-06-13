@@ -1,5 +1,6 @@
 {
-  "name": "rest-express",
+  "name": "inner-dna",
+  "description": "The Inner DNA personality assessment application.",
   "version": "1.0.0",
   "type": "module",
   "license": "MIT",
